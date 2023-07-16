@@ -11,7 +11,7 @@ import tkinter as tk
 import subprocess
 import os
 
-from tkinter import ttk, Text, Label, Button
+from tkinter import scrolledtext, Label, Button
 from antlr4 import *
 
 def create_g4():
@@ -88,7 +88,7 @@ def show_tree():
 root = tk.Tk()
 
 # Create text widget and specify size.
-T = Text(root, height=15, width=55)
+T = scrolledtext.ScrolledText(root, height=15, width=55)
 
 # Create label
 l = Label(root, text="Cheap Studio Code")
