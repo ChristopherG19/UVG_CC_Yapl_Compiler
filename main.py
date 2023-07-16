@@ -14,17 +14,26 @@ import os
 from tkinter import scrolledtext, Label, Button
 from antlr4 import *
 
-def create_g4():
-    # Texto completo
+def get_expr():
     texto = T.get("1.0", tk.END)
-    arch = "Expr.g4"
+    arch = "test1.expr"
     try:
         with open(arch, "w") as archivo:
             archivo.write(texto)
     except IOError as e:
         print("Error al generar el archivo:", e)
         
-    comando = ["antlr4", "-Dlanguage=Python3", str(arch)]
+    show_tree()
+    root.after(4000, lambda: T.delete(1.0, tk.END))
+
+def create_g4():
+    
+    fil = "test1.expr"
+    if not os.path.exists(fil):
+        get_expr()
+    
+    grammar = "YALP.g4" 
+    comando = ["antlr4", "-Dlanguage=Python3", str(grammar)]
 
     try:
         subprocess.run(comando, check=True)
@@ -32,14 +41,13 @@ def create_g4():
         print("Error al ejecutar el comando:", e)
     
     # Crear archivo para imprimir arbol
-    archP = f"{arch[:-3]}Parser.py"
-    archL = f"{arch[:-3]}Lexer.py"
+    archP = f"{grammar[:-3]}Parser.py"
+    archL = f"{grammar[:-3]}Lexer.py"
     
     treeA = "Tree.py"
     
     if os.path.exists(archP) and os.path.exists(archL):
         show_tree()
-        
         root.after(4000, lambda: T.delete(1.0, tk.END))
         
         with open(treeA, "w") as archi:
@@ -75,7 +83,7 @@ def create_g4():
 
 def show_tree():
     file_name = 'test1.expr'
-    command = ["antlr4-parse", "Expr.g4", "prog", "-gui"]
+    command = ["antlr4-parse", "YALP.g4", "prog", "-gui"]
 
     process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -88,7 +96,7 @@ def show_tree():
 root = tk.Tk()
 
 # Create text widget and specify size.
-T = scrolledtext.ScrolledText(root, height=15, width=55)
+T = scrolledtext.ScrolledText(root, height=10, width=50)
 
 # Create label
 l = Label(root, text="Cheap Studio Code")
@@ -98,14 +106,16 @@ space = Label(root, height=1)
 space2 = Label(root, height=1)
 
 # Create an Exit button.
-b2 = Button(root, text="Obtener Texto", command=create_g4)
+b2 = Button(root, text="Ingresar expresion y mostrar árbol", command=get_expr)
 b3 = Button(root, text="Mostrar árbol", command=show_tree)
 b4 = Button(root, text="Exit", command=root.destroy)
+b5 = Button(root, text="Generar archivos y mostrar árbol", command=create_g4)
 
 l.pack()
 T.pack()
 space.pack()
 b2.pack()
+b5.pack()
 b3.pack()
 space2.pack()
 b4.pack()
