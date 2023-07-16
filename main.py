@@ -23,8 +23,8 @@ def get_expr():
     except IOError as e:
         print("Error al generar el archivo:", e)
         
-    show_tree()
     root.after(4000, lambda: T.delete(1.0, tk.END))
+    show_tree()
 
 def create_g4():
     
@@ -32,7 +32,7 @@ def create_g4():
     if not os.path.exists(fil):
         get_expr()
     
-    grammar = "YALP.g4" 
+    grammar = "YAPL.g4" 
     comando = ["antlr4", "-Dlanguage=Python3", str(grammar)]
 
     try:
@@ -48,7 +48,6 @@ def create_g4():
     
     if os.path.exists(archP) and os.path.exists(archL):
         show_tree()
-        root.after(4000, lambda: T.delete(1.0, tk.END))
         
         with open(treeA, "w") as archi:
             archi.write("from antlr4 import *\n")
@@ -83,23 +82,33 @@ def create_g4():
 
 def show_tree():
     file_name = 'test1.expr'
-    command = ["antlr4-parse", "YALP.g4", "prog", "-gui"]
+    command = ["antlr4-parse", "YAPL.g4", "prog", "-gui"]
 
     process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     with open(file_name, "r") as file:
         example = file.read()
         
-    process.stdin.write(example.encode('utf-8'))
-    process.stdin.flush()
+    stdout, stderr = process.communicate(input=example.encode('utf-8'))
+
+    T.delete(1.0, tk.END)
+    if stdout:
+        T.insert(tk.END, "Errores:\n")
+        T.insert(tk.END, stdout.decode('utf-8'))
+    else:
+        T.insert(tk.END, "No se encontraron errores :D\n")
+        
+    T.insert(tk.END, stderr.decode('utf-8'))
+        
+    #root.after(10000, lambda: T.delete(1.0, tk.END))
 
 root = tk.Tk()
 
 # Create text widget and specify size.
-T = scrolledtext.ScrolledText(root, height=10, width=50)
+T = scrolledtext.ScrolledText(root, height=20, width=100)
 
 # Create label
-l = Label(root, text="Cheap Studio Code")
+l = Label(root, text="Not Visual Studio Code")
 l.config(font=("Arial", 13))
 
 space = Label(root, height=1)
