@@ -1,16 +1,16 @@
 grammar YAPL;
 
 /* Entry point */
-prog: (class ';')+ EOF
+prog: (class_def ';')+ EOF
     ;
 
-class:
-        CLASS TYPE (INHERITS TYPE)? '{' (feature ';')* '}'
+class_def:
+        CLASS_N TYPE (INHERITS TYPE)? '{' (feature ';')* '}'
     ;   
 
 feature:
-        ID '(' (formal (',' formal)* )* ')' ':' TYPE '{' expr'}'
-    |   ID ':' TYPE  (ASSIGNMENT expr)? ';'
+        ID '(' ( formal (',' formal )* )? ')' ':' TYPE '{' expr '}'
+    |   ID ':' TYPE  (ASSIGNMENT expr)?
     ;
 
 formal:
@@ -18,11 +18,12 @@ formal:
     ;
 
 expr:
-        expr ('@' TYPE)? '.' ID '(' (expr (',' expr)*)')'
-    |   ID '(' (expr (',' expr)*) ')'
+        ID ASSIGNMENT expr
+    |   expr ('@' TYPE)? '.' ID '(' ( expr (',' expr)* )? ')'
+    |   ID '(' ( expr (',' expr)* ) ')'
     |   IF expr THEN expr ELSE expr FI
     |   WHILE expr LOOP expr POOL
-    |   '{' (expr ';')+'}'
+    |   '{' (expr ';')+ '}'
     |   LET ID ':' TYPE (ASSIGNMENT expr)? (',' ID ':' TYPE (ASSIGNMENT expr)? )* IN expr
     |   NEW TYPE
     |   '~' expr
@@ -42,7 +43,7 @@ WS:
         [ \t\r\n\f]+ -> skip;
 
 /* Reserved words */
-CLASS:  
+CLASS_N:  
     [cC][lL][aA][sS][sS];
 NOT:
     [nN][oO][tT];
@@ -87,7 +88,6 @@ ID:
 ASSIGNMENT:
     '<-';
 
-fragment ESC: 
-    '\\' (["\\/bfnrt] | 'u' HEX HEX HEX HEX);
-fragment HEX: 
-    [0-9a-fA-F];
+fragment ESC: '\\' ([/bfnrt] | UNICODE | '"');
+fragment UNICODE: 'u' HEX HEX HEX HEX;
+fragment HEX: [0-9a-fA-F];

@@ -1,5 +1,12 @@
-class Main{
-  main():Int{
-    return 5 + 6;
+class Main (
+      bar : B;
+    baz: A;
+
+    main(): B {
+    {
+      bar <- (new B).init();
+      baz <- (new A).init(111, "TAC generation");
+      bar.createFoo();
+    }
   };
 };
