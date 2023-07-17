@@ -6,22 +6,28 @@
     Laboratorio#0
 '''
 
+import sys
 from antlr4.error.ErrorListener import ErrorListener
 
 class CustomErrorListener(ErrorListener):    
     def __init__(self, text_widget, tk_module):
         self.T = text_widget
         self.tk = tk_module
+        self.errors = []  # Lista para almacenar los mensajes de error
         self.error_occurred = False
         
     def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
-        self.T.delete(1.0, self.tk.END)
-        self.T.insert(self.tk.END, f"Error en línea {line}, columna {column}\nDescripcion: {msg}\n")
+        error_msg = f"Error en línea {line}, columna {column}\nDescripcion: {msg}\n"
+        self.errors.append(error_msg)
         self.error_occurred = True
         
     def has_error(self):
         return self.error_occurred
 
+    def get_errors(self):
+        return self.errors
+
+# Función proveniente de https://github.com/AkiraHakuta/antlr4_Python3_examples
 def beautify_lisp_string(in_string):
    indent_size = 4
    add_indent = ' '*indent_size

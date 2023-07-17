@@ -1,4 +1,5 @@
-class Main (
+class Main {
+	This is a comment*)
       bar : B;
     baz: A;
 

@@ -58,13 +58,18 @@ def create_g4():
         tree = parser.prog()
         
         if not error_listener.has_error():
-            T.insert(tk.END, "\nNo se encontraron errores, árbol disponible en consola y GUI desplegada")
+            T.insert(tk.END, "\n\nNo se encontraron errores, árbol disponible en consola y GUI desplegada")
             print('Tree:\n')
             lisp_tree_str = tree.toStringTree(recog=parser)
             print(beautify_lisp_string(lisp_tree_str))
             print()
-            
             show_tree()
+        else:
+            T.delete(1.0, tk.END)
+            errors = error_listener.get_errors()
+            T.insert(tk.END, "\nSe encontraron errores:\n")
+            for error in errors:
+                T.insert(tk.END, error + "\n")
 
 def show_tree():
     file_name = 'test1.expr'
@@ -77,7 +82,10 @@ def show_tree():
         
     process.communicate(input=example.encode('utf-8'))
         
-    #root.after(10000, lambda: T.delete(1.0, tk.END))
+    root.after(10000, lambda: T.delete(1.0, tk.END))
+
+def clear():
+    T.delete(1.0, tk.END)
 
 root = tk.Tk()
 
@@ -88,12 +96,14 @@ l.config(font=("Arial", 13))
 space = Label(root, height=1)
 space2 = Label(root, height=1)
 b2 = Button(root, text="Ingresar expresion y mostrar árbol", command=create_g4)
+b3 = Button(root, text="Limpiar", command=clear)
 b4 = Button(root, text="Exit", command=root.destroy)
 
 l.pack()
 T.pack()
 space.pack()
 b2.pack()
+b3.pack()
 space2.pack()
 b4.pack()
 

@@ -39,6 +39,10 @@ expr:
     |   bool=(TRUE | FALSE)
     ;
 
+/* Comments */
+BLOCK_COMMENT   :   '(*' (BLOCK_COMMENT|.)*? '*)'   -> channel(HIDDEN);
+LINE_COMMENT    :   '--' .*? '\n'                   -> channel(HIDDEN);
+
 WS:
         [ \t\r\n\f]+ -> skip;
 
