@@ -1,5 +1,5 @@
-class Main inherits IO { 
-   main(): IO {
-	   out_string("Hello mundo\n")
-   };
+class Main{
+  main():Int{
+    return 5 + 6;
+  };
 };
