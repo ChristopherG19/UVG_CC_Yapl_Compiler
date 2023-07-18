@@ -28,138 +28,7 @@ En el cuadro de texto es posible ingresar una expresión a evaluar, luego de hab
 
 ### Ejemplo:
 *Gramática*
-```
-grammar YAPL;
-
-/* Entry point */
-prog: (class_def ';')+ EOF
-    ;
-
-class_def:
-        CLASS_N TYPE (INHERITS TYPE)? '{' (feature ';')* '}'
-    ;   
-
-feature:
-        ID '(' ( formal (',' formal )* )? ')' ':' TYPE '{' expr '}'
-    |   ID ':' TYPE  (ASSIGNMENT expr)?
-    ;
-
-formal:
-        ID ':' TYPE ';'
-    ;
-
-expr:
-        ID ASSIGNMENT expr
-    |   expr ('@' TYPE)? '.' ID '(' ( expr (',' expr)* )? ')'
-    |   ID '(' ( expr (',' expr)* ) ')'
-    |   IF expr THEN expr ELSE expr FI
-    |   WHILE expr LOOP expr POOL
-    |   '{' (expr ';')+ '}'
-    |   LET ID ':' TYPE (ASSIGNMENT expr)? (',' ID ':' TYPE (ASSIGNMENT expr)? )* IN expr
-    |   NEW TYPE
-    |   '~' expr
-    |   ISVOID expr
-    |   expr op=('*' | '/') expr
-    |   expr op=('+' | '-') expr
-    |   expr op=('<=' | '<' | '=' ) expr
-    |   NOT expr
-    |   '(' expr ')'
-    |   ID 
-    |   INT 
-    |   STRING
-    |   bool=(TRUE | FALSE)
-    ;
-
-/* Comments */
-BLOCK_COMMENT   :   '(*' (BLOCK_COMMENT|.)*? '*)'   -> channel(HIDDEN);
-LINE_COMMENT    :   '--' .*? '\n'                   -> channel(HIDDEN);
-
-WS:
-        [ \t\r\n\f]+ -> skip;
-
-/* Reserved words */
-CLASS_N:  
-    [cC][lL][aA][sS][sS];
-NOT:
-    [nN][oO][tT];
-ISVOID:
-    [iI][sS][vV][oO][iI][dD];
-IF:
-    [iI][fF];
-FI:
-    [fF][iI];
-THEN:
-    [tT][hH][eE][nN];
-ELSE:
-    [eE][lL][sS][eE];
-WHILE:
-    [wW][hH][iI][lL][eE];
-LET:
-    [lL][eE][tT];
-IN:
-    [iI][nN];
-INHERITS:
-    [iI][nN][hH][eE][rR][iI][tT][sS];
-LOOP:
-    [lL][oO][oO][pP];
-POOL:
-    [pP][oO][oO][lL];
-NEW:
-    [nN][eE][wW];
-TRUE:
-    [tT][rR][uU][eE];
-FALSE:
-    [fF][aA][lL][sS][eE];
-
-/* Data Types */
-STRING:
-    '"' (ESC | ~ ["\\])* '"';
-INT:
-    [0-9]+;
-TYPE:
-    [A-Z][_0-9A-Za-z]*;
-ID:
-    [a-z][_0-9A-Za-z]*;
-ASSIGNMENT:
-    '<-';
-
-fragment ESC: '\\' ([/bfnrt] | UNICODE | '"');
-fragment UNICODE: 'u' HEX HEX HEX HEX;
-fragment HEX: [0-9a-fA-F];
-```
-*Expresión evaluada (Sin errores)*
-```
-class Main {
-	(This is a comment*)
-      bar : B;
-    baz: A;
-
-    main(): B {
-    {
-      bar <- (new B).init();
-      baz <- (new A).init(111, "TAC generation");
-      bar.createFoo();
-    }
-  };
-};
-```
-
-*Expresión evaluada (Con errores)*
-```
-class Main {
-	This is a comment*)
-      bar : B;
-    baz: 
-    
-    main(): B {
-    {
-      bar <- (new B).init();
-      baz <- (new A).init(111, "TAC generation");
-      bar.createFoo();
-    }
-  };
-};
-```
+<a href="https://github.com/ChristopherG19/UVG_CC_Yapl_Compiler/blob/main/YAPL.g4">YAPL.g4</a>
 
 Resultado expresión sin errores
 <p align="center">
@@ -171,3 +40,17 @@ Resultado expresión con errores
   <img src="https://github.com/ChristopherG19/UVG_CC_Yapl_Compiler/assets/60325784/f8a9b4df-463d-49a1-805a-b451858c843f"/>
 </p>
 En este segundo caso no sé muestra ningún árbol porque existen varios errores
+
+## Resultados
+
+### Ejemplo 1
+![image](https://github.com/ChristopherG19/UVG_CC_Yapl_Compiler/assets/60325784/fa1014ab-0d26-48b7-84de-9c26cd2de1ad)
+
+### Ejemplo 2
+![image](https://github.com/ChristopherG19/UVG_CC_Yapl_Compiler/assets/60325784/33f3a7db-37c5-4fdb-a474-7fc7b41dad9e)
+
+### Ejemplo 3
+![image](https://github.com/ChristopherG19/UVG_CC_Yapl_Compiler/assets/60325784/b311cd04-2227-41b9-aa80-3ab6243e88aa)
+
+
+
