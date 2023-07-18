@@ -17,7 +17,7 @@ class CustomErrorListener(ErrorListener):
         self.error_occurred = False
         
     def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
-        error_msg = f"Error en línea {line}, columna {column}\nDescripcion: {msg}\n"
+        error_msg = f">> Error en línea {line}, columna {column}\nDescripcion: {msg}\n"
         self.errors.append(error_msg)
         self.error_occurred = True
         
