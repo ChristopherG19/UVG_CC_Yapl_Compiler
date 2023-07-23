@@ -28,7 +28,7 @@ def create_g4():
     #root.after(4000, lambda: T.delete(1.0, tk.END))
     
     grammar = "YAPL.g4" 
-    comando = ["antlr4", "-Dlanguage=Python3", str(grammar)]
+    comando = ["antlr4", "-Dlanguage=Python3", "-visitor",str(grammar)]
 
     try:
         subprocess.run(comando, check=True)
