@@ -17,26 +17,26 @@ formal:
         ID ':' TYPE
     ;
 
-expr:
-        ID ASSIGNMENT expr
-    |   expr ('@' TYPE)? '.' ID '(' ( expr (',' expr)* )? ')'
-    |   ID '(' ( expr (',' expr)* ) ')'
-    |   IF expr THEN expr ELSE expr FI
-    |   WHILE expr LOOP expr POOL
-    |   '{' (expr ';')+ '}'
-    |   LET ID ':' TYPE (ASSIGNMENT expr)? (',' ID ':' TYPE (ASSIGNMENT expr)? )* IN expr
-    |   NEW TYPE
-    |   '~' expr
-    |   ISVOID expr
-    |   expr op=('*' | '/') expr
-    |   expr op=('+' | '-') expr
-    |   expr op=('<=' | '<' | '=' ) expr
-    |   NOT expr
-    |   '(' expr ')'
-    |   ID 
-    |   INT 
-    |   STRING
-    |   bool=(TRUE | FALSE)
+expr: 
+        ID ASSIGNMENT expr #assignment
+    |   expr ('@' TYPE)? '.' ID '(' ( expr (',' expr)* )? ')' #dispatchExplicit
+    |   ID '(' ( expr (',' expr)* ) ')' #dispatchImplicit
+    |   IF expr THEN expr ELSE expr FI #if
+    |   WHILE expr LOOP expr POOL #while
+    |   '{' (expr ';')+ '}' #block
+    |   LET ID ':' TYPE (ASSIGNMENT expr)? (',' ID ':' TYPE (ASSIGNMENT expr)? )* IN expr #letid
+    |   NEW TYPE #new
+    |   '~' expr #negative
+    |   ISVOID expr #isvoid
+    |   expr op=('*' | '/') expr #mulDiv
+    |   expr op=('+' | '-') expr #addSub
+    |   expr op=('<=' | '<' | '>' | '=' ) expr #comparisson
+    |   NOT expr #neg
+    |   '(' expr ')' #parens
+    |   ID #id
+    |   INT #int
+    |   STRING #string
+    |   bool=(TRUE | FALSE) #boolean
     ;
 
 /* Comments */
@@ -91,6 +91,44 @@ ID:
     [a-z][_0-9A-Za-z]*;
 ASSIGNMENT:
     '<-';
+
+/* operators */
+TIMES:
+    '*';
+DIV:
+    '/';
+PLUS: 
+    '+';
+MINUS:
+    '-';
+TILDE:
+    '~';
+LESS:
+    '<';
+EQLESS:
+    '<=';
+EQ:
+    '=';
+LPAR:
+    '(';
+RPAR:
+    ')';
+LCBRACE:
+    '{';
+RCBRACE:
+    '}';
+LBRACKET:
+    '[';
+RBRACKET:
+    ']';
+DOT:
+    '.';
+AT:
+    '@';
+COLON:
+    ':';
+COMA:
+    ',';
 
 fragment ESC: '\\' ([/bfnrt] | UNICODE | '"');
 fragment UNICODE: 'u' HEX HEX HEX HEX;

@@ -88,23 +88,32 @@ def clear():
     T.delete(1.0, tk.END)
 
 root = tk.Tk()
+root.title("Not Visual Studio Code")
+root.configure(bg="#1e1e1e")  # Color de fondo oscuro
 
-T = scrolledtext.ScrolledText(root, height=20, width=100)
-l = Label(root, text="Not Visual Studio Code")
-l.config(font=("Arial", 13))
-
-space = Label(root, height=1)
-space2 = Label(root, height=1)
-b2 = Button(root, text="Ingresar expresion y mostrar árbol", command=create_g4)
-b3 = Button(root, text="Limpiar", command=clear)
-b4 = Button(root, text="Exit", command=root.destroy)
-
+l = tk.Label(root, text="Not Visual Studio Code", fg="white", bg="#1e1e1e", font=("Arial", 13))
 l.pack()
+
+T = scrolledtext.ScrolledText(root, height=20, width=100, bg="#2d2d2d", fg="white", insertbackground="white",
+                              selectbackground="blue", selectforeground="white", font=("Arial", 12))
 T.pack()
+
+space = tk.Label(root, height=1, bg="#1e1e1e")
 space.pack()
+
+b2 = tk.Button(root, text="Ingresar expresion y mostrar árbol", command=create_g4, bg="#2d2d2d", fg="white",
+               activebackground="#444", activeforeground="white")
 b2.pack()
+
+b3 = tk.Button(root, text="Limpiar", command=clear, bg="#2d2d2d", fg="white", activebackground="#444",
+               activeforeground="white")
 b3.pack()
+
+space2 = tk.Label(root, height=1, bg="#1e1e1e")
 space2.pack()
+
+b4 = tk.Button(root, text="Exit", command=root.destroy, bg="#2d2d2d", fg="white", activebackground="#444",
+               activeforeground="white")
 b4.pack()
 
 T.insert(tk.END, "")

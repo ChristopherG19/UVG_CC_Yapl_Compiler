@@ -37,6 +37,12 @@ class Table():
     def add_column(self, column):
         self.columns.append(column)
         self.build_Table()
+        
+    def containsKey(self, id):
+        for row in self.columns:
+            if row[0] == id:
+                return row
+            return None
 
     def build_Table(self):
         # Limpiar tabla
