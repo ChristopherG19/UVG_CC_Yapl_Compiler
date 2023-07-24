@@ -10,7 +10,7 @@ from prettytable import PrettyTable
 
 class Table():
     def __init__(self):
-        self.headers = ['Name', 'Value', 'Type', 'Env', 'Line']
+        self.headers = ['Name', 'Value', 'Type']
         self.columns = []
         self.prettyT = PrettyTable()
         
@@ -32,7 +32,7 @@ class Table():
         if row == None:
             return f"Value with parameters ({type}, {name}, {value}) is not present"
         else:
-            return f"(Type: {row[2]}) {row[0]} = {row[1]} in line {row[4]}"
+            return f"(Type: {row[2]}) {row[0]} = {row[1]}"
         
     def add_column(self, column):
         self.columns.append(column)
