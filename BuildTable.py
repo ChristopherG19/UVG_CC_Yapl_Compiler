@@ -97,7 +97,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return str(ctx.STRING().getText())[1:-1]
 
     def visitBoolean(self, ctx: YAPLParser.BooleanContext):
-        return ctx.bool.type == YAPLParser.TRUE
+        return ctx.bool_ == YAPLParser.TRUE
     
 def main():
     file_name = 'test1.expr'
@@ -106,10 +106,10 @@ def main():
     token_stream = CommonTokenStream(lexer)
     parser = YAPLParser(token_stream)
     tree = parser.prog()
-    print(tree)
     YV = YAPLVisitorImpl()
     YV.visit(tree)
-    print(YV.symbolTable.build_Table())
+    treeF = YV.symbolTable.build_Table()
+    print(treeF)
     
 if __name__ == '__main__':
     main()

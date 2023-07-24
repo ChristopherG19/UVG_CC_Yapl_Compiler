@@ -1,6 +1,16 @@
-class Main inherits IO {
-  a : Int <- 1;
-  b : Int <- 2;
-  c : Int;
-  d : Int;
+class Cons inherits List {
+  xcar : Int;
+  test : Int;
+  xcdr : List;
+  isNil() : Bool { 
+    false
+  };
+  init(hd : Int, tl : List) : Cons {
+    {
+      xcar <- hd;
+      xcdr <- tl;
+      test <- tl;
+      self;
+    }
+  };
 };

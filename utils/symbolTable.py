@@ -58,5 +58,5 @@ class Table():
         # Centrar todo, agregar título e imprimir tabla
         self.prettyT.align = "c"
         self.prettyT.title = "Symbols Table"
-        print(self.prettyT)
+        return self.prettyT
        
