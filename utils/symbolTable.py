@@ -13,20 +13,6 @@ class Table():
         self.headers = ['Name', 'Value', 'Type']
         self.columns = []
         self.prettyT = PrettyTable()
-        
-    def getCell(self, type, name=None, value=None):
-        # Buscar la celda que coincida con los valores dados
-        if type is not None and name is not None and value is not None:
-            for row in self.columns:
-                if row[2] == type and row[0] == name and row[1] == value:
-                    print(self.prettyCell(row, type, name, value))
-                    return row
-                else:
-                    print(self.prettyCell(None, type, name, value))
-                    return None
-
-        # Si no se encuentra ninguna celda que coincida, se devuelve None
-        return None
     
     def prettyCell(self, row, type=None, name=None, value=None):
         if row == None:
@@ -38,11 +24,16 @@ class Table():
         self.columns.append(column)
         self.build_Table()
         
-    def containsKey(self, id):
+    def get_cell(self, id):
         for row in self.columns:
             if row[0] == id:
-                return row
+                return row[2]
             return None
+        
+    def containsKey(self, id):
+        if self.get_cell(id) is not None:
+            return True
+        return False
 
     def build_Table(self):
         # Limpiar tabla

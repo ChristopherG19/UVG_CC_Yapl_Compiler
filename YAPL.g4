@@ -1,20 +1,20 @@
 grammar YAPL;
 
 /* Entry point */
-prog: (class_def ';')+ EOF
+prog: (class_def ';')+ EOF #start
     ;
 
 class_def:
-        CLASS_N TYPE (INHERITS TYPE)? '{' (feature ';')* '}'
+        CLASS_N TYPE (INHERITS TYPE)? '{' (feature ';')* '}' #defClass
     ;   
 
 feature:
-        ID '(' ( formal (',' formal )* )? ')' ':' TYPE '{' expr '}'
-    |   ID ':' TYPE  (ASSIGNMENT expr)?
+        ID '(' ( formal (',' formal )* )? ')' ':' TYPE '{' expr '}' #defFunc
+    |   ID ':' TYPE  (ASSIGNMENT expr)? #defAsign
     ;
 
 formal:
-        ID ':' TYPE
+        ID ':' TYPE #asign
     ;
 
 expr: 
@@ -28,8 +28,10 @@ expr:
     |   NEW TYPE #new
     |   '~' expr #negative
     |   ISVOID expr #isvoid
-    |   expr op=('*' | '/') expr #mulDiv
-    |   expr op=('+' | '-') expr #addSub
+    |   expr '*' expr #times
+    |   expr '/' expr #div
+    |   expr '+' expr #plus
+    |   expr '-' expr #minus
     |   expr op=('<=' | '<' | '>' | '=' ) expr #comparisson
     |   NOT expr #neg
     |   '(' expr ')' #parens

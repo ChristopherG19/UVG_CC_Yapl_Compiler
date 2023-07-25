@@ -6,7 +6,6 @@
     Laboratorio#1
 '''
 
-import sys
 from antlr4 import *
 from YAPLLexer import YAPLLexer
 from YAPLParser import YAPLParser
@@ -17,38 +16,62 @@ from utils.symbolTable import *
 class YAPLVisitorImpl(YAPLVisitor):
     def __init__(self):
         self.symbolTable = Table()
-        
+         
     def visitAssignment(self, ctx: YAPLParser.AssignmentContext):
-        id = ctx.ID().getText()
-        value = self.visit(ctx.expr())
-        self.symbolTable.add_column([id, 'temp', value])
-        return value
+        id = ctx.ID()
+        type_id = self.visit(ctx.expr())
+        self.symbolTable.add_column([id, 'temp', type_id])
+        return type_id
+    
+    def visitDefClass(self, ctx: YAPLParser.DefClassContext):
+        return super().visitDefClass(ctx)
     
     def visitId(self, ctx: YAPLParser.IdContext):
         id = ctx.ID().getText()
-        val = self.symbolTable.containsKey(id)
+        val = self.symbolTable.get_cell(id)
         if val is not None:
             return val
-        return 0
+        return None
+    
+    def visitDefFunc(self, ctx: YAPLParser.DefFuncContext):
+        id = ctx.ID().getText()
+        type_id = ctx.TYPE().getText()
+        self.symbolTable.add_column([id, 'temp', type_id])
+        return type_id
+    
+    def visitDefAsign(self, ctx: YAPLParser.DefAsignContext):
+        id = ctx.ID().getText()
+        type_id = ctx.TYPE().getText()
+        self.symbolTable.add_column([id, 'temp', type_id])
+        return type_id
+    
+    def visitFeature(self, ctx: YAPLParser.FeatureContext):
+        id = ctx.ID().getText()
+        type_id = ctx.TYPE().getText()
+        self.symbolTable.add_column([id, 'temp', type_id])
+        return type_id
 
-    def visitInt(ctx:YAPLParser.IntContext):
+    def visitInt(self, ctx:YAPLParser.IntContext):
         return int(str(ctx.INT().getText()))
     
-    def visitMulDiv(self, ctx: YAPLParser.MulDivContext):
-        left = int(self.visit(ctx.expr(0)))
-        right = int(self.visit(ctx.expr(1)))
-        if (ctx.TIMES == YAPLParser.TIMES):
-            return left * right
-        if right != 0:
-            return left / right
-        return 0
+    def visitTimes(self, ctx:YAPLParser.TimesContext):
+        left = self.visit(ctx.expr(0))
+        left_T = self.symbolTable.get_cell(left) if self.symbolTable.containsKey(left) else left
+        right = self.visit(ctx.expr(1))
+        right_T = self.symbolTable.get_cell(right) if self.symbolTable.containsKey(right) else right
+        
+        print(left, right, left_T, right_T, self.symbolTable.get_cell(left), self.symbolTable.containsKey(left))
+        
+        return super().visitTimes(ctx)
+
+    def visitDiv(self, ctx:YAPLParser.DivContext):
+        return super().visitDiv(ctx)
     
-    def visitAddSub(self, ctx: YAPLParser.AddSubContext):
-        left = int(self.visit(ctx.expr(0)))
-        right = int(self.visit(ctx.expr(1)))
-        if (ctx.PLUS == YAPLParser.PLUS):
-            return left + right
-        return left - right
+    def visitMinus(self, ctx: YAPLParser.MinusContext):
+        return super().visitMinus(ctx)
+
+    def visitPlus(self, ctx:YAPLParser.PlusContext):
+        return super().visitPlus(ctx)
     
     def visitParens(self, ctx: YAPLParser.ParensContext):
         return self.visit(ctx.expr())

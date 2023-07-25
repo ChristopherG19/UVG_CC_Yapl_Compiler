@@ -8,39 +8,48 @@ else:
 # This class defines a complete listener for a parse tree produced by YAPLParser.
 class YAPLListener(ParseTreeListener):
 
-    # Enter a parse tree produced by YAPLParser#prog.
-    def enterProg(self, ctx:YAPLParser.ProgContext):
+    # Enter a parse tree produced by YAPLParser#start.
+    def enterStart(self, ctx:YAPLParser.StartContext):
         pass
 
-    # Exit a parse tree produced by YAPLParser#prog.
-    def exitProg(self, ctx:YAPLParser.ProgContext):
-        pass
-
-
-    # Enter a parse tree produced by YAPLParser#class_def.
-    def enterClass_def(self, ctx:YAPLParser.Class_defContext):
-        pass
-
-    # Exit a parse tree produced by YAPLParser#class_def.
-    def exitClass_def(self, ctx:YAPLParser.Class_defContext):
+    # Exit a parse tree produced by YAPLParser#start.
+    def exitStart(self, ctx:YAPLParser.StartContext):
         pass
 
 
-    # Enter a parse tree produced by YAPLParser#feature.
-    def enterFeature(self, ctx:YAPLParser.FeatureContext):
+    # Enter a parse tree produced by YAPLParser#defClass.
+    def enterDefClass(self, ctx:YAPLParser.DefClassContext):
         pass
 
-    # Exit a parse tree produced by YAPLParser#feature.
-    def exitFeature(self, ctx:YAPLParser.FeatureContext):
+    # Exit a parse tree produced by YAPLParser#defClass.
+    def exitDefClass(self, ctx:YAPLParser.DefClassContext):
         pass
 
 
-    # Enter a parse tree produced by YAPLParser#formal.
-    def enterFormal(self, ctx:YAPLParser.FormalContext):
+    # Enter a parse tree produced by YAPLParser#defFunc.
+    def enterDefFunc(self, ctx:YAPLParser.DefFuncContext):
         pass
 
-    # Exit a parse tree produced by YAPLParser#formal.
-    def exitFormal(self, ctx:YAPLParser.FormalContext):
+    # Exit a parse tree produced by YAPLParser#defFunc.
+    def exitDefFunc(self, ctx:YAPLParser.DefFuncContext):
+        pass
+
+
+    # Enter a parse tree produced by YAPLParser#defAsign.
+    def enterDefAsign(self, ctx:YAPLParser.DefAsignContext):
+        pass
+
+    # Exit a parse tree produced by YAPLParser#defAsign.
+    def exitDefAsign(self, ctx:YAPLParser.DefAsignContext):
+        pass
+
+
+    # Enter a parse tree produced by YAPLParser#asign.
+    def enterAsign(self, ctx:YAPLParser.AsignContext):
+        pass
+
+    # Exit a parse tree produced by YAPLParser#asign.
+    def exitAsign(self, ctx:YAPLParser.AsignContext):
         pass
 
 
@@ -50,6 +59,15 @@ class YAPLListener(ParseTreeListener):
 
     # Exit a parse tree produced by YAPLParser#new.
     def exitNew(self, ctx:YAPLParser.NewContext):
+        pass
+
+
+    # Enter a parse tree produced by YAPLParser#minus.
+    def enterMinus(self, ctx:YAPLParser.MinusContext):
+        pass
+
+    # Exit a parse tree produced by YAPLParser#minus.
+    def exitMinus(self, ctx:YAPLParser.MinusContext):
         pass
 
 
@@ -89,15 +107,6 @@ class YAPLListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by YAPLParser#addSub.
-    def enterAddSub(self, ctx:YAPLParser.AddSubContext):
-        pass
-
-    # Exit a parse tree produced by YAPLParser#addSub.
-    def exitAddSub(self, ctx:YAPLParser.AddSubContext):
-        pass
-
-
     # Enter a parse tree produced by YAPLParser#while.
     def enterWhile(self, ctx:YAPLParser.WhileContext):
         pass
@@ -125,12 +134,21 @@ class YAPLListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by YAPLParser#mulDiv.
-    def enterMulDiv(self, ctx:YAPLParser.MulDivContext):
+    # Enter a parse tree produced by YAPLParser#plus.
+    def enterPlus(self, ctx:YAPLParser.PlusContext):
         pass
 
-    # Exit a parse tree produced by YAPLParser#mulDiv.
-    def exitMulDiv(self, ctx:YAPLParser.MulDivContext):
+    # Exit a parse tree produced by YAPLParser#plus.
+    def exitPlus(self, ctx:YAPLParser.PlusContext):
+        pass
+
+
+    # Enter a parse tree produced by YAPLParser#div.
+    def enterDiv(self, ctx:YAPLParser.DivContext):
+        pass
+
+    # Exit a parse tree produced by YAPLParser#div.
+    def exitDiv(self, ctx:YAPLParser.DivContext):
         pass
 
 
@@ -149,6 +167,15 @@ class YAPLListener(ParseTreeListener):
 
     # Exit a parse tree produced by YAPLParser#negative.
     def exitNegative(self, ctx:YAPLParser.NegativeContext):
+        pass
+
+
+    # Enter a parse tree produced by YAPLParser#times.
+    def enterTimes(self, ctx:YAPLParser.TimesContext):
+        pass
+
+    # Exit a parse tree produced by YAPLParser#times.
+    def exitTimes(self, ctx:YAPLParser.TimesContext):
         pass
 
 
