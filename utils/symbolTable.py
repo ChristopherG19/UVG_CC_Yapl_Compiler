@@ -27,8 +27,8 @@ class Table():
     def get_cell(self, id):
         for row in self.columns:
             if row[0] == id:
-                return row[2]
-            return None
+                return row
+        return None
         
     def containsKey(self, id):
         if self.get_cell(id) is not None:

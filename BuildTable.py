@@ -21,7 +21,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         id = ctx.ID()
         type_id = self.visit(ctx.expr())
         self.symbolTable.add_column([id, 'temp', type_id])
-        return type_id
+        return super().visitAssignment(ctx)
     
     def visitDefClass(self, ctx: YAPLParser.DefClassContext):
         return super().visitDefClass(ctx)
@@ -29,48 +29,78 @@ class YAPLVisitorImpl(YAPLVisitor):
     def visitId(self, ctx: YAPLParser.IdContext):
         id = ctx.ID().getText()
         val = self.symbolTable.get_cell(id)
-        if val is not None:
-            return val
-        return None
+        return super().visitId(ctx)
+    
+    def visitDefClass(self, ctx: YAPLParser.DefClassContext):
+        return super().visitDefClass(ctx)
     
     def visitDefFunc(self, ctx: YAPLParser.DefFuncContext):
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
         self.symbolTable.add_column([id, 'temp', type_id])
-        return type_id
+        return super().visitDefFunc(ctx)
     
     def visitDefAsign(self, ctx: YAPLParser.DefAsignContext):
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
         self.symbolTable.add_column([id, 'temp', type_id])
-        return type_id
+        return super().visitDefAsign(ctx)
     
     def visitFeature(self, ctx: YAPLParser.FeatureContext):
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
         self.symbolTable.add_column([id, 'temp', type_id])
-        return type_id
+        return super().visitFeature(ctx)
 
     def visitInt(self, ctx:YAPLParser.IntContext):
-        return int(str(ctx.INT().getText()))
+        return super().visitInt(ctx)
     
     def visitTimes(self, ctx:YAPLParser.TimesContext):
-        left = self.visit(ctx.expr(0))
+        left = ctx.expr(0).getText()
         left_T = self.symbolTable.get_cell(left) if self.symbolTable.containsKey(left) else left
-        right = self.visit(ctx.expr(1))
+        right = ctx.expr(1).getText()
         right_T = self.symbolTable.get_cell(right) if self.symbolTable.containsKey(right) else right
         
-        print(left, right, left_T, right_T, self.symbolTable.get_cell(left), self.symbolTable.containsKey(left))
-        
+        if left_T[2] == right_T[2]:
+            print("Coincide")
+        else:
+            print("No coincide")
         return super().visitTimes(ctx)
 
     def visitDiv(self, ctx:YAPLParser.DivContext):
+        left = ctx.expr(0).getText()
+        left_T = self.symbolTable.get_cell(left) if self.symbolTable.containsKey(left) else left
+        right = ctx.expr(1).getText()
+        right_T = self.symbolTable.get_cell(right) if self.symbolTable.containsKey(right) else right
+        
+        if left_T[2] == right_T[2]:
+            print("Coincide")
+        else:
+            print("No coincide")
         return super().visitDiv(ctx)
     
     def visitMinus(self, ctx: YAPLParser.MinusContext):
+        left = ctx.expr(0).getText()
+        left_T = self.symbolTable.get_cell(left) if self.symbolTable.containsKey(left) else left
+        right = ctx.expr(1).getText()
+        right_T = self.symbolTable.get_cell(right) if self.symbolTable.containsKey(right) else right
+        
+        if left_T[2] == right_T[2]:
+            print("Coincide")
+        else:
+            print("No coincide")
         return super().visitMinus(ctx)
 
     def visitPlus(self, ctx:YAPLParser.PlusContext):
+        left = ctx.expr(0).getText()
+        left_T = self.symbolTable.get_cell(left) if self.symbolTable.containsKey(left) else left
+        right = ctx.expr(1).getText()
+        right_T = self.symbolTable.get_cell(right) if self.symbolTable.containsKey(right) else right
+        
+        if left_T[2] == right_T[2]:
+            print("Coincide")
+        else:
+            print("No coincide")
         return super().visitPlus(ctx)
     
     def visitParens(self, ctx: YAPLParser.ParensContext):

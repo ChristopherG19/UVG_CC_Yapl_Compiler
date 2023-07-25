@@ -1,8 +1,6 @@
-class Main inherits IO {
+class A {
   a: Int;
   b: Int;
-  c: Int;
-  main(): Object {
-    a = a + b * c
-  };
+  c: Int <- a + b;
+  d: Int <- b * c;
 };
