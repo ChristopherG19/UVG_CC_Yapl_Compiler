@@ -32,7 +32,13 @@ expr:
     |   expr '/' expr #div
     |   expr '+' expr #plus
     |   expr '-' expr #minus
-    |   expr op=('<=' | '<' | '>' | '=' ) expr #comparisson
+    |   expr '<=' expr #lesst
+    |   expr '<' expr #less
+    |   expr '>' expr #greater
+    |   expr '>=' expr #greatert
+    |   expr '=' expr #equal
+    |   expr '&' expr #and
+    |   expr '|' expr #or
     |   NOT expr #neg
     |   '(' expr ')' #parens
     |   ID #id

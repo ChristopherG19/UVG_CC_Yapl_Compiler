@@ -1,6 +1,9 @@
 class A {
-  a: Int;
-  b: Int;
-  c: Int <- a + b;
-  d: Int <- b * c;
+  a: Char;
+  b: Char;
+  f: Int;
+  g: Int;
+  c: Char <- a + b;
+  d: Int <- f * f;
+  e: Bool <- f > g;
 };

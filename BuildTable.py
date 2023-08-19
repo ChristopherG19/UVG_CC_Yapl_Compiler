@@ -28,8 +28,10 @@ class YAPLVisitorImpl(YAPLVisitor):
     
     def visitId(self, ctx: YAPLParser.IdContext):
         id = ctx.ID().getText()
-        val = self.symbolTable.get_cell(id)
-        return super().visitId(ctx)
+        row = self.symbolTable.get_cell(id)
+        if row:
+            return row[2]
+        return None
     
     def visitDefClass(self, ctx: YAPLParser.DefClassContext):
         return super().visitDefClass(ctx)
@@ -38,7 +40,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
         self.symbolTable.add_column([id, 'temp', type_id])
-        return super().visitDefFunc(ctx)
+        return type_id
     
     def visitDefAsign(self, ctx: YAPLParser.DefAsignContext):
         id = ctx.ID().getText()
@@ -50,68 +52,60 @@ class YAPLVisitorImpl(YAPLVisitor):
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
         self.symbolTable.add_column([id, 'temp', type_id])
-        return super().visitFeature(ctx)
+        return type_id
 
     def visitInt(self, ctx:YAPLParser.IntContext):
         return super().visitInt(ctx)
     
     def visitTimes(self, ctx:YAPLParser.TimesContext):
-        left = ctx.expr(0).getText()
-        left_T = self.symbolTable.get_cell(left) if self.symbolTable.containsKey(left) else left
-        right = ctx.expr(1).getText()
-        right_T = self.symbolTable.get_cell(right) if self.symbolTable.containsKey(right) else right
-        
-        if left_T[2] == right_T[2]:
-            print("Coincide")
+        left_type = self.visit(ctx.expr(0))
+        right_type = self.visit(ctx.expr(1))
+
+        if left_type == 'Int' and right_type == 'Int':
+            return left_type
         else:
-            print("No coincide")
-        return super().visitTimes(ctx)
+            raise TypeError("Incongruencia de tipos en multiplicación")
 
     def visitDiv(self, ctx:YAPLParser.DivContext):
-        left = ctx.expr(0).getText()
-        left_T = self.symbolTable.get_cell(left) if self.symbolTable.containsKey(left) else left
-        right = ctx.expr(1).getText()
-        right_T = self.symbolTable.get_cell(right) if self.symbolTable.containsKey(right) else right
-        
-        if left_T[2] == right_T[2]:
-            print("Coincide")
+        left_type = self.visit(ctx.expr(0))
+        right_type = self.visit(ctx.expr(1))
+
+        if left_type == 'Int' and right_type == 'Int':
+            return left_type
         else:
-            print("No coincide")
-        return super().visitDiv(ctx)
+            raise TypeError("Incongruencia de tipos en división")
     
     def visitMinus(self, ctx: YAPLParser.MinusContext):
-        left = ctx.expr(0).getText()
-        left_T = self.symbolTable.get_cell(left) if self.symbolTable.containsKey(left) else left
-        right = ctx.expr(1).getText()
-        right_T = self.symbolTable.get_cell(right) if self.symbolTable.containsKey(right) else right
-        
-        if left_T[2] == right_T[2]:
-            print("Coincide")
+        left_type = self.visit(ctx.expr(0))
+        right_type = self.visit(ctx.expr(1))
+
+        if left_type == 'Int' and right_type == 'Int':
+            return left_type
         else:
-            print("No coincide")
-        return super().visitMinus(ctx)
+            raise TypeError("Incongruencia de tipos en resta")
 
     def visitPlus(self, ctx:YAPLParser.PlusContext):
-        left = ctx.expr(0).getText()
-        left_T = self.symbolTable.get_cell(left) if self.symbolTable.containsKey(left) else left
-        right = ctx.expr(1).getText()
-        right_T = self.symbolTable.get_cell(right) if self.symbolTable.containsKey(right) else right
-        
-        if left_T[2] == right_T[2]:
-            print("Coincide")
+        left_type = self.visit(ctx.expr(0))
+        right_type = self.visit(ctx.expr(1))
+
+        if left_type == 'Int' and right_type == 'Int':
+            return left_type
+        elif left_type == 'Char' and right_type == 'Char':
+            return left_type
         else:
-            print("No coincide")
-        return super().visitPlus(ctx)
+            raise TypeError("Incongruencia de tipos en suma")
     
     def visitParens(self, ctx: YAPLParser.ParensContext):
         return self.visit(ctx.expr())
     
     def visitIf(self, ctx: YAPLParser.IfContext):
-        condition = self.visit(ctx.expr(0))
-        if condition:
-            return self.visit(ctx.expr(1))
-        else:
-            return self.visit(ctx.expr(2))
+        condition_type = self.visit(ctx.expr(0))
+        then_type = self.visit(ctx.expr(1))
+        else_type = self.visit(ctx.expr(2))
+
+        if condition_type == 'Bool':
+            return then_type if then_type == else_type else None
+        return None
     
     def visitWhile(self, ctx: YAPLParser.WhileContext):
         result = 0
@@ -120,23 +114,24 @@ class YAPLVisitorImpl(YAPLVisitor):
         return result
     
     def visitBlock(self, ctx: YAPLParser.BlockContext):
-        result = 0
+        result_type = None
         for expr_ctx in ctx.expr():
-            result = self.visit(expr_ctx)
-        return result
+            result_type = self.visit(expr_ctx)
+        return result_type
     
     def visitLetid(self, ctx: YAPLParser.LetidContext):
-        # Recorre las declaraciones let y agrega las variables a la tabla de símbolos
+        result_type = None
         for i in range(len(ctx.ID())):
             id = ctx.ID(i).getText()
             _type = ctx.TYPE(i).getText()
-            value = self.visit(ctx.expr(i)) if ctx.expr(i) else None
-            self.symbolTable.add_column([id, _type, value])
-        return self.visit(ctx.expr(-1))
+            value_type = self.visit(ctx.expr(i)) if ctx.expr(i) else None
+            self.symbolTable.add_column([id, _type, value_type])
+            result_type = value_type
+        return result_type
     
     def visitNew(self, ctx: YAPLParser.NewContext):
         _type = ctx.TYPE().getText()
-        return None
+        return _type
     
     def visitNegative(self, ctx: YAPLParser.NegativeContext):
         expr_value = self.visit(ctx.expr())
@@ -160,7 +155,10 @@ def main():
     parser = YAPLParser(token_stream)
     tree = parser.prog()
     YV = YAPLVisitorImpl()
-    YV.visit(tree)
+    try:
+        YV.visit(tree)
+    except TypeError as e:
+        print(e);
     treeF = YV.symbolTable.build_Table()
     print(treeF)
     

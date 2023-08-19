@@ -53,15 +53,6 @@ class YAPLListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by YAPLParser#new.
-    def enterNew(self, ctx:YAPLParser.NewContext):
-        pass
-
-    # Exit a parse tree produced by YAPLParser#new.
-    def exitNew(self, ctx:YAPLParser.NewContext):
-        pass
-
-
     # Enter a parse tree produced by YAPLParser#minus.
     def enterMinus(self, ctx:YAPLParser.MinusContext):
         pass
@@ -89,15 +80,6 @@ class YAPLListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by YAPLParser#assignment.
-    def enterAssignment(self, ctx:YAPLParser.AssignmentContext):
-        pass
-
-    # Exit a parse tree produced by YAPLParser#assignment.
-    def exitAssignment(self, ctx:YAPLParser.AssignmentContext):
-        pass
-
-
     # Enter a parse tree produced by YAPLParser#isvoid.
     def enterIsvoid(self, ctx:YAPLParser.IsvoidContext):
         pass
@@ -113,33 +95,6 @@ class YAPLListener(ParseTreeListener):
 
     # Exit a parse tree produced by YAPLParser#while.
     def exitWhile(self, ctx:YAPLParser.WhileContext):
-        pass
-
-
-    # Enter a parse tree produced by YAPLParser#dispatchImplicit.
-    def enterDispatchImplicit(self, ctx:YAPLParser.DispatchImplicitContext):
-        pass
-
-    # Exit a parse tree produced by YAPLParser#dispatchImplicit.
-    def exitDispatchImplicit(self, ctx:YAPLParser.DispatchImplicitContext):
-        pass
-
-
-    # Enter a parse tree produced by YAPLParser#int.
-    def enterInt(self, ctx:YAPLParser.IntContext):
-        pass
-
-    # Exit a parse tree produced by YAPLParser#int.
-    def exitInt(self, ctx:YAPLParser.IntContext):
-        pass
-
-
-    # Enter a parse tree produced by YAPLParser#plus.
-    def enterPlus(self, ctx:YAPLParser.PlusContext):
-        pass
-
-    # Exit a parse tree produced by YAPLParser#plus.
-    def exitPlus(self, ctx:YAPLParser.PlusContext):
         pass
 
 
@@ -179,12 +134,12 @@ class YAPLListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by YAPLParser#boolean.
-    def enterBoolean(self, ctx:YAPLParser.BooleanContext):
+    # Enter a parse tree produced by YAPLParser#and.
+    def enterAnd(self, ctx:YAPLParser.AndContext):
         pass
 
-    # Exit a parse tree produced by YAPLParser#boolean.
-    def exitBoolean(self, ctx:YAPLParser.BooleanContext):
+    # Exit a parse tree produced by YAPLParser#and.
+    def exitAnd(self, ctx:YAPLParser.AndContext):
         pass
 
 
@@ -206,12 +161,12 @@ class YAPLListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by YAPLParser#comparisson.
-    def enterComparisson(self, ctx:YAPLParser.ComparissonContext):
+    # Enter a parse tree produced by YAPLParser#lesst.
+    def enterLesst(self, ctx:YAPLParser.LesstContext):
         pass
 
-    # Exit a parse tree produced by YAPLParser#comparisson.
-    def exitComparisson(self, ctx:YAPLParser.ComparissonContext):
+    # Exit a parse tree produced by YAPLParser#lesst.
+    def exitLesst(self, ctx:YAPLParser.LesstContext):
         pass
 
 
@@ -230,6 +185,105 @@ class YAPLListener(ParseTreeListener):
 
     # Exit a parse tree produced by YAPLParser#if.
     def exitIf(self, ctx:YAPLParser.IfContext):
+        pass
+
+
+    # Enter a parse tree produced by YAPLParser#greater.
+    def enterGreater(self, ctx:YAPLParser.GreaterContext):
+        pass
+
+    # Exit a parse tree produced by YAPLParser#greater.
+    def exitGreater(self, ctx:YAPLParser.GreaterContext):
+        pass
+
+
+    # Enter a parse tree produced by YAPLParser#new.
+    def enterNew(self, ctx:YAPLParser.NewContext):
+        pass
+
+    # Exit a parse tree produced by YAPLParser#new.
+    def exitNew(self, ctx:YAPLParser.NewContext):
+        pass
+
+
+    # Enter a parse tree produced by YAPLParser#or.
+    def enterOr(self, ctx:YAPLParser.OrContext):
+        pass
+
+    # Exit a parse tree produced by YAPLParser#or.
+    def exitOr(self, ctx:YAPLParser.OrContext):
+        pass
+
+
+    # Enter a parse tree produced by YAPLParser#assignment.
+    def enterAssignment(self, ctx:YAPLParser.AssignmentContext):
+        pass
+
+    # Exit a parse tree produced by YAPLParser#assignment.
+    def exitAssignment(self, ctx:YAPLParser.AssignmentContext):
+        pass
+
+
+    # Enter a parse tree produced by YAPLParser#less.
+    def enterLess(self, ctx:YAPLParser.LessContext):
+        pass
+
+    # Exit a parse tree produced by YAPLParser#less.
+    def exitLess(self, ctx:YAPLParser.LessContext):
+        pass
+
+
+    # Enter a parse tree produced by YAPLParser#dispatchImplicit.
+    def enterDispatchImplicit(self, ctx:YAPLParser.DispatchImplicitContext):
+        pass
+
+    # Exit a parse tree produced by YAPLParser#dispatchImplicit.
+    def exitDispatchImplicit(self, ctx:YAPLParser.DispatchImplicitContext):
+        pass
+
+
+    # Enter a parse tree produced by YAPLParser#int.
+    def enterInt(self, ctx:YAPLParser.IntContext):
+        pass
+
+    # Exit a parse tree produced by YAPLParser#int.
+    def exitInt(self, ctx:YAPLParser.IntContext):
+        pass
+
+
+    # Enter a parse tree produced by YAPLParser#plus.
+    def enterPlus(self, ctx:YAPLParser.PlusContext):
+        pass
+
+    # Exit a parse tree produced by YAPLParser#plus.
+    def exitPlus(self, ctx:YAPLParser.PlusContext):
+        pass
+
+
+    # Enter a parse tree produced by YAPLParser#equal.
+    def enterEqual(self, ctx:YAPLParser.EqualContext):
+        pass
+
+    # Exit a parse tree produced by YAPLParser#equal.
+    def exitEqual(self, ctx:YAPLParser.EqualContext):
+        pass
+
+
+    # Enter a parse tree produced by YAPLParser#boolean.
+    def enterBoolean(self, ctx:YAPLParser.BooleanContext):
+        pass
+
+    # Exit a parse tree produced by YAPLParser#boolean.
+    def exitBoolean(self, ctx:YAPLParser.BooleanContext):
+        pass
+
+
+    # Enter a parse tree produced by YAPLParser#greatert.
+    def enterGreatert(self, ctx:YAPLParser.GreatertContext):
+        pass
+
+    # Exit a parse tree produced by YAPLParser#greatert.
+    def exitGreatert(self, ctx:YAPLParser.GreatertContext):
         pass
 
 

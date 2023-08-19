@@ -34,11 +34,6 @@ class YAPLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by YAPLParser#new.
-    def visitNew(self, ctx:YAPLParser.NewContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by YAPLParser#minus.
     def visitMinus(self, ctx:YAPLParser.MinusContext):
         return self.visitChildren(ctx)
@@ -54,11 +49,6 @@ class YAPLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by YAPLParser#assignment.
-    def visitAssignment(self, ctx:YAPLParser.AssignmentContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by YAPLParser#isvoid.
     def visitIsvoid(self, ctx:YAPLParser.IsvoidContext):
         return self.visitChildren(ctx)
@@ -66,21 +56,6 @@ class YAPLVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by YAPLParser#while.
     def visitWhile(self, ctx:YAPLParser.WhileContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by YAPLParser#dispatchImplicit.
-    def visitDispatchImplicit(self, ctx:YAPLParser.DispatchImplicitContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by YAPLParser#int.
-    def visitInt(self, ctx:YAPLParser.IntContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by YAPLParser#plus.
-    def visitPlus(self, ctx:YAPLParser.PlusContext):
         return self.visitChildren(ctx)
 
 
@@ -104,8 +79,8 @@ class YAPLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by YAPLParser#boolean.
-    def visitBoolean(self, ctx:YAPLParser.BooleanContext):
+    # Visit a parse tree produced by YAPLParser#and.
+    def visitAnd(self, ctx:YAPLParser.AndContext):
         return self.visitChildren(ctx)
 
 
@@ -119,8 +94,8 @@ class YAPLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by YAPLParser#comparisson.
-    def visitComparisson(self, ctx:YAPLParser.ComparissonContext):
+    # Visit a parse tree produced by YAPLParser#lesst.
+    def visitLesst(self, ctx:YAPLParser.LesstContext):
         return self.visitChildren(ctx)
 
 
@@ -131,6 +106,61 @@ class YAPLVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by YAPLParser#if.
     def visitIf(self, ctx:YAPLParser.IfContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by YAPLParser#greater.
+    def visitGreater(self, ctx:YAPLParser.GreaterContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by YAPLParser#new.
+    def visitNew(self, ctx:YAPLParser.NewContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by YAPLParser#or.
+    def visitOr(self, ctx:YAPLParser.OrContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by YAPLParser#assignment.
+    def visitAssignment(self, ctx:YAPLParser.AssignmentContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by YAPLParser#less.
+    def visitLess(self, ctx:YAPLParser.LessContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by YAPLParser#dispatchImplicit.
+    def visitDispatchImplicit(self, ctx:YAPLParser.DispatchImplicitContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by YAPLParser#int.
+    def visitInt(self, ctx:YAPLParser.IntContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by YAPLParser#plus.
+    def visitPlus(self, ctx:YAPLParser.PlusContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by YAPLParser#equal.
+    def visitEqual(self, ctx:YAPLParser.EqualContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by YAPLParser#boolean.
+    def visitBoolean(self, ctx:YAPLParser.BooleanContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by YAPLParser#greatert.
+    def visitGreatert(self, ctx:YAPLParser.GreatertContext):
         return self.visitChildren(ctx)
 
 
