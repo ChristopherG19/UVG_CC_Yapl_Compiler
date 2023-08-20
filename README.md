@@ -1,5 +1,5 @@
 # UVG_Compilador_CC
-# Laboratorio#0
+# Laboratorio#1
 ## Objetivos:
 - Familizarizarse con YAPL: con ayuda de los archivos del curso y herramientas brindadas por el laboratorio se buscaba entender mejor la estructura y funcionamiento de este lenguaje.
 - Generación de Scanner y Parser: se recomendó utilizar ANTLR para la generación del parser y lexer que permitieran la creación y recorrido de árboles de análisis sintáctico por lo que se tuvo que realizar una investigación respecto al funcionamiento, sintaxis e implementación de esta herramienta
@@ -22,35 +22,11 @@ Archivo a ejecutar: <a href="https://github.com/ChristopherG19/UVG_CC_Yapl_Compi
 Luego de ejecutar el programa, y esperando que se hayan instalado todas las librerías y plugins necesarios, aparece una ventana similar a esta:
 <p align="center">
   <img src="https://github.com/ChristopherG19/UVG_CC_Yapl_Compiler/assets/60325784/e61ff2a1-5eb0-43d2-9977-bcc888026dff"/>
+  <br>Ahora en modo oscuro
 </p>
 <br>
-En el cuadro de texto es posible ingresar una expresión a evaluar, luego de haberla ingresado se presiona el botón correspondiente y se muestra el árbol en una GUI independiente y adicional se imprime en consola en forma de texto. Existe la opción de limpiar el inputArea y también salir del programa.
+En el cuadro de texto es posible ingresar una expresión a evaluar, luego de haberla ingresado se presiona el botón correspondiente y se muestra el árbol en una GUI independiente y adicional se imprime en consola en forma de texto. Existe la opción de limpiar el inputArea y también salir del programa.<br>
 
-### Ejemplo:
-*Gramática*
-<a href="https://github.com/ChristopherG19/UVG_CC_Yapl_Compiler/blob/main/YAPL.g4">YAPL.g4</a>
-
-Resultado expresión sin errores
-<p align="center">
-  <img src="https://github.com/ChristopherG19/UVG_CC_Yapl_Compiler/assets/60325784/23685454-c7fd-4991-b2c4-2244d01bda95"/>
-</p>
-<br>
-Resultado expresión con errores
-<p align="center">
-  <img src="https://github.com/ChristopherG19/UVG_CC_Yapl_Compiler/assets/60325784/f8a9b4df-463d-49a1-805a-b451858c843f"/>
-</p>
-En este segundo caso no sé muestra ningún árbol porque existen varios errores
-
-## Resultados
-
-### Ejemplo 1
-![image](https://github.com/ChristopherG19/UVG_CC_Yapl_Compiler/assets/60325784/fa1014ab-0d26-48b7-84de-9c26cd2de1ad)
-
-### Ejemplo 2
-![image](https://github.com/ChristopherG19/UVG_CC_Yapl_Compiler/assets/60325784/33f3a7db-37c5-4fdb-a474-7fc7b41dad9e)
-
-### Ejemplo 3
-![image](https://github.com/ChristopherG19/UVG_CC_Yapl_Compiler/assets/60325784/b311cd04-2227-41b9-aa80-3ab6243e88aa)
-
+Luego de haber corrido el programa una vez, o podría intentar de una vez con los archivos que ya están subidos, ejecutar el siguiente archivo: Archivo a modificar: <a href="https://github.com/ChristopherG19/UVG_CC_Yapl_Compiler/blob/visitor-pattern/BuildTable.py">BuildTable.py</a>
 
 
