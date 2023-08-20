@@ -10,15 +10,15 @@ from prettytable import PrettyTable
 
 class Table():
     def __init__(self):
-        self.headers = ['Name', 'Value', 'Type']
+        self.headers = ['Name', 'Type']
         self.columns = []
         self.prettyT = PrettyTable()
     
-    def prettyCell(self, row, type=None, name=None, value=None):
+    def prettyCell(self, row, type=None, name=None):
         if row == None:
-            return f"Value with parameters ({type}, {name}, {value}) is not present"
+            return f"Value with parameters ({type}, {name}) is not present"
         else:
-            return f"(Type: {row[2]}) {row[0]} = {row[1]}"
+            return f"(Type: {row[1]}) {row[0]}"
         
     def add_column(self, column):
         self.columns.append(column)

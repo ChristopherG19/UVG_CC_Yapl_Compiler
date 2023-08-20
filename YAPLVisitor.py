@@ -24,8 +24,8 @@ class YAPLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by YAPLParser#defAsign.
-    def visitDefAsign(self, ctx:YAPLParser.DefAsignContext):
+    # Visit a parse tree produced by YAPLParser#defAssign.
+    def visitDefAssign(self, ctx:YAPLParser.DefAssignContext):
         return self.visitChildren(ctx)
 
 
@@ -89,13 +89,13 @@ class YAPLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by YAPLParser#block.
-    def visitBlock(self, ctx:YAPLParser.BlockContext):
+    # Visit a parse tree produced by YAPLParser#lessThan.
+    def visitLessThan(self, ctx:YAPLParser.LessThanContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by YAPLParser#lesst.
-    def visitLesst(self, ctx:YAPLParser.LesstContext):
+    # Visit a parse tree produced by YAPLParser#block.
+    def visitBlock(self, ctx:YAPLParser.BlockContext):
         return self.visitChildren(ctx)
 
 
@@ -109,8 +109,8 @@ class YAPLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by YAPLParser#greater.
-    def visitGreater(self, ctx:YAPLParser.GreaterContext):
+    # Visit a parse tree produced by YAPLParser#greaterThan.
+    def visitGreaterThan(self, ctx:YAPLParser.GreaterThanContext):
         return self.visitChildren(ctx)
 
 
@@ -129,11 +129,6 @@ class YAPLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by YAPLParser#less.
-    def visitLess(self, ctx:YAPLParser.LessContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by YAPLParser#dispatchImplicit.
     def visitDispatchImplicit(self, ctx:YAPLParser.DispatchImplicitContext):
         return self.visitChildren(ctx)
@@ -149,6 +144,11 @@ class YAPLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by YAPLParser#greaterThanOrEqual.
+    def visitGreaterThanOrEqual(self, ctx:YAPLParser.GreaterThanOrEqualContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by YAPLParser#equal.
     def visitEqual(self, ctx:YAPLParser.EqualContext):
         return self.visitChildren(ctx)
@@ -159,8 +159,8 @@ class YAPLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by YAPLParser#greatert.
-    def visitGreatert(self, ctx:YAPLParser.GreatertContext):
+    # Visit a parse tree produced by YAPLParser#lessThanOrEqual.
+    def visitLessThanOrEqual(self, ctx:YAPLParser.LessThanOrEqualContext):
         return self.visitChildren(ctx)
 
 

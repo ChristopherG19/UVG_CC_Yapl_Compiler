@@ -1,9 +1,9 @@
 class A {
-  a: Char;
-  b: Char;
+  a: Bool;
+  b: String;
   f: Int;
   g: Int;
-  c: Char <- a + b;
+  c: Bool <- a & b;
   d: Int <- f * f;
   e: Bool <- f > g;
 };

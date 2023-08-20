@@ -45,7 +45,7 @@ def create_g4():
         from YAPLParser import YAPLParser
         from YAPLLexer import YAPLLexer
         
-        file_name = 'test1.expr'
+        file_name = './tests/exampleUser.expr'
         error_listener = CustomErrorListener(T, tk)
         
         input_stream = FileStream(file_name)

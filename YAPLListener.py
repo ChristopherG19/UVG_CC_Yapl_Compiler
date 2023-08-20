@@ -35,12 +35,12 @@ class YAPLListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by YAPLParser#defAsign.
-    def enterDefAsign(self, ctx:YAPLParser.DefAsignContext):
+    # Enter a parse tree produced by YAPLParser#defAssign.
+    def enterDefAssign(self, ctx:YAPLParser.DefAssignContext):
         pass
 
-    # Exit a parse tree produced by YAPLParser#defAsign.
-    def exitDefAsign(self, ctx:YAPLParser.DefAsignContext):
+    # Exit a parse tree produced by YAPLParser#defAssign.
+    def exitDefAssign(self, ctx:YAPLParser.DefAssignContext):
         pass
 
 
@@ -152,21 +152,21 @@ class YAPLListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by YAPLParser#lessThan.
+    def enterLessThan(self, ctx:YAPLParser.LessThanContext):
+        pass
+
+    # Exit a parse tree produced by YAPLParser#lessThan.
+    def exitLessThan(self, ctx:YAPLParser.LessThanContext):
+        pass
+
+
     # Enter a parse tree produced by YAPLParser#block.
     def enterBlock(self, ctx:YAPLParser.BlockContext):
         pass
 
     # Exit a parse tree produced by YAPLParser#block.
     def exitBlock(self, ctx:YAPLParser.BlockContext):
-        pass
-
-
-    # Enter a parse tree produced by YAPLParser#lesst.
-    def enterLesst(self, ctx:YAPLParser.LesstContext):
-        pass
-
-    # Exit a parse tree produced by YAPLParser#lesst.
-    def exitLesst(self, ctx:YAPLParser.LesstContext):
         pass
 
 
@@ -188,12 +188,12 @@ class YAPLListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by YAPLParser#greater.
-    def enterGreater(self, ctx:YAPLParser.GreaterContext):
+    # Enter a parse tree produced by YAPLParser#greaterThan.
+    def enterGreaterThan(self, ctx:YAPLParser.GreaterThanContext):
         pass
 
-    # Exit a parse tree produced by YAPLParser#greater.
-    def exitGreater(self, ctx:YAPLParser.GreaterContext):
+    # Exit a parse tree produced by YAPLParser#greaterThan.
+    def exitGreaterThan(self, ctx:YAPLParser.GreaterThanContext):
         pass
 
 
@@ -224,15 +224,6 @@ class YAPLListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by YAPLParser#less.
-    def enterLess(self, ctx:YAPLParser.LessContext):
-        pass
-
-    # Exit a parse tree produced by YAPLParser#less.
-    def exitLess(self, ctx:YAPLParser.LessContext):
-        pass
-
-
     # Enter a parse tree produced by YAPLParser#dispatchImplicit.
     def enterDispatchImplicit(self, ctx:YAPLParser.DispatchImplicitContext):
         pass
@@ -260,6 +251,15 @@ class YAPLListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by YAPLParser#greaterThanOrEqual.
+    def enterGreaterThanOrEqual(self, ctx:YAPLParser.GreaterThanOrEqualContext):
+        pass
+
+    # Exit a parse tree produced by YAPLParser#greaterThanOrEqual.
+    def exitGreaterThanOrEqual(self, ctx:YAPLParser.GreaterThanOrEqualContext):
+        pass
+
+
     # Enter a parse tree produced by YAPLParser#equal.
     def enterEqual(self, ctx:YAPLParser.EqualContext):
         pass
@@ -278,12 +278,12 @@ class YAPLListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by YAPLParser#greatert.
-    def enterGreatert(self, ctx:YAPLParser.GreatertContext):
+    # Enter a parse tree produced by YAPLParser#lessThanOrEqual.
+    def enterLessThanOrEqual(self, ctx:YAPLParser.LessThanOrEqualContext):
         pass
 
-    # Exit a parse tree produced by YAPLParser#greatert.
-    def exitGreatert(self, ctx:YAPLParser.GreatertContext):
+    # Exit a parse tree produced by YAPLParser#lessThanOrEqual.
+    def exitLessThanOrEqual(self, ctx:YAPLParser.LessThanOrEqualContext):
         pass
 
 

@@ -10,7 +10,7 @@ class_def:
 
 feature:
         ID '(' ( formal (',' formal )* )? ')' ':' TYPE '{' expr '}' #defFunc
-    |   ID ':' TYPE  (ASSIGNMENT expr)? #defAsign
+    |   ID ':' TYPE  (ASSIGNMENT expr)? #defAssign
     ;
 
 formal:
@@ -32,10 +32,10 @@ expr:
     |   expr '/' expr #div
     |   expr '+' expr #plus
     |   expr '-' expr #minus
-    |   expr '<=' expr #lesst
-    |   expr '<' expr #less
-    |   expr '>' expr #greater
-    |   expr '>=' expr #greatert
+    |   expr '<=' expr #lessThanOrEqual
+    |   expr '<' expr #lessThan
+    |   expr '>' expr #greaterThan
+    |   expr '>=' expr #greaterThanOrEqual
     |   expr '=' expr #equal
     |   expr '&' expr #and
     |   expr '|' expr #or

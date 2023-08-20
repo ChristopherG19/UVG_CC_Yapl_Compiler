@@ -20,7 +20,7 @@ class YAPLVisitorImpl(YAPLVisitor):
     def visitAssignment(self, ctx: YAPLParser.AssignmentContext):
         id = ctx.ID()
         type_id = self.visit(ctx.expr())
-        self.symbolTable.add_column([id, 'temp', type_id])
+        self.symbolTable.add_column([id, type_id])
         return super().visitAssignment(ctx)
     
     def visitDefClass(self, ctx: YAPLParser.DefClassContext):
@@ -30,7 +30,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         id = ctx.ID().getText()
         row = self.symbolTable.get_cell(id)
         if row:
-            return row[2]
+            return row[1]
         return None
     
     def visitDefClass(self, ctx: YAPLParser.DefClassContext):
@@ -39,19 +39,19 @@ class YAPLVisitorImpl(YAPLVisitor):
     def visitDefFunc(self, ctx: YAPLParser.DefFuncContext):
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
-        self.symbolTable.add_column([id, 'temp', type_id])
+        self.symbolTable.add_column([id, type_id])
         return type_id
     
-    def visitDefAsign(self, ctx: YAPLParser.DefAsignContext):
+    def visitDefAssign(self, ctx: YAPLParser.DefAssignContext):
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
-        self.symbolTable.add_column([id, 'temp', type_id])
-        return super().visitDefAsign(ctx)
+        self.symbolTable.add_column([id, type_id])
+        return super().visitDefAssign(ctx)
     
     def visitFeature(self, ctx: YAPLParser.FeatureContext):
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
-        self.symbolTable.add_column([id, 'temp', type_id])
+        self.symbolTable.add_column([id, type_id])
         return type_id
 
     def visitInt(self, ctx:YAPLParser.IntContext):
@@ -95,6 +95,69 @@ class YAPLVisitorImpl(YAPLVisitor):
         else:
             raise TypeError("Incongruencia de tipos en suma")
     
+    def visitAnd(self, ctx: YAPLParser.AndContext):
+        left_type = self.visit(ctx.expr(0))
+        right_type = self.visit(ctx.expr(1))
+
+        if left_type == 'Bool' and right_type == 'Bool':
+            return 'Bool'
+        else:
+            raise TypeError("Incongruencia de tipos en AND")
+
+    def visitOr(self, ctx: YAPLParser.OrContext):
+        left_type = self.visit(ctx.expr(0))
+        right_type = self.visit(ctx.expr(1))
+
+        if left_type == 'Bool' and right_type == 'Bool':
+            return 'Bool'
+        else:
+            raise TypeError("Incongruencia de tipos en OR")
+    
+    def visitEqual(self, ctx:YAPLParser.EqualContext):
+        left_type = self.visit(ctx.expr(0))
+        right_type = self.visit(ctx.expr(1))
+
+        if left_type == right_type:
+            return 'Bool'
+        else:
+            raise TypeError("Type mismatch in equal operation")
+    
+    def visitGreaterThanOrEqual(self, ctx:YAPLParser.GreaterThanOrEqualContext):
+        left_type = self.visit(ctx.expr(0))
+        right_type = self.visit(ctx.expr(1))
+        
+        if left_type == 'Int' and right_type == 'Int':
+            return 'Bool'
+        else:
+            raise TypeError("Incongruencia de tipos en mayor o igual que")
+    
+    def visitLessThanOrEqual(self, ctx:YAPLParser.LessThanOrEqualContext):
+        left_type = self.visit(ctx.expr(0))
+        right_type = self.visit(ctx.expr(1))
+        
+        if left_type == 'Int' and right_type == 'Int':
+            return 'Bool'
+        else:
+            raise TypeError("Incongruencia de tipos en menor o igual que")
+    
+    def visitLessThan(self, ctx:YAPLParser.LessThanContext):
+        left_type = self.visit(ctx.expr(0))
+        right_type = self.visit(ctx.expr(1))
+        
+        if left_type == 'Int' and right_type == 'Int':
+            return 'Bool'
+        else:
+            raise TypeError("Incongruencia de tipos en menor que")
+    
+    def visitGreaterThan(self, ctx:YAPLParser.GreaterThanContext):
+        left_type = self.visit(ctx.expr(0))
+        right_type = self.visit(ctx.expr(1))
+
+        if left_type == 'Int' and right_type == 'Int':
+            return 'Bool'
+        else:
+            raise TypeError("Incongruencia de tipos en mayor que")
+    
     def visitParens(self, ctx: YAPLParser.ParensContext):
         return self.visit(ctx.expr())
     
@@ -108,7 +171,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return None
     
     def visitWhile(self, ctx: YAPLParser.WhileContext):
-        result = 0
+        result = None
         while self.visit(ctx.expr(0)):
             result = self.visit(ctx.expr(1))
         return result
@@ -148,7 +211,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return ctx.bool_ == YAPLParser.TRUE
     
 def main():
-    file_name = 'test1.expr'
+    file_name = './tests/test1.cl'
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
