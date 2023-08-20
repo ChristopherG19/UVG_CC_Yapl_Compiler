@@ -20,7 +20,7 @@ class YAPLVisitorImpl(YAPLVisitor):
     def visitAssignment(self, ctx: YAPLParser.AssignmentContext):
         id = ctx.ID()
         type_id = self.visit(ctx.expr())
-        self.symbolTable.add_column([id, type_id])
+        self.symbolTable.add_column([id, type_id, None, None, None, None, None])
         return super().visitAssignment(ctx)
     
     def visitDefClass(self, ctx: YAPLParser.DefClassContext):
@@ -39,19 +39,19 @@ class YAPLVisitorImpl(YAPLVisitor):
     def visitDefFunc(self, ctx: YAPLParser.DefFuncContext):
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
-        self.symbolTable.add_column([id, type_id])
+        self.symbolTable.add_column([id, type_id, None, None, None, None, None])
         return type_id
     
     def visitDefAssign(self, ctx: YAPLParser.DefAssignContext):
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
-        self.symbolTable.add_column([id, type_id])
+        self.symbolTable.add_column([id, type_id, None, None, None, None, None])
         return super().visitDefAssign(ctx)
     
     def visitFeature(self, ctx: YAPLParser.FeatureContext):
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
-        self.symbolTable.add_column([id, type_id])
+        self.symbolTable.add_column([id, type_id, None, None, None, None, None])
         return type_id
 
     def visitInt(self, ctx:YAPLParser.IntContext):
@@ -211,7 +211,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return ctx.bool_ == YAPLParser.TRUE
     
 def main():
-    file_name = './tests/test1.cl'
+    file_name = './tests/recur.cl'
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)

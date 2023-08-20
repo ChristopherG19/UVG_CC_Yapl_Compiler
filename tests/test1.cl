@@ -1,6 +1,6 @@
 class A {
   a: Bool;
-  b: String;
+  b: Bool;
   f: Int;
   g: Int;
   c: Bool <- a & b;
