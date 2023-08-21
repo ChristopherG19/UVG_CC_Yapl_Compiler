@@ -210,20 +210,20 @@ class YAPLVisitorImpl(YAPLVisitor):
     def visitBoolean(self, ctx: YAPLParser.BooleanContext):
         return ctx.bool_ == YAPLParser.TRUE
     
-def main():
-    file_name = './tests/recur.cl'
-    input_stream = FileStream(file_name)
-    lexer = YAPLLexer(input_stream)
-    token_stream = CommonTokenStream(lexer)
-    parser = YAPLParser(token_stream)
-    tree = parser.prog()
-    YV = YAPLVisitorImpl()
-    try:
-        YV.visit(tree)
-    except TypeError as e:
-        print(e);
-    treeF = YV.symbolTable.build_Table()
-    print(treeF)
+# def main():
+#     file_name = './tests/recur.cl'
+#     input_stream = FileStream(file_name)
+#     lexer = YAPLLexer(input_stream)
+#     token_stream = CommonTokenStream(lexer)
+#     parser = YAPLParser(token_stream)
+#     tree = parser.prog()
+#     YV = YAPLVisitorImpl()
+#     try:
+#         YV.visit(tree)
+#     except TypeError as e:
+#         print(e);
+#     treeF = YV.symbolTable.build_Table()
+#     print(treeF)
     
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()

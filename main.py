@@ -13,12 +13,13 @@ import os
 
 from tkinter import scrolledtext, Label, Button
 from antlr4 import *
+from BuildTable import YAPLVisitorImpl
 
 from utils.utils import CustomErrorListener, beautify_lisp_string
 
 def create_g4():
     texto = T.get("1.0", tk.END)
-    arch = "test1.expr"
+    arch = "./tests/exampleUser.expr"
     try:
         with open(arch, "w") as archivo:
             archivo.write(texto)
@@ -57,6 +58,14 @@ def create_g4():
         parser._listeners = [error_listener]
         tree = parser.prog()
         
+        YV = YAPLVisitorImpl()
+        try:
+            YV.visit(tree)
+        except TypeError as e:
+            print(e);
+        treeF = YV.symbolTable.build_Table()
+        print(treeF)
+        
         if not error_listener.has_error():
             T.insert(tk.END, "\n\nNo se encontraron errores, árbol disponible en consola y GUI desplegada")
             print('Tree:\n')
@@ -72,7 +81,7 @@ def create_g4():
                 T.insert(tk.END, error + "\n")
 
 def show_tree():
-    file_name = 'test1.expr'
+    file_name = './tests/exampleUser.expr'
     command = ["antlr4-parse", "YAPL.g4", "prog", "-gui"]
 
     process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
