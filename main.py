@@ -106,12 +106,14 @@ def clear_terminal():
     Terminal.delete(1.0, tk.END)
 
 # FILE ===================================================
+def on_new():
+    T.delete(1.0, tk.END)
+    Terminal.delete(1.0, tk.END)
+
 def on_open():
     file_path = filedialog.askopenfilename(title="Select a File", filetypes=[("All Files", "*.*")])
     if file_path:
         print("Selected File:", file_path)
-
-# EDIT ===================================================
 
 def on_save():
     texto = T.get("1.0", tk.END)
@@ -121,6 +123,13 @@ def on_save():
             archivo.write(texto)
     except IOError as e:
         print("Error al generar el archivo:", e)
+
+def on_save_as():
+    file_path = filedialog.asksaveasfilename(title="Select Where to save it", filetypes=[("All Files", "*.*")])
+    if file_path:
+        print("Selected File:", file_path)
+
+# EDIT ===================================================
 
 def on_undo():
     try:
@@ -171,10 +180,11 @@ root.config(menu=IDE_opts)
 
 btn_File = tk.Menu(menu_bar, tearoff=0)
 IDE_opts.add_cascade(label="Archivo", menu=btn_File)
-btn_File.add_command(label="Nuevo Archivo", command=None)
+btn_File.add_command(label="Nuevo Archivo", command=on_new)
 btn_File.add_command(label="Abrir", command=on_open)
 btn_File.add_separator()
 btn_File.add_command(label="Guardar", command=on_save)
+btn_File.add_command(label="Guardar como", command=on_save_as)
 btn_File.add_separator()
 btn_File.add_command(label="Salir", command=root.quit)
 
