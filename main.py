@@ -12,6 +12,8 @@ import subprocess
 import os
 
 from tkinter import scrolledtext, Label, Button
+from PIL import Image, ImageTk
+import cairosvg
 from antlr4 import *
 from BuildTable import YAPLVisitorImpl
 
@@ -19,7 +21,6 @@ from utils.utils import CustomErrorListener, beautify_lisp_string
 
 def create_g4():
     texto = T.get("1.0", tk.END)
-    Terminal.insert(tk.END, f"\n<{os.path}>\n")
     arch = "./tests/exampleUser.expr"
     try:
         with open(arch, "w") as archivo:
@@ -97,6 +98,18 @@ def show_tree():
 def clear():
     T.delete(1.0, tk.END)
 
+def clear_terminal():
+    Terminal.delete(1.0, tk.END)
+
+def on_save():
+    texto = T.get("1.0", tk.END)
+    arch = "./tests/exampleUser.expr"
+    try:
+        with open(arch, "w") as archivo:
+            archivo.write(texto)
+    except IOError as e:
+        print("Error al generar el archivo:", e)
+
 def on_undo():
     try:
         T.edit_undo()
@@ -143,6 +156,8 @@ IDE_opts.add_cascade(label="Archivo", menu=btn_File)
 btn_File.add_command(label="Nuevo Archivo", command=None)
 btn_File.add_command(label="Abrir", command=None)
 btn_File.add_separator()
+btn_File.add_command(label="Guardar", command=on_save)
+btn_File.add_separator()
 btn_File.add_command(label="Salir", command=root.quit)
 
 btn_Edit = tk.Menu(menu_bar, tearoff=0)
@@ -157,26 +172,24 @@ btn_Edit.add_command(label="Cortar", command=on_cut)
 IDE_opts.add_separator()
 
 # Header 
-header_frame = tk.Frame(root)
+header_frame = tk.Frame(root, bg="#1e1e1e")
 header_frame.pack(side=tk.TOP, fill=tk.X)
 
 # Botones 
 
-
-
-
 b3 = tk.Button(header_frame, text="Limpiar", command=clear, bg="#2d2d2d", fg="white", activebackground="#444",
                activeforeground="white")
-b3.pack(side=tk.LEFT)
+b3.pack(side=tk.RIGHT)
+
+btn_Clean_termianl = tk.Button(header_frame, text="LimpiarTerminal", command=clear_terminal, bg="#2d2d2d", fg="white", activebackground="#444",
+               activeforeground="white")
+btn_Clean_termianl.pack(side=tk.RIGHT)
 
 # space2 = tk.Label(header_frame, height=1, bg="#1e1e1e")
 # space2.pack()
 
-b4 = tk.Button(header_frame, text="Exit", command=root.destroy, bg="#2d2d2d", fg="white", activebackground="#444",
-               activeforeground="white")
-b4.pack(side=tk.LEFT)
 
-btn_exe = tk.Button(header_frame, text="Ingresar expresion y mostrar árbol", command=create_g4, bg="#2d2d2d", fg="white",
+btn_exe = tk.Button(header_frame, text="Ejecutar", command=create_g4, bg="#2d2d2d", fg="white",
                activebackground="#444", activeforeground="white")
 btn_exe.pack(side=tk.RIGHT)
 
