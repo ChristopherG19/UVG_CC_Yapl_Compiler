@@ -10,7 +10,7 @@ from prettytable import PrettyTable
 
 class Table():
     def __init__(self):
-        self.headers = ['Name', 'Type', 'Inherits', 'Displacement', 'Parent of', 'Ambit', 'Space']
+        self.headers = ['Name', 'Type', 'Inherits', 'Displacement', 'Contains', 'Ambit', 'Space']
         self.columns = []
         self.prettyT = PrettyTable()
     

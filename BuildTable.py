@@ -17,7 +17,7 @@ from utils.utils import get_space_vars
 class YAPLVisitorImpl(YAPLVisitor):
     def __init__(self):
         self.symbolTable = Table()
-        self.function_list = []
+        self.class_methods = {}
         
     def get_function_list(self):
         return self.function_list
@@ -36,6 +36,9 @@ class YAPLVisitorImpl(YAPLVisitor):
             self.symbolTable.add_column([class_id, type_class_id, inherits, None, None, "Global", None])
         else:
             self.symbolTable.add_column([class_id, type_class_id, None, None, None, "Global", None])
+        
+        self.class_methods[class_id] = []
+        
         return super().visitDefClass(ctx)
     
     def visitId(self, ctx: YAPLParser.IdContext):
@@ -49,8 +52,13 @@ class YAPLVisitorImpl(YAPLVisitor):
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
         parent_class = ctx.parentCtx.TYPE(0).getText() if ctx.parentCtx.TYPE(0) else None
-        self.function_list.append(id)
-        self.symbolTable.add_info_to_cell(parent_class, "Parent of", self.function_list)
+
+        if parent_class in self.class_methods:
+            self.class_methods[parent_class].append(id)
+        else:
+            self.class_methods[parent_class] = [id]
+        
+        self.symbolTable.add_info_to_cell(parent_class, "Contains", self.class_methods[parent_class])
         self.symbolTable.add_column([id, type_id, None, None, None, "Local", None])
         return type_id
     
