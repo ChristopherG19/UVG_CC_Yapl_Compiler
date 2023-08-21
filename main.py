@@ -13,7 +13,6 @@ import os
 
 from tkinter import scrolledtext, filedialog
 from PIL import Image, ImageTk
-import cairosvg
 from antlr4 import *
 from BuildTable import YAPLVisitorImpl
 
