@@ -19,9 +19,27 @@ from BuildTable import YAPLVisitorImpl
 
 from utils.utils import CustomErrorListener, beautify_lisp_string
 
+arch = "./tests/exampleUser.expr"
+grammar = "YAPL.g4" 
+
+def init_program():
+
+    comando = ["antlr4", "-Dlanguage=Python3", "-visitor",str(grammar)]
+
+    try:
+        subprocess.run(comando, check=True)
+    except subprocess.CalledProcessError as e:
+        print("Error al ejecutar el comando:", e)
+    
+    # Crear archivo para imprimir arbol
+    archP = f"{grammar[:-3]}Parser.py"
+    archL = f"{grammar[:-3]}Lexer.py"
+            
+    treeA = "Tree.py"
+
 def create_g4():
     texto = T.get("1.0", tk.END)
-    arch = "./tests/exampleUser.expr"
+    
     try:
         with open(arch, "w") as archivo:
             archivo.write(texto)
@@ -30,7 +48,7 @@ def create_g4():
         
     #root.after(4000, lambda: T.delete(1.0, tk.END))
     
-    grammar = "YAPL.g4" 
+    
     comando = ["antlr4", "-Dlanguage=Python3", "-visitor",str(grammar)]
 
     try:
@@ -69,14 +87,15 @@ def create_g4():
         print(treeF)
         
         if not error_listener.has_error():
-            T.insert(tk.END, "\n\nNo se encontraron errores, árbol disponible en consola y GUI desplegada")
-            print('Tree:\n')
-            lisp_tree_str = tree.toStringTree(recog=parser)
-            print(beautify_lisp_string(lisp_tree_str))
-            print()
+            Terminal.delete(1.0, tk.END)
+            Terminal.insert(tk.END, "\n\nNo se encontraron errores, árbol disponible en consola y GUI desplegada")
+            # print('Tree:\n')
+            # lisp_tree_str = tree.toStringTree(recog=parser)
+            # print(beautify_lisp_string(lisp_tree_str))
             show_tree()
+
         else:
-            # Terminal.delete(1.0, tk.END)
+            Terminal.delete(1.0, tk.END)
             errors = error_listener.get_errors()
             
             Terminal.insert(tk.END, "\n========================================================")
@@ -160,8 +179,23 @@ def on_cut():
 
 # RUN ==========================================================
 
+def on_select_grammar():
+    file_path_g = filedialog.askopenfilename(title="Select a File", filetypes=[("All Files", "*.*")])
+    if file_path_g:
+        # grammar = file_path_g
+        print("Nueva gramática obtenida a partir de:", file_path_g)
+        with open(file_path_g) as new_Grammar:
+            content = new_Grammar.read()
+
+        with open('YAPL.g4', "w") as old_Grammar:
+            old_Grammar.write(content)
+
+        # reinizializar el programa
+        init_program()
+        
 
 # UID ==========================================================
+
 
 root = tk.Tk()
 root.title("Not Visual Studio Code")
@@ -200,6 +234,8 @@ btn_Edit.add_command(label="Cortar", command=on_cut)
 btn_Exec = tk.Menu(menu_bar, tearoff=0)
 IDE_opts.add_cascade(label="Ejecución", menu=btn_Exec)
 btn_Exec.add_command(label="Correr", command=create_g4)
+btn_Exec.add_separator()
+btn_Exec.add_command(label="Definir gramática", command=on_select_grammar)
 
 
 IDE_opts.add_separator()
@@ -249,5 +285,10 @@ space.pack()
 
 
 T.insert(tk.END, "")
+
+
+# inicialización del programa y la gramática
+init_program()
+
 tk.mainloop()
 
