@@ -14,7 +14,7 @@ feature:
     ;
 
 formal:
-        ID ':' TYPE #asign
+        ID ':' TYPE #assign
     ;
 
 expr: 

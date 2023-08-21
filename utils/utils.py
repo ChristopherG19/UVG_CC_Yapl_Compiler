@@ -44,3 +44,15 @@ def beautify_lisp_string(in_string):
        else:
            out_string += in_string[i]
    return out_string
+
+def get_space_vars(type):
+    space = 0
+    
+    eight_space = ['int', 'char', 'string']
+    
+    if(type in eight_space):
+        space = 8
+    else:
+        space = 1
+    
+    return space
