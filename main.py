@@ -97,6 +97,33 @@ def show_tree():
 def clear():
     T.delete(1.0, tk.END)
 
+def on_undo():
+    try:
+        T.edit_undo()
+    except tk.TclError:
+        pass
+
+def on_redo():
+    try:
+        T.edit_redo()
+    except tk.TclError:
+        pass
+
+def on_copy():
+    selected_text = T.get("sel.first", "sel.last")
+    root.clipboard_clear()
+    root.clipboard_append(selected_text)
+
+def on_paste():
+    clipboard_text = root.clipboard_get()
+    T.insert(tk.INSERT, clipboard_text)
+
+def on_cut():
+    selected_text = T.get("sel.first", "sel.last")
+    root.clipboard_clear()
+    root.clipboard_append(selected_text)
+    T.delete("sel.first", "sel.last")
+
 root = tk.Tk()
 root.title("Not Visual Studio Code")
 root.configure(bg="#1e1e1e")  # Color de fondo oscuro
@@ -104,24 +131,52 @@ root.configure(bg="#1e1e1e")  # Color de fondo oscuro
 l = tk.Label(root, text="Not Visual Studio Code", fg="white", bg="#1e1e1e", font=("Arial", 13))
 l.pack()
 
+# Upper options
+menu_bar = tk.Menu(root)
+root.config(menu=menu_bar)
+
+IDE_opts = tk.Menu(menu_bar)
+root.config(menu=IDE_opts)
+
+btn_File = tk.Menu(menu_bar, tearoff=0)
+IDE_opts.add_cascade(label="Archivo", menu=btn_File)
+btn_File.add_command(label="Nuevo Archivo", command=None)
+btn_File.add_command(label="Abrir", command=None)
+btn_File.add_separator()
+btn_File.add_command(label="Salir", command=root.quit)
+
+btn_Edit = tk.Menu(menu_bar, tearoff=0)
+IDE_opts.add_cascade(label="Editar", menu=btn_Edit)
+btn_Edit.add_command(label="Deshacer", command=on_undo)
+btn_Edit.add_command(label="Rehacer", command=on_redo)
+btn_Edit.add_separator()
+btn_Edit.add_command(label="Copiar", command=on_copy)
+btn_Edit.add_command(label="Pegar", command=on_paste)
+btn_Edit.add_command(label="Cortar", command=on_cut)
+
+IDE_opts.add_separator()
+
 # Header 
-footer_frame = tk.Frame(root)
-footer_frame.pack(side=tk.TOP, fill=tk.X)
+header_frame = tk.Frame(root)
+header_frame.pack(side=tk.TOP, fill=tk.X)
 
 # Botones 
 
-b3 = tk.Button(footer_frame, text="Limpiar", command=clear, bg="#2d2d2d", fg="white", activebackground="#444",
+
+
+
+b3 = tk.Button(header_frame, text="Limpiar", command=clear, bg="#2d2d2d", fg="white", activebackground="#444",
                activeforeground="white")
 b3.pack(side=tk.LEFT)
 
-# space2 = tk.Label(footer_frame, height=1, bg="#1e1e1e")
+# space2 = tk.Label(header_frame, height=1, bg="#1e1e1e")
 # space2.pack()
 
-b4 = tk.Button(footer_frame, text="Exit", command=root.destroy, bg="#2d2d2d", fg="white", activebackground="#444",
+b4 = tk.Button(header_frame, text="Exit", command=root.destroy, bg="#2d2d2d", fg="white", activebackground="#444",
                activeforeground="white")
 b4.pack(side=tk.LEFT)
 
-btn_exe = tk.Button(footer_frame, text="Ingresar expresion y mostrar árbol", command=create_g4, bg="#2d2d2d", fg="white",
+btn_exe = tk.Button(header_frame, text="Ingresar expresion y mostrar árbol", command=create_g4, bg="#2d2d2d", fg="white",
                activebackground="#444", activeforeground="white")
 btn_exe.pack(side=tk.RIGHT)
 
