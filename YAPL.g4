@@ -1,7 +1,7 @@
 grammar YAPL;
 
 /* Entry point */
-prog: (class_def ';') #start
+prog: (class_def ';')+ #start
     ;
 
 class_def:

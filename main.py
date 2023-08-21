@@ -71,7 +71,6 @@ def create_g4():
             # print('Tree:\n')
             # lisp_tree_str = tree.toStringTree(recog=parser)
             # print(beautify_lisp_string(lisp_tree_str))
-            print()
             show_tree()
         else:
             T.delete(1.0, tk.END)

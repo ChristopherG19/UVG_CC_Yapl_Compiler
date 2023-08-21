@@ -59,7 +59,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         type_id = ctx.TYPE().getText()
         space = get_space_vars(type_id.lower())
         self.symbolTable.add_column([id, type_id, None, None, None, None, space])
-        return super().visitDefAssign(ctx)
+        return type_id
     
     def visitFeature(self, ctx: YAPLParser.FeatureContext):
         id = ctx.ID().getText()
@@ -67,9 +67,6 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.symbolTable.add_column([id, type_id, None, None, None, None, None])
         return type_id
 
-    def visitInt(self, ctx:YAPLParser.IntContext):
-        return super().visitInt(ctx)
-    
     def visitTimes(self, ctx:YAPLParser.TimesContext):
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
@@ -176,21 +173,6 @@ class YAPLVisitorImpl(YAPLVisitor):
     def visitParens(self, ctx: YAPLParser.ParensContext):
         return self.visit(ctx.expr())
     
-    def visitIf(self, ctx: YAPLParser.IfContext):
-        condition_type = self.visit(ctx.expr(0))
-        then_type = self.visit(ctx.expr(1))
-        else_type = self.visit(ctx.expr(2))
-
-        if condition_type.lower() == 'bool':
-            return then_type if then_type == else_type else None
-        return None
-    
-    def visitWhile(self, ctx: YAPLParser.WhileContext):
-        result = None
-        while self.visit(ctx.expr(0)):
-            result = self.visit(ctx.expr(1))
-        return result
-    
     def visitBlock(self, ctx: YAPLParser.BlockContext):
         result_type = None
         for expr_ctx in ctx.expr():
@@ -210,20 +192,6 @@ class YAPLVisitorImpl(YAPLVisitor):
     def visitNew(self, ctx: YAPLParser.NewContext):
         _type = ctx.TYPE().getText()
         return _type
-    
-    def visitNegative(self, ctx: YAPLParser.NegativeContext):
-        expr_value = self.visit(ctx.expr())
-        return -expr_value
-    
-    def visitIsvoid(self, ctx: YAPLParser.IsvoidContext):
-        expr_value = self.visit(ctx.expr())
-        return expr_value is None
-    
-    def visitString(self, ctx: YAPLParser.StringContext):
-        return str(ctx.STRING().getText())[1:-1]
-
-    def visitboolean(self, ctx: YAPLParser.BooleanContext):
-        return ctx.bool_ == YAPLParser.TRUE
     
 def main():
     file_name = './tests/exampleUser.expr'
