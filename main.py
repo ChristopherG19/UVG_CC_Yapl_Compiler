@@ -68,9 +68,9 @@ def create_g4():
         
         if not error_listener.has_error():
             T.insert(tk.END, "\n\nNo se encontraron errores, árbol disponible en consola y GUI desplegada")
-            print('Tree:\n')
-            lisp_tree_str = tree.toStringTree(recog=parser)
-            print(beautify_lisp_string(lisp_tree_str))
+            # print('Tree:\n')
+            # lisp_tree_str = tree.toStringTree(recog=parser)
+            # print(beautify_lisp_string(lisp_tree_str))
             print()
             show_tree()
         else:

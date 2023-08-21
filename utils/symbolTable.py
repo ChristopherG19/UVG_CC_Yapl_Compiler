@@ -34,6 +34,21 @@ class Table():
         if self.get_cell(id) is not None:
             return True
         return False
+    
+    def add_info_to_cell(self, name, column_name, value):
+        for row in self.columns:
+            if row[0] == name:
+                if column_name in self.headers:
+                    index = self.headers.index(column_name)
+                    if index < len(row):
+                        row[index] = value
+                        self.build_Table()
+                        return True
+                else:
+                    print(f"Column '{column_name}' does not exist in the table.")
+                    return False
+        print(f"Row with name '{name}' does not exist in the table.")
+        return False
 
     def build_Table(self):
         # Limpiar tabla
