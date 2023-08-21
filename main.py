@@ -19,6 +19,7 @@ from utils.utils import CustomErrorListener, beautify_lisp_string
 
 def create_g4():
     texto = T.get("1.0", tk.END)
+    Terminal.insert(tk.END, f"\n<{os.path}>\n")
     arch = "./tests/exampleUser.expr"
     try:
         with open(arch, "w") as archivo:
@@ -74,11 +75,11 @@ def create_g4():
             print()
             show_tree()
         else:
-            T.delete(1.0, tk.END)
+            # Terminal.delete(1.0, tk.END)
             errors = error_listener.get_errors()
-            T.insert(tk.END, "\nSe encontraron errores:\n")
+            Terminal.insert(tk.END, "\nSe encontraron errores:\n")
             for error in errors:
-                T.insert(tk.END, error + "\n")
+                Terminal.insert(tk.END, error + "\n")
 
 def show_tree():
     file_name = './tests/exampleUser.expr'
@@ -103,27 +104,44 @@ root.configure(bg="#1e1e1e")  # Color de fondo oscuro
 l = tk.Label(root, text="Not Visual Studio Code", fg="white", bg="#1e1e1e", font=("Arial", 13))
 l.pack()
 
+# Header 
+footer_frame = tk.Frame(root)
+footer_frame.pack(side=tk.TOP, fill=tk.X)
+
+# Botones 
+
+b3 = tk.Button(footer_frame, text="Limpiar", command=clear, bg="#2d2d2d", fg="white", activebackground="#444",
+               activeforeground="white")
+b3.pack(side=tk.LEFT)
+
+# space2 = tk.Label(footer_frame, height=1, bg="#1e1e1e")
+# space2.pack()
+
+b4 = tk.Button(footer_frame, text="Exit", command=root.destroy, bg="#2d2d2d", fg="white", activebackground="#444",
+               activeforeground="white")
+b4.pack(side=tk.LEFT)
+
+btn_exe = tk.Button(footer_frame, text="Ingresar expresion y mostrar árbol", command=create_g4, bg="#2d2d2d", fg="white",
+               activebackground="#444", activeforeground="white")
+btn_exe.pack(side=tk.RIGHT)
+
+
+# Área de escritura de texto 
 T = scrolledtext.ScrolledText(root, height=20, width=100, bg="#2d2d2d", fg="white", insertbackground="white",
-                              selectbackground="blue", selectforeground="white", font=("Arial", 12))
+                              selectbackground="#444649", selectforeground="white", font=("Arial", 12))
 T.pack()
+
+
+# Terminal 
+Terminal = scrolledtext.ScrolledText(root, height=10, width=100, bg="#2d2d2d", fg="white", insertbackground="white",
+                              selectbackground="#444649", selectforeground="white", font=("Arial", 12),
+                              )
+Terminal.pack()
+
 
 space = tk.Label(root, height=1, bg="#1e1e1e")
 space.pack()
 
-b2 = tk.Button(root, text="Ingresar expresion y mostrar árbol", command=create_g4, bg="#2d2d2d", fg="white",
-               activebackground="#444", activeforeground="white")
-b2.pack()
-
-b3 = tk.Button(root, text="Limpiar", command=clear, bg="#2d2d2d", fg="white", activebackground="#444",
-               activeforeground="white")
-b3.pack()
-
-space2 = tk.Label(root, height=1, bg="#1e1e1e")
-space2.pack()
-
-b4 = tk.Button(root, text="Exit", command=root.destroy, bg="#2d2d2d", fg="white", activebackground="#444",
-               activeforeground="white")
-b4.pack()
 
 T.insert(tk.END, "")
 tk.mainloop()
