@@ -79,7 +79,8 @@ def create_g4():
         
         YV = YAPLVisitorImpl()
         try:
-            YV.visit(tree)
+            Res = YV.visit(tree)
+            print("Valor de tipo final", Res)
         except TypeError as e:
             print(e);
         treeF = YV.symbolTable.build_Table()
