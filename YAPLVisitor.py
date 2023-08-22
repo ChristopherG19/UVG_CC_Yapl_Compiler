@@ -29,8 +29,8 @@ class YAPLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by YAPLParser#assign.
-    def visitAssign(self, ctx:YAPLParser.AssignContext):
+    # Visit a parse tree produced by YAPLParser#formalAssign.
+    def visitFormalAssign(self, ctx:YAPLParser.FormalAssignContext):
         return self.visitChildren(ctx)
 
 

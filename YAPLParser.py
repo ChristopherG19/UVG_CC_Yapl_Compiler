@@ -564,7 +564,7 @@ class YAPLParser ( Parser ):
 
 
 
-    class AssignContext(FormalContext):
+    class FormalAssignContext(FormalContext):
 
         def __init__(self, parser, ctx:ParserRuleContext): # actually a YAPLParser.FormalContext
             super().__init__(parser)
@@ -578,16 +578,16 @@ class YAPLParser ( Parser ):
             return self.getToken(YAPLParser.TYPE, 0)
 
         def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterAssign" ):
-                listener.enterAssign(self)
+            if hasattr( listener, "enterFormalAssign" ):
+                listener.enterFormalAssign(self)
 
         def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitAssign" ):
-                listener.exitAssign(self)
+            if hasattr( listener, "exitFormalAssign" ):
+                listener.exitFormalAssign(self)
 
         def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitAssign" ):
-                return visitor.visitAssign(self)
+            if hasattr( visitor, "visitFormalAssign" ):
+                return visitor.visitFormalAssign(self)
             else:
                 return visitor.visitChildren(self)
 
@@ -598,7 +598,7 @@ class YAPLParser ( Parser ):
         localctx = YAPLParser.FormalContext(self, self._ctx, self.state)
         self.enterRule(localctx, 6, self.RULE_formal)
         try:
-            localctx = YAPLParser.AssignContext(self, localctx)
+            localctx = YAPLParser.FormalAssignContext(self, localctx)
             self.enterOuterAlt(localctx, 1)
             self.state = 62
             self.match(YAPLParser.ID)

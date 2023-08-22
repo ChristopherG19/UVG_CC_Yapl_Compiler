@@ -20,9 +20,18 @@ class Table():
         else:
             return f"(Type: {row[1]}) {row[0]}"
         
+    def row_exists_with_attributes(self, attributes):
+        for row in self.columns:
+            if all(row[i] == attr for i, attr in enumerate(attributes)):
+                return True
+        return False
+
     def add_column(self, column):
-        self.columns.append(column)
-        self.build_Table()
+        if not self.row_exists_with_attributes(column):
+            self.columns.append(column)
+            self.build_Table()
+            return True
+        return False
         
     def get_cell(self, id):
         for row in self.columns:

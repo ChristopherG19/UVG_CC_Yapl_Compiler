@@ -44,12 +44,12 @@ class YAPLListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by YAPLParser#assign.
-    def enterAssign(self, ctx:YAPLParser.AssignContext):
+    # Enter a parse tree produced by YAPLParser#formalAssign.
+    def enterFormalAssign(self, ctx:YAPLParser.FormalAssignContext):
         pass
 
-    # Exit a parse tree produced by YAPLParser#assign.
-    def exitAssign(self, ctx:YAPLParser.AssignContext):
+    # Exit a parse tree produced by YAPLParser#formalAssign.
+    def exitFormalAssign(self, ctx:YAPLParser.FormalAssignContext):
         pass
 
 
