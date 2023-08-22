@@ -26,7 +26,6 @@ class YAPLVisitorImpl(YAPLVisitor):
         stages = ctx.class_def()
         for stage in stages:
             stage_type = self.visit(stage)
-            print("Start", stage, stage_type)
             if stage_type != "Error":
                 final_type = stage_type
             else:
@@ -57,7 +56,6 @@ class YAPLVisitorImpl(YAPLVisitor):
         return type_class
     
     def visitDefFunc(self, ctx: YAPLParser.DefFuncContext):
-        print("defFunc")
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
         parent_class = ctx.parentCtx.TYPE(0).getText() if ctx.parentCtx.TYPE(0) else None
@@ -83,11 +81,9 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.symbolTable.add_info_to_cell(parent_class, "Contains", self.class_methods[parent_class])
         
         type_id_b = self.visit(ctx.expr())
-        print("Type", type_id)
         return type_id_b
     
     def visitDefAssign(self, ctx: YAPLParser.DefAssignContext):
-        print("defAssign")
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
         space = get_space_vars(type_id.lower())
@@ -103,43 +99,34 @@ class YAPLVisitorImpl(YAPLVisitor):
         
         if(ctx.expr()):
             type_id = self.visit(ctx.expr())
-            print("aaaaaaaaaaaa", type_id)
         return type_id
     
     def visitFormalAssign(self, ctx:YAPLParser.FormalAssignContext):
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText() 
-        print("Formal", type_id)
         return type_id
         
     def visitAssignment(self, ctx: YAPLParser.AssignmentContext):
-        print("Assignment")
         id = ctx.ID().getText()
         type_id = self.visit(ctx.expr()) 
         return type_id
     
     def visitDispatchExplicit(self, ctx: YAPLParser.DispatchExplicitContext):
-        print("DispE")
         return self.visitChildren(ctx)
     
     def visitDispatchImplicit(self, ctx: YAPLParser.DispatchImplicitContext):
-        print("DispI")
         return self.visitChildren(ctx)
     
     def visitIf(self, ctx: YAPLParser.IfContext):
-        print("If")
         return self.visitChildren(ctx)
     
     def visitWhile(self, ctx: YAPLParser.WhileContext):
-        print("While")
         return self.visitChildren(ctx)
     
     def visitBlock(self, ctx: YAPLParser.BlockContext):
-        print("Block")
         return self.visitChildren(ctx)
     
     def visitLetId(self, ctx: YAPLParser.LetIdContext):
-        print("LetId")
         for i in range(len(ctx.ID())):
             id = ctx.ID(i).getText()
             _type = ctx.TYPE(i).getText()
@@ -156,20 +143,16 @@ class YAPLVisitorImpl(YAPLVisitor):
         return self.visitChildren(ctx)
     
     def visitNew(self, ctx: YAPLParser.NewContext):
-        print("New")
         _type = ctx.TYPE().getText()
         return _type
     
     def visitNegative(self, ctx: YAPLParser.NegativeContext):
-        print("Negative")
         return self.visitChildren(ctx)
     
     def visitIsvoid(self, ctx: YAPLParser.IsvoidContext):
-        print("isVoid")
         return self.visitChildren(ctx)
     
     def visitTimes(self, ctx: YAPLParser.TimesContext):
-        print("Times")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
 
@@ -180,7 +163,6 @@ class YAPLVisitorImpl(YAPLVisitor):
         return 'Error'
     
     def visitDiv(self, ctx: YAPLParser.DivContext):
-        print("Div")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
 
@@ -190,22 +172,18 @@ class YAPLVisitorImpl(YAPLVisitor):
             return "Error"
     
     def visitPlus(self, ctx: YAPLParser.PlusContext):
-        print("Plus")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
         
         if left_type is not None and right_type is not None:
             if left_type.lower() == 'int' and right_type.lower() == 'int':
                 return 'int'
-            elif left_type.lower() == 'char' and right_type.lower() == 'char':
-                return 'char'
             elif left_type.lower() == 'string' and right_type.lower() == 'string':
                 return 'string'
         
         return 'Error'
     
     def visitMinus(self, ctx: YAPLParser.MinusContext):
-        print("Minus")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
 
@@ -215,7 +193,6 @@ class YAPLVisitorImpl(YAPLVisitor):
             return "Error"
     
     def visitLessThanOrEqual(self, ctx: YAPLParser.LessThanOrEqualContext):
-        print("LessTOE")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
         
@@ -225,7 +202,6 @@ class YAPLVisitorImpl(YAPLVisitor):
             return 'Error'
     
     def visitLessThan(self, ctx: YAPLParser.LessThanContext):
-        print("Less")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
 
@@ -235,7 +211,6 @@ class YAPLVisitorImpl(YAPLVisitor):
             return 'Error'
     
     def visitGreaterThan(self, ctx: YAPLParser.GreaterThanContext):
-        print("Greater")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
 
@@ -245,7 +220,6 @@ class YAPLVisitorImpl(YAPLVisitor):
             return 'Error'
     
     def visitGreaterThanOrEqual(self, ctx: YAPLParser.GreaterThanOrEqualContext):
-        print("GreaterTOE")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
         
@@ -255,7 +229,6 @@ class YAPLVisitorImpl(YAPLVisitor):
             return 'Error'
     
     def visitEqual(self, ctx: YAPLParser.EqualContext):
-        print("Equal")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
 
@@ -265,7 +238,6 @@ class YAPLVisitorImpl(YAPLVisitor):
             return 'Error'
     
     def visitAnd(self, ctx:YAPLParser.AndContext):
-        print("And")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
 
@@ -275,7 +247,6 @@ class YAPLVisitorImpl(YAPLVisitor):
             return 'Error'
     
     def visitOr(self, ctx:YAPLParser.OrContext):
-        print("Or")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
 
@@ -285,15 +256,12 @@ class YAPLVisitorImpl(YAPLVisitor):
             return 'Error'
     
     def visitNeg(self, ctx:YAPLParser.NegContext):
-        print("Neg")
         return self.visitChildren(ctx)
     
     def visitParens(self, ctx:YAPLParser.ParensContext):
-        print("Parens")
         return self.visit(ctx.expr())
     
     def visitId(self, ctx:YAPLParser.IdContext):
-        print("Id")
         id = ctx.ID().getText()
         row = self.symbolTable.get_cell(id)
         if row:
@@ -301,15 +269,12 @@ class YAPLVisitorImpl(YAPLVisitor):
         return None
     
     def visitInt(self, ctx: YAPLParser.IntContext):
-        print("Int")
         return "Int"
     
     def visitString(self, ctx: YAPLParser.StringContext):
-        print("String")
         return "String"
     
     def visitBoolean(self, ctx: YAPLParser.BooleanContext):
-        print("Bool")
         return "Bool"
 
 def main():
