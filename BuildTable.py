@@ -313,7 +313,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return "Bool"
 
 def main():
-    file_name = './tests/test1.cl'
+    file_name = './tests/recur.cl'
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)

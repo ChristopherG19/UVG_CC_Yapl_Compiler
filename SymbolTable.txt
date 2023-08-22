@@ -1,12 +1,20 @@
-+-----------------------------------------------------------------------------------------------+
-|                                         Symbols Table                                         |
-+------+--------+----------+--------+---------------------------+--------------+--------+-------+
-| Name |  Type  | Inherits | Parent |          Contains         | Displacement | Ambit  | Space |
-+------+--------+----------+--------+---------------------------+--------------+--------+-------+
-|  A   | class  |   None   |  None  | ['a', 'b', 'f', 'g', 'c'] |     None     | Global |  None |
-|  a   |  Bool  |   None   |   A    |            None           |     None     | Local  |   1   |
-|  b   | String |   None   |   A    |            None           |     None     | Local  |   8   |
-|  f   |  Int   |   None   |   A    |            None           |     None     | Local  |   8   |
-|  g   |  Int   |   None   |   A    |            None           |     None     | Local  |   8   |
-|  c   | String |   None   |   A    |            None           |     None     | Local  |   8   |
-+------+--------+----------+--------+---------------------------+--------------+--------+-------+
++------------------------------------------------------------------------------------------------------------------+
+|                                                  Symbols Table                                                   |
++-----------+-----------+----------+-----------+--------------------------------+--------------+-----------+-------+
+|    Name   |    Type   | Inherits |   Parent  |            Contains            | Displacement |   Ambit   | Space |
++-----------+-----------+----------+-----------+--------------------------------+--------------+-----------+-------+
+| Factorial |   class   |   None   |    None   | ['var', 'n', 'factorial', 'f'] |     None     |   Global  |  None |
+|    var    |    Int    |   None   | Factorial |              None              |     None     |   Local   |   8   |
+|     n     |    Int    |   None   | Factorial |              None              |     None     | Parameter |   8   |
+| factorial |    Int    |   None   | Factorial |              None              |     None     |   Local   |  None |
+|     f     |    Int    |   None   | Factorial |              None              |     None     |   Local   |   8   |
+| Fibonacci |   class   |   None   |    None   |    ['n', 'fibonacci', 'f']     |     None     |   Global  |  None |
+|     n     |    Int    |   None   | Fibonacci |              None              |     None     | Parameter |   8   |
+| fibonacci |    Int    |   None   | Fibonacci |              None              |     None     |   Local   |  None |
+|     f     |    Int    |   None   | Fibonacci |              None              |     None     |   Local   |   8   |
+|    Main   |   class   |    IO    |    None   | ['n', 'facto', 'fibo', 'main'] |     None     |   Global  |  None |
+|     n     |    Int    |   None   |    Main   |              None              |     None     |   Local   |   8   |
+|   facto   | Factorial |   None   |    Main   |              None              |     None     |   Local   |  None |
+|    fibo   | Fibonacci |   None   |    Main   |              None              |     None     |   Local   |  None |
+|    main   | SELF_TYPE |   None   |    Main   |              None              |     None     |   Local   |  None |
++-----------+-----------+----------+-----------+--------------------------------+--------------+-----------+-------+
