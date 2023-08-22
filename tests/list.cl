@@ -46,8 +46,20 @@ class List {
    -- conforms to the return type List, because Cons is a subclass of
    -- List.
 
+   car : Int;	-- The element in this list cell
+
+   cdr : List;	-- The rest of the list
+
+   init(i : Int, rest : List) : List {
+      {
+	 car <- i;
+	 cdr <- rest;
+	 self;
+      }
+   };
+
    cons(i : Int) : List {
-      (new Cons).init(i, self)
+      (new List).init(i, self)
    };
 
 };

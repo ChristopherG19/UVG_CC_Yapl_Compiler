@@ -83,7 +83,8 @@ def create_g4():
         except TypeError as e:
             print(e);
         treeF = YV.symbolTable.build_Table()
-        print(treeF)
+        with open("SymbolTable.txt", 'w', encoding="utf-8") as f:
+            f.write(treeF.get_string())
         
         if not error_listener.has_error():
             Terminal.delete(1.0, tk.END)

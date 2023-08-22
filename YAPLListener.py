@@ -143,15 +143,6 @@ class YAPLListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by YAPLParser#letid.
-    def enterLetid(self, ctx:YAPLParser.LetidContext):
-        pass
-
-    # Exit a parse tree produced by YAPLParser#letid.
-    def exitLetid(self, ctx:YAPLParser.LetidContext):
-        pass
-
-
     # Enter a parse tree produced by YAPLParser#lessThan.
     def enterLessThan(self, ctx:YAPLParser.LessThanContext):
         pass
@@ -275,6 +266,15 @@ class YAPLListener(ParseTreeListener):
 
     # Exit a parse tree produced by YAPLParser#boolean.
     def exitBoolean(self, ctx:YAPLParser.BooleanContext):
+        pass
+
+
+    # Enter a parse tree produced by YAPLParser#letId.
+    def enterLetId(self, ctx:YAPLParser.LetIdContext):
+        pass
+
+    # Exit a parse tree produced by YAPLParser#letId.
+    def exitLetId(self, ctx:YAPLParser.LetIdContext):
         pass
 
 

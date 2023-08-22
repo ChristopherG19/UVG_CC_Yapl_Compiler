@@ -917,63 +917,6 @@ class YAPLParser ( Parser ):
                 return visitor.visitChildren(self)
 
 
-    class LetidContext(ExprContext):
-
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a YAPLParser.ExprContext
-            super().__init__(parser)
-            self.copyFrom(ctx)
-
-        def LET(self):
-            return self.getToken(YAPLParser.LET, 0)
-        def ID(self, i:int=None):
-            if i is None:
-                return self.getTokens(YAPLParser.ID)
-            else:
-                return self.getToken(YAPLParser.ID, i)
-        def COLON(self, i:int=None):
-            if i is None:
-                return self.getTokens(YAPLParser.COLON)
-            else:
-                return self.getToken(YAPLParser.COLON, i)
-        def TYPE(self, i:int=None):
-            if i is None:
-                return self.getTokens(YAPLParser.TYPE)
-            else:
-                return self.getToken(YAPLParser.TYPE, i)
-        def IN(self):
-            return self.getToken(YAPLParser.IN, 0)
-        def expr(self, i:int=None):
-            if i is None:
-                return self.getTypedRuleContexts(YAPLParser.ExprContext)
-            else:
-                return self.getTypedRuleContext(YAPLParser.ExprContext,i)
-
-        def ASSIGNMENT(self, i:int=None):
-            if i is None:
-                return self.getTokens(YAPLParser.ASSIGNMENT)
-            else:
-                return self.getToken(YAPLParser.ASSIGNMENT, i)
-        def COMA(self, i:int=None):
-            if i is None:
-                return self.getTokens(YAPLParser.COMA)
-            else:
-                return self.getToken(YAPLParser.COMA, i)
-
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterLetid" ):
-                listener.enterLetid(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitLetid" ):
-                listener.exitLetid(self)
-
-        def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitLetid" ):
-                return visitor.visitLetid(self)
-            else:
-                return visitor.visitChildren(self)
-
-
     class LessThanContext(ExprContext):
 
         def __init__(self, parser, ctx:ParserRuleContext): # actually a YAPLParser.ExprContext
@@ -1385,6 +1328,63 @@ class YAPLParser ( Parser ):
                 return visitor.visitChildren(self)
 
 
+    class LetIdContext(ExprContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a YAPLParser.ExprContext
+            super().__init__(parser)
+            self.copyFrom(ctx)
+
+        def LET(self):
+            return self.getToken(YAPLParser.LET, 0)
+        def ID(self, i:int=None):
+            if i is None:
+                return self.getTokens(YAPLParser.ID)
+            else:
+                return self.getToken(YAPLParser.ID, i)
+        def COLON(self, i:int=None):
+            if i is None:
+                return self.getTokens(YAPLParser.COLON)
+            else:
+                return self.getToken(YAPLParser.COLON, i)
+        def TYPE(self, i:int=None):
+            if i is None:
+                return self.getTokens(YAPLParser.TYPE)
+            else:
+                return self.getToken(YAPLParser.TYPE, i)
+        def IN(self):
+            return self.getToken(YAPLParser.IN, 0)
+        def expr(self, i:int=None):
+            if i is None:
+                return self.getTypedRuleContexts(YAPLParser.ExprContext)
+            else:
+                return self.getTypedRuleContext(YAPLParser.ExprContext,i)
+
+        def ASSIGNMENT(self, i:int=None):
+            if i is None:
+                return self.getTokens(YAPLParser.ASSIGNMENT)
+            else:
+                return self.getToken(YAPLParser.ASSIGNMENT, i)
+        def COMA(self, i:int=None):
+            if i is None:
+                return self.getTokens(YAPLParser.COMA)
+            else:
+                return self.getToken(YAPLParser.COMA, i)
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterLetId" ):
+                listener.enterLetId(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitLetId" ):
+                listener.exitLetId(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitLetId" ):
+                return visitor.visitLetId(self)
+            else:
+                return visitor.visitChildren(self)
+
+
     class LessThanOrEqualContext(ExprContext):
 
         def __init__(self, parser, ctx:ParserRuleContext): # actually a YAPLParser.ExprContext
@@ -1575,7 +1575,7 @@ class YAPLParser ( Parser ):
                 pass
 
             elif la_ == 6:
-                localctx = YAPLParser.LetidContext(self, localctx)
+                localctx = YAPLParser.LetIdContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
                 self.state = 106

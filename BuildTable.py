@@ -18,14 +18,19 @@ class YAPLVisitorImpl(YAPLVisitor):
     def __init__(self):
         self.symbolTable = Table()
         self.class_methods = {}
-        
-    def get_function_list(self):
-        return self.function_list
          
     def visitAssignment(self, ctx: YAPLParser.AssignmentContext):
         id = ctx.ID()
         type_id = self.visit(ctx.expr())
-        self.symbolTable.add_column([id, type_id.lower(), None, None, None, None, None])
+        parent_class = ctx.parentCtx.TYPE(0).getText() if ctx.parentCtx.TYPE(0) else None
+        space = get_space_vars(type_id.lower())
+        if parent_class in self.class_methods:
+            self.class_methods[parent_class].append(id)
+            self.symbolTable.add_column([id, type_id, None, parent_class, None, None, "Local", None])
+        else:
+            self.class_methods[parent_class] = [id]
+            
+        self.symbolTable.add_info_to_cell(parent_class, "Contains", self.class_methods[parent_class])
         return type_id
     
     def visitDefClass(self, ctx: YAPLParser.DefClassContext):
@@ -33,9 +38,9 @@ class YAPLVisitorImpl(YAPLVisitor):
         type_class_id = ctx.CLASS_N().__str__()
         if ctx.INHERITS():
             inherits = ctx.TYPE(1).getText()
-            self.symbolTable.add_column([class_id, type_class_id, inherits, None, None, "Global", None])
+            self.symbolTable.add_column([class_id, type_class_id, inherits, None, None, None, "Global", None])
         else:
-            self.symbolTable.add_column([class_id, type_class_id, None, None, None, "Global", None])
+            self.symbolTable.add_column([class_id, type_class_id, None, None, None, None, "Global", None])
         
         self.class_methods[class_id] = []
         
@@ -47,32 +52,55 @@ class YAPLVisitorImpl(YAPLVisitor):
         if row:
             return row[1]
         return None
-
+    
     def visitDefFunc(self, ctx: YAPLParser.DefFuncContext):
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
         parent_class = ctx.parentCtx.TYPE(0).getText() if ctx.parentCtx.TYPE(0) else None
-
+        formal_parameters = ctx.formal()
+        if formal_parameters:
+            for formal_param in formal_parameters:
+                param_name = formal_param.ID().getText()
+                param_type = formal_param.TYPE().getText()
+                space = get_space_vars(param_type.lower())
+                self.symbolTable.add_column([param_name, param_type, None, parent_class, None, None, "Parameter", space])
+                if parent_class in self.class_methods:
+                    self.class_methods[parent_class].append(param_name)
+                else:
+                    self.class_methods[parent_class] = [param_name]
+                
         if parent_class in self.class_methods:
             self.class_methods[parent_class].append(id)
+            self.symbolTable.add_column([id, type_id, None, parent_class, None, None, "Local", None])
         else:
             self.class_methods[parent_class] = [id]
-        
+            
         self.symbolTable.add_info_to_cell(parent_class, "Contains", self.class_methods[parent_class])
-        self.symbolTable.add_column([id, type_id, None, None, None, "Local", None])
+        
         return type_id
+    
+    def visitLetId(self, ctx: YAPLParser.LetIdContext):
+        print("aaaaa")
+        return super().visitLetId(ctx)
     
     def visitDefAssign(self, ctx: YAPLParser.DefAssignContext):
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
         space = get_space_vars(type_id.lower())
-        self.symbolTable.add_column([id, type_id, None, None, None, None, space])
+        parent_class = ctx.parentCtx.TYPE(0).getText() if ctx.parentCtx.TYPE(0) else None
+        if parent_class in self.class_methods:
+            self.class_methods[parent_class].append(id)
+            self.symbolTable.add_column([id, type_id, None, parent_class, None, None, "Local", space])
+        else:
+            self.class_methods[parent_class] = [id]
+            
+        self.symbolTable.add_info_to_cell(parent_class, "Contains", self.class_methods[parent_class])
         return type_id
     
     def visitFeature(self, ctx: YAPLParser.FeatureContext):
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
-        self.symbolTable.add_column([id, type_id, None, None, None, None, None])
+        self.symbolTable.add_column([id, type_id, None, None, None, None, None, None])
         return type_id
 
     def visitTimes(self, ctx:YAPLParser.TimesContext):
@@ -80,7 +108,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         right_type = self.visit(ctx.expr(1))
 
         if left_type.lower() == 'int' and right_type.lower() == 'int':
-            return left_type
+            return 'int'
         else:
             raise TypeError("Incongruencia de tipos en multiplicación")
 
@@ -89,7 +117,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         right_type = self.visit(ctx.expr(1))
 
         if left_type.lower() == 'int' and right_type.lower() == 'int':
-            return left_type
+            return 'int'
         else:
             raise TypeError("Incongruencia de tipos en división")
     
@@ -98,7 +126,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         right_type = self.visit(ctx.expr(1))
 
         if left_type.lower() == 'int' and right_type.lower() == 'int':
-            return left_type
+            return 'int'
         else:
             raise TypeError("Incongruencia de tipos en resta")
 
@@ -107,11 +135,11 @@ class YAPLVisitorImpl(YAPLVisitor):
         right_type = self.visit(ctx.expr(1))
 
         if left_type.lower() == 'int' and right_type.lower() == 'int':
-            return left_type
+            return 'int'
         elif left_type.lower() == 'char' and right_type.lower() == 'char':
-            return left_type
+            return 'char'
         elif left_type.lower() == 'string' and right_type.lower() == 'string':
-            return left_type
+            return 'string'
         else:
             raise TypeError("Incongruencia de tipos en suma")
     
@@ -181,26 +209,15 @@ class YAPLVisitorImpl(YAPLVisitor):
     def visitParens(self, ctx: YAPLParser.ParensContext):
         return self.visit(ctx.expr())
     
-    def visitBlock(self, ctx: YAPLParser.BlockContext):
-        result_type = None
-        for expr_ctx in ctx.expr():
-            result_type = self.visit(expr_ctx)
-        return result_type
+    def visitInt(self, ctx: YAPLParser.IntContext):
+        return 'int'
     
-    def visitLetid(self, ctx: YAPLParser.LetidContext):
-        result_type = None
-        for i in range(len(ctx.ID())):
-            id = ctx.ID(i).getText()
-            _type = ctx.TYPE(i).getText()
-            value_type = self.visit(ctx.expr(i)) if ctx.expr(i) else None
-            self.symbolTable.add_column([id, _type, value_type])
-            result_type = value_type
-        return result_type
+    def visitString(self, ctx: YAPLParser.StringContext):
+        return 'string'
     
-    def visitNew(self, ctx: YAPLParser.NewContext):
-        _type = ctx.TYPE().getText()
-        return _type
-    
+    def visitBoolean(self, ctx:YAPLParser.BooleanContext):
+        return 'bool'
+
 def main():
     file_name = './tests/exampleUser.expr'
     input_stream = FileStream(file_name)
@@ -215,7 +232,9 @@ def main():
     except TypeError as e:
         print(e);
     treeF = YV.symbolTable.build_Table()
-    print(treeF)
+    #print(treeF)
+    with open("SymbolTable.txt", 'w', encoding="utf-8") as f:
+        f.write(treeF.get_string())
     
 if __name__ == '__main__':
     main()

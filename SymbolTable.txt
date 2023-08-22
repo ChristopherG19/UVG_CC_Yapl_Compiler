@@ -1,0 +1,18 @@
++------------------------------------------------------------------------------------------------------------------+
+|                                                  Symbols Table                                                   |
++-----------+-----------+----------+-----------+--------------------------------+--------------+-----------+-------+
+|    Name   |    Type   | Inherits |   Parent  |            Contains            | Displacement |   Ambit   | Space |
++-----------+-----------+----------+-----------+--------------------------------+--------------+-----------+-------+
+| Factorial |   class   |   None   |    None   |   ['var', 'n', 'factorial']    |     None     |   Global  |  None |
+|    var    |    Int    |   None   | Factorial |              None              |     None     |   Local   |   8   |
+|     n     |    Int    |   None   | Factorial |              None              |     None     | Parameter |   8   |
+| factorial |    Int    |   None   | Factorial |              None              |     None     |   Local   |  None |
+| Fibonacci |   class   |   None   |    None   |       ['n', 'fibonacci']       |     None     |   Global  |  None |
+|     n     |    Int    |   None   | Fibonacci |              None              |     None     | Parameter |   8   |
+| fibonacci |    Int    |   None   | Fibonacci |              None              |     None     |   Local   |  None |
+|    Main   |   class   |    IO    |    None   | ['n', 'facto', 'fibo', 'main'] |     None     |   Global  |  None |
+|     n     |    Int    |   None   |    Main   |              None              |     None     |   Local   |   8   |
+|   facto   | Factorial |   None   |    Main   |              None              |     None     |   Local   |  None |
+|    fibo   | Fibonacci |   None   |    Main   |              None              |     None     |   Local   |  None |
+|    main   | SELF_TYPE |   None   |    Main   |              None              |     None     |   Local   |  None |
++-----------+-----------+----------+-----------+--------------------------------+--------------+-----------+-------+

@@ -24,7 +24,7 @@ expr:
     |   IF expr THEN expr ELSE expr FI #if
     |   WHILE expr LOOP expr POOL #while
     |   '{' (expr ';')+ '}' #block
-    |   LET ID ':' TYPE (ASSIGNMENT expr)? (',' ID ':' TYPE (ASSIGNMENT expr)? )* IN expr #letid
+    |   LET ID ':' TYPE (ASSIGNMENT expr)? (',' ID ':' TYPE (ASSIGNMENT expr)? )* IN expr #letId
     |   NEW TYPE #new
     |   '~' expr #negative
     |   ISVOID expr #isvoid

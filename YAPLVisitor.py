@@ -84,11 +84,6 @@ class YAPLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by YAPLParser#letid.
-    def visitLetid(self, ctx:YAPLParser.LetidContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by YAPLParser#lessThan.
     def visitLessThan(self, ctx:YAPLParser.LessThanContext):
         return self.visitChildren(ctx)
@@ -156,6 +151,11 @@ class YAPLVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by YAPLParser#boolean.
     def visitBoolean(self, ctx:YAPLParser.BooleanContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by YAPLParser#letId.
+    def visitLetId(self, ctx:YAPLParser.LetIdContext):
         return self.visitChildren(ctx)
 
 
