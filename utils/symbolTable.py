@@ -10,7 +10,7 @@ from prettytable import PrettyTable
 
 class Table():
     def __init__(self):
-        self.headers = ['Name', 'Type', 'Inherits', 'Parent', 'Contains', 'Displacement', 'Ambit', 'Space']
+        self.headers = ['Name', 'Type', 'Inherits', 'Parent', 'Contains', 'Displacement', 'Scope', 'Space']
         self.columns = []
         self.prettyT = PrettyTable()
     
@@ -33,14 +33,14 @@ class Table():
             return True
         return False
         
-    def get_cell(self, id):
+    def get_cell(self, id, addType=None, addParent=None):
         for row in self.columns:
-            if row[0] == id:
+            if row[0] == id and (not addType or row[1] == addType) and (not addParent or row[3] == addParent):
                 return row
         return None
         
-    def containsKey(self, id):
-        if self.get_cell(id) is not None:
+    def containsKey(self, id, addType=None, addParent=None):
+        if self.get_cell(id, addType, addParent) is not None:
             return True
         return False
     

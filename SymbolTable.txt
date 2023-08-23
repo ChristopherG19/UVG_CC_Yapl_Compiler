@@ -3,11 +3,6 @@
 +-----------+-----------+----------+-----------+--------------------------------+--------------+-----------+-------+
 |    Name   |    Type   | Inherits |   Parent  |            Contains            | Displacement |   Ambit   | Space |
 +-----------+-----------+----------+-----------+--------------------------------+--------------+-----------+-------+
-| Factorial |   class   |   None   |    None   | ['var', 'n', 'factorial', 'f'] |     None     |   Global  |  None |
-|    var    |    Int    |   None   | Factorial |              None              |     None     |   Local   |   8   |
-|     n     |    Int    |   None   | Factorial |              None              |     None     | Parameter |   8   |
-| factorial |    Int    |   None   | Factorial |              None              |     None     |   Local   |  None |
-|     f     |    Int    |   None   | Factorial |              None              |     None     |   Local   |   8   |
 | Fibonacci |   class   |   None   |    None   |    ['n', 'fibonacci', 'f']     |     None     |   Global  |  None |
 |     n     |    Int    |   None   | Fibonacci |              None              |     None     | Parameter |   8   |
 | fibonacci |    Int    |   None   | Fibonacci |              None              |     None     |   Local   |  None |

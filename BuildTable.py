@@ -19,6 +19,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.symbolTable = Table()
         self.class_methods = {}
         self.current_class = None
+        self.customErrors = []
         
     # Visit a parse tree produced by YAPLParser#start.
     def visitStart(self, ctx:YAPLParser.StartContext):
@@ -26,10 +27,28 @@ class YAPLVisitorImpl(YAPLVisitor):
         stages = ctx.class_def()
         for stage in stages:
             stage_type = self.visit(stage)
-            if stage_type != "Error":
-                final_type = stage_type
-            else:
+            final_type = stage_type
+          
+        if(self.symbolTable.containsKey('Main')):
+            if(not self.symbolTable.containsKey('main', None, 'Main')):
+                self.customErrors.append("Clase Main no cuenta con método main")
                 return "Error"
+            
+            cell_Main = self.symbolTable.get_cell('Main')
+            if(cell_Main[2] != None):
+                value_inh = self.symbolTable.get_cell(cell_Main[2])
+                
+                if(value_inh != None):
+                    if(value_inh[1] == 'class'):
+                        if(value_inh[0] != 'IO'):
+                            self.customErrors.append("Clase Main no puede heredar de otra clase")
+                            return "Error"
+                    self.customErrors.append(f'Clase Main no puede heredar de este elemento ({value_inh[1]})')
+                    return "Error"            
+        else:
+            self.customErrors.append("No contiene clase Main")
+            return "Error"
+
         return final_type
     
     def visitDefClass(self, ctx: YAPLParser.DefClassContext):
@@ -278,7 +297,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return "Bool"
 
 def main():
-    file_name = './tests/recur.cl'
+    file_name = './tests/test1.cl'
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
@@ -288,7 +307,16 @@ def main():
     
     try:
         res = YV.visit(tree)
-        print("Final", res)
+        if(str(res) == "Error"):
+            print("\n----------------------------------")
+            print("  Errores semánticos encontrados")
+            print("----------------------------------\n")
+            for err in YV.customErrors:
+                print("->",err)
+            print()
+        else:
+            print("\nResultado Lectura: Todo está semánticamente correcto\n")
+            
     except TypeError as e:
         print(e);
     treeF = YV.symbolTable.build_Table()
