@@ -44,7 +44,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         
     # Visit a parse tree produced by YAPLParser#start.
     def visitStart(self, ctx:YAPLParser.StartContext):
-        print("Start")
+        #print("Start")
         final_type = None
         stages = ctx.class_def()
         for stage in stages:
@@ -74,7 +74,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return final_type
     
     def visitDefClass(self, ctx: YAPLParser.DefClassContext):
-        print("defClass")
+        #print("defClass")
         id = ctx.TYPE(0).getText()
         type_id = ctx.CLASS_N().__str__()
         self.current_class = id
@@ -104,7 +104,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return type_class
     
     def visitDefFunc(self, ctx: YAPLParser.DefFuncContext):
-        print("visitDefFunc")
+        #print("visitDefFunc")
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
         parent_class = ctx.parentCtx.TYPE(0).getText() if ctx.parentCtx.TYPE(0) else None
@@ -142,20 +142,33 @@ class YAPLVisitorImpl(YAPLVisitor):
         return type_id_b
     
     def visitDefAssign(self, ctx: YAPLParser.DefAssignContext):
-        print("visitDefAssign")
+        #print("visitDefAssign")
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
         space = get_space_vars(type_id.lower())
         parent_class = ctx.parentCtx.TYPE(0).getText() if ctx.parentCtx.TYPE(0) else None
         self.current_class = parent_class
         
+        if(type_id == "Error"):
+            return "Error"
+        
+        type_id_res = None
         val = None
         if(ctx.expr()):
             result = self.visit(ctx.expr())
+            
             if isinstance(result, tuple):
-                type_id, val = result
+                type_id_res, val = result
             else:
-                type_id = result
+                type_id_res = result
+                
+            if(type_id_res == "Error"):
+                return "Error"
+                
+            if(type_id != type_id_res):
+                if not ((type_id == 'Int' and type_id_res == 'Bool') or (type_id == 'Bool' and type_id_res == 'Int')):
+                    self.customErrors.append(f"Mismatch entre tipos de datos en asignacion ({id}: {type_id} <- {type_id_res})")
+                    return "Error"
             
             if(val == True):
                 val = 1
@@ -177,13 +190,13 @@ class YAPLVisitorImpl(YAPLVisitor):
         return type_id
     
     def visitFormalAssign(self, ctx:YAPLParser.FormalAssignContext):
-        print("visitFormalAssign")
+        #print("visitFormalAssign")
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText() 
         return type_id
         
     def visitAssignment(self, ctx: YAPLParser.AssignmentContext):
-        print("visitAssignment")
+        #print("visitAssignment")
         id = ctx.ID().getText()
         result = self.visit(ctx.expr())
         if isinstance(result, tuple):
@@ -197,7 +210,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return type_id
     
     def visitDispatchExplicit(self, ctx: YAPLParser.DispatchExplicitContext):
-        print("visitDispatchExplicit")
+        #print("visitDispatchExplicit")
         obj_expr_type = self.visit(ctx.expr(0))
         method_name = ctx.ID().getText()
         print(obj_expr_type, method_name)
@@ -206,7 +219,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return self.visitChildren(ctx)
     
     def visitDispatchImplicit(self, ctx: YAPLParser.DispatchImplicitContext):
-        print("visitDispatchImplicit")
+        #print("visitDispatchImplicit")
         method_name = ctx.ID().getText()
         
         if self.current_class:
@@ -226,22 +239,22 @@ class YAPLVisitorImpl(YAPLVisitor):
         return self.visitChildren(ctx)
 
     def visitIf(self, ctx: YAPLParser.IfContext):
-        print("visitIf")
+        #print("visitIf")
         return self.visitChildren(ctx)
     
     def visitWhile(self, ctx: YAPLParser.WhileContext):
-        print("visitWhile")
+        #print("visitWhile")
         return self.visitChildren(ctx)
     
     def visitBlock(self, ctx: YAPLParser.BlockContext):
-        print("visitBlock")
+        #print("visitBlock")
         result_type = None
         for expr_ctx in ctx.expr():
             result_type = self.visit(expr_ctx)
         return result_type
     
     def visitLetId(self, ctx: YAPLParser.LetIdContext):
-        print("visitLetId")
+        #print("visitLetId")
         for i in range(len(ctx.ID())):
             id = ctx.ID(i).getText()
             _type = ctx.TYPE(i).getText()
@@ -258,12 +271,12 @@ class YAPLVisitorImpl(YAPLVisitor):
         return self.visitChildren(ctx)
     
     def visitNew(self, ctx: YAPLParser.NewContext):
-        print("visitNew")
+        #print("visitNew")
         _type = ctx.TYPE().getText()
         return _type
     
     def visitNegative(self, ctx: YAPLParser.NegativeContext):
-        print("visitNegative")
+        #print("visitNegative")
         expr_value = self.visit(ctx.expr())
         expr_val = None
         
@@ -284,7 +297,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return "Error"
     
     def visitTimes(self, ctx: YAPLParser.TimesContext):
-        print("visitTimes")
+        #print("visitTimes")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
         
@@ -318,11 +331,14 @@ class YAPLVisitorImpl(YAPLVisitor):
                     res = self.symbolTable.get_cell(left_val, "Bool")[-1] * self.symbolTable.get_cell(right_val, "Bool")[-1]
                     return "Bool", not (res == 0)
                 return "Int"
+            else:
+                self.customErrors.append(f"Incongruencia de tipos {left_type} y {right_type} en multiplicación")
+                return "Error"
         
         return "Error"
     
     def visitDiv(self, ctx: YAPLParser.DivContext):
-        print("visitDiv")
+        #print("visitDiv")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
         
@@ -341,63 +357,65 @@ class YAPLVisitorImpl(YAPLVisitor):
                     if(right_val != 0):
                         res = left_val / right_val
                         if(res % 1 != 0):
-                            # Agregar error por decimales
+                            self.customErrors.append(f"Tipo float no permitido; Valor de: {left_val}/{right_val} = {res:.2f}")
                             return "Error"
                         return "Int", int(res)
                     else:
-                        # Agregar error de división por 0
-                        return "Error"
+                        return "Int", 0
                 return "Int"
             elif left_type.lower() == "bool" and right_type.lower() == "int":
                 if(left_val != None and right_val != None):
                     if(right_val != 0):
                         res = self.symbolTable.get_cell(left_val, "Bool")[-1] / right_val
                         if(res % 1 != 0):
-                            # Agregar error por decimales
+                            self.customErrors.append(f"Tipo float no permitido; Valor de: {left_val}/{right_val} = {res:.2f}")
                             return "Error"
                         return "Bool", not (int(res) == 0)
                     else:
-                        return "Error"
+                        return "Int", 0
                 return "Int"
             elif left_type.lower() == "int" and right_type.lower() == "bool":
                 if(left_val != None and right_val != None):
                     if(right_val != False):
                         res = left_val / self.symbolTable.get_cell(right_val, "Bool")[-1]
                         if(res % 1 != 0):
-                            # Agregar error por decimales
+                            self.customErrors.append(f"Tipo float no permitido; Valor de: {left_val}/{right_val} = {res:.2f}")
                             return "Error"
                         return "Bool", not (int(res) == 0)
                     else:
-                        return "Error"
+                        return "Int", 0
                 return "Int"
             elif left_type.lower() == "bool" and right_type.lower() == "bool":
                 if(left_val != None and right_val != None):
                     if(right_val != False):
                         res = self.symbolTable.get_cell(left_val, "Bool")[-1] / self.symbolTable.get_cell(right_val, "Bool")[-1]
                         if(res % 1 != 0):
-                            # Agregar error por decimales
+                            self.customErrors.append(f"Tipo float no permitido; Valor de: {left_val}/{right_val} = {res:.2f}")
                             return "Error"
                         return "Bool", not (int(res) == 0)
                     else:
-                        return "Error"
+                        return "Int", 0
                 return "Int"
+            else:
+                self.customErrors.append(f"Incongruencia de tipos {left_type} y {right_type} en división")
+                return "Error"
         else:
             return "Error"
     
     def visitPlus(self, ctx: YAPLParser.PlusContext):
-        print("visitPlus")
+        #print("visitPlus")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
         
         left_val = None
         right_val = None
-
+        
         if isinstance(left_type, tuple):
             left_type, left_val = left_type
 
         if isinstance(right_type, tuple):
             right_type, right_val = right_type
-        
+            
         if left_type is not None and right_type is not None:
             if left_type.lower() == "int" and right_type.lower() == "int":
                 if(left_val != None and right_val != None):
@@ -421,11 +439,14 @@ class YAPLVisitorImpl(YAPLVisitor):
                 return "Int"
             elif left_type.lower() == "string" and right_type.lower() == "string":
                 return "string"
+            else:
+                self.customErrors.append(f"Incongruencia de tipos {left_type} y {right_type} en suma")
+                return "Error"
         
         return "Error"
     
     def visitMinus(self, ctx: YAPLParser.MinusContext):
-        print("visitMinus")
+        #print("visitMinus")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
         
@@ -459,11 +480,14 @@ class YAPLVisitorImpl(YAPLVisitor):
                     res = self.symbolTable.get_cell(left_val, "Bool")[-1] - self.symbolTable.get_cell(right_val, "Bool")[-1]
                     return "Bool", not (res == 0)
                 return "Int"
+            else:
+                self.customErrors.append(f"Incongruencia de tipos {left_type} y {right_type} en resta")
+                return "Error"
         else:
             return "Error"
     
     def visitLessThanOrEqual(self, ctx: YAPLParser.LessThanOrEqualContext):
-        print("visitLessThanOrEqual")
+        #print("visitLessThanOrEqual")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
         
@@ -493,10 +517,11 @@ class YAPLVisitorImpl(YAPLVisitor):
                 return "Bool", self.symbolTable.get_cell(left_val, "Bool")[-1] <= right_val
             return "Bool"
         else:
+            self.customErrors.append(f"Incongruencia de tipos {left_type} y {right_type} en operación <=")
             return "Error"
     
     def visitLessThan(self, ctx: YAPLParser.LessThanContext):
-        print("visitLessThan")
+        #print("visitLessThan")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
 
@@ -526,10 +551,11 @@ class YAPLVisitorImpl(YAPLVisitor):
                 return "Bool", self.symbolTable.get_cell(left_val, "Bool")[-1] < right_val
             return "Bool"
         else:
+            self.customErrors.append(f"Incongruencia de tipos {left_type} y {right_type} en operación <")
             return "Error"
     
     def visitGreaterThan(self, ctx: YAPLParser.GreaterThanContext):
-        print("visitGreaterThan")
+        #print("visitGreaterThan")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
 
@@ -559,10 +585,11 @@ class YAPLVisitorImpl(YAPLVisitor):
                 return "Bool", self.symbolTable.get_cell(left_val, "Bool")[-1] > right_val
             return "Bool"
         else:
+            self.customErrors.append(f"Incongruencia de tipos {left_type} y {right_type} en operación >")
             return "Error"
     
     def visitGreaterThanOrEqual(self, ctx: YAPLParser.GreaterThanOrEqualContext):
-        print("visitGreaterThanOrEqual")
+        #print("visitGreaterThanOrEqual")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
         
@@ -592,10 +619,11 @@ class YAPLVisitorImpl(YAPLVisitor):
                 return "Bool", self.symbolTable.get_cell(left_val, "Bool")[-1] >= right_val
             return "Bool"
         else:
+            self.customErrors.append(f"Incongruencia de tipos {left_type} y {right_type} en operación >=")
             return "Error"
     
     def visitEqual(self, ctx: YAPLParser.EqualContext):
-        print("visitEqual")
+        #print("visitEqual")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
         
@@ -629,10 +657,11 @@ class YAPLVisitorImpl(YAPLVisitor):
                 return "Bool", self.symbolTable.get_cell(left_val, "Bool")[-1] == right_val
             return "Bool"
         else:
+            self.customErrors.append(f"Incongruencia de tipos {left_type} y {right_type} en operación =")
             return "Error"
     
     def visitAnd(self, ctx:YAPLParser.AndContext):
-        print("visitAnd")
+        #print("visitAnd")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
         
@@ -662,10 +691,11 @@ class YAPLVisitorImpl(YAPLVisitor):
                 return "Bool", not(self.symbolTable.get_cell(left_val, "Bool")[-1] == 0) and not(right_val == 0)
             return "Bool"
         else:
+            self.customErrors.append(f"Incongruencia de tipos {left_type} y {right_type} en & lógico")
             return "Error"
     
     def visitOr(self, ctx:YAPLParser.OrContext):
-        print("visitOr")
+        #print("visitOr")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
         
@@ -695,10 +725,11 @@ class YAPLVisitorImpl(YAPLVisitor):
                 return "Bool", not(self.symbolTable.get_cell(left_val, "Bool")[-1] == 0) or not(right_val == 0)
             return "Bool"
         else:
+            self.customErrors.append(f"Incongruencia de tipos {left_type} y {right_type} en | lógico")
             return "Error"
     
     def visitNeg(self, ctx:YAPLParser.NegContext):
-        print("visitNeg")
+        #print("visitNeg")
         expr_type = self.visit(ctx.expr())
         expr_val = None
         
@@ -711,11 +742,11 @@ class YAPLVisitorImpl(YAPLVisitor):
             return "Error"
     
     def visitParens(self, ctx:YAPLParser.ParensContext):
-        print("visitParens")
+        #print("visitParens")
         return self.visit(ctx.expr())
     
     def visitId(self, ctx:YAPLParser.IdContext):
-        print("visitId")
+        #print("visitId")
         id = ctx.ID().getText()
         row = self.symbolTable.get_cell(id)
         if not self.symbolTable.is_attribute_declared(id, self.current_class):
@@ -727,15 +758,15 @@ class YAPLVisitorImpl(YAPLVisitor):
         return "Error"
     
     def visitInt(self, ctx: YAPLParser.IntContext):
-        print("visitInt")
+        #print("visitInt")
         return "Int", int(ctx.INT().getText())
     
     def visitString(self, ctx: YAPLParser.StringContext):
-        print("visitString")
+        #print("visitString")
         return "String", ctx.STRING().getText()
     
     def visitBoolean(self, ctx: YAPLParser.BooleanContext):
-        print("visitBoolean")
+        #print("visitBoolean")
         res = None
         if(ctx.getText().capitalize() == "False"):
             res = False
@@ -754,7 +785,7 @@ def main():
     
     try:
         res = YV.visit(tree)
-        if(str(res) == "Error" or len(YV.customErrors) > 0):
+        if(str(res) == "Error"):
             print("----------------------------------")
             print("  Errores semánticos encontrados")
             print("----------------------------------\n")
