@@ -146,6 +146,13 @@ class YAPLVisitorImpl(YAPLVisitor):
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
         space = get_space_vars(type_id.lower())
+        
+        if (ctx.expr() is not None):
+            type_id_exp = self.visit(ctx.expr())
+            if type_id_exp != type_id:
+                self.customErrors.append(f"{id} definido como {type_id} pero se econtró {self.visit(ctx.expr())}")
+                return "Error"
+        
         parent_class = ctx.parentCtx.TYPE(0).getText() if ctx.parentCtx.TYPE(0) else None
         self.current_class = parent_class
         
@@ -199,11 +206,26 @@ class YAPLVisitorImpl(YAPLVisitor):
         #print("visitAssignment")
         id = ctx.ID().getText()
         result = self.visit(ctx.expr())
+        
+        if (not self.symbolTable.containsKey(id)): 
+            self.customErrors.append(f"{id} no está definido")
+            return "Error"
+        
+        id_type =  self.symbolTable.get_cell(id)[1]
+        if (id_type != type_id ):
+            self.customErrors.append(f"{id} definido como {id_type}, pero se encontró {type_id}")
+            return "Error"
+        
+        if (id not in self.symbolTable.get_cell(self.current_class)[6]):
+            self.customErrors.append(f"{id} no definido dentro de {self.current_class}")
+            return "Error"
+        
         if isinstance(result, tuple):
             type_id, val = result
         else:
             type_id = result
             val = None
+            
         if(self.symbolTable.containsKey(id)):
             if(val != None):
                 self.symbolTable.add_info_to_cell(id, "Value", val)
@@ -240,18 +262,40 @@ class YAPLVisitorImpl(YAPLVisitor):
 
     def visitIf(self, ctx: YAPLParser.IfContext):
         #print("visitIf")
-        return self.visitChildren(ctx)
+        self.visitChildren(ctx)
+        condition_expr = self.visit(ctx.expr(1))
+        if condition_expr != 'Bool':
+        # Handle the type mismatch error here
+            self.customErrors.append("La condición dentro del if debe de retornar bool")
+            return "Error"
+
+        # return self.visitChildren(ctx)s
+        return None
     
     def visitWhile(self, ctx: YAPLParser.WhileContext):
         #print("visitWhile")
-        return self.visitChildren(ctx)
+        self.visitChildren(ctx)
+
+        condition_expr = self.visit(ctx.expr(1))
+        if condition_expr != 'Bool':
+        # Handle the type mismatch error here
+            self.customErrors.append("La condición dentro del if debe de retornar bool")
+            return "Error"
+
+        return None
     
     def visitBlock(self, ctx: YAPLParser.BlockContext):
         #print("visitBlock")
-        result_type = None
-        for expr_ctx in ctx.expr():
-            result_type = self.visit(expr_ctx)
-        return result_type
+        n = ctx.getChildCount()  # Get the number of child expressions in the block
+        last_expr = None
+        
+        for i in range(n):
+            child_expr_ctx = ctx.expr(i)
+            if child_expr_ctx is not None:
+                child_expr = self.visit(child_expr_ctx)
+                last_expr = child_expr  # Keep track of the last expression's value
+        
+        return last_expr  # Return the value of the last expression
     
     def visitLetId(self, ctx: YAPLParser.LetIdContext):
         #print("visitLetId")
