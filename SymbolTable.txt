@@ -23,7 +23,7 @@
 |     b      |    int     |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   8   |   1   |
 |     c      |    bool    |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   1   |   0   |
 |     d      |    bool    |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   1   |   1   |
-|     e      |    bool    |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   8   |   0   |
+|     e      |    bool    |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   8   |   1   |
 |     m      |   String   |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   8   |  None |
 |     o      |    bool    |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   8   |   0   |
 |    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |                ['out_string']               |     None     | Global |  None |  None |

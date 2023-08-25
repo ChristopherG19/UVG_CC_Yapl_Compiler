@@ -264,7 +264,16 @@ class YAPLVisitorImpl(YAPLVisitor):
     
     def visitNegative(self, ctx: YAPLParser.NegativeContext):
         print("visitNegative")
-        return self.visitChildren(ctx)
+        expr_value = self.visit(ctx.expr())
+        expr_val = None
+        
+        if isinstance(expr_value, tuple):
+            expr_value, expr_val = expr_value
+
+        if(expr_value.lower() == "int" and expr_val != None):
+            return "Int", -expr_val
+        else:
+            return "Error"
     
     def visitIsvoid(self, ctx: YAPLParser.IsvoidContext):
         print("visitIsvoid")
@@ -467,19 +476,19 @@ class YAPLVisitorImpl(YAPLVisitor):
         if isinstance(right_type, tuple):
             right_type, right_val = right_type
 
-        if (left_type.lower() == 'int' and right_type.lower() == 'int'):
+        if (left_type.lower() == "int" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
                 return "bool", left_val <= right_val
             return "bool"
-        elif (left_type.lower() == 'bool' and right_type.lower() == 'bool'):
+        elif (left_type.lower() == "bool" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
                 return "bool", self.symbolTable.get_cell(left_val, "Bool")[-1] <= self.symbolTable.get_cell(right_val, "Bool")[-1]
             return "bool"
-        elif (left_type.lower() == 'int' and right_type.lower() == 'bool'):
+        elif (left_type.lower() == "int" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
                 return "bool", left_val <= self.symbolTable.get_cell(right_val, "Bool")[-1]
             return "bool"
-        elif (left_type.lower() == 'bool' and right_type.lower() == 'int'):
+        elif (left_type.lower() == "bool" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
                 return "bool", self.symbolTable.get_cell(left_val, "Bool")[-1] <= right_val
             return "bool"
@@ -500,19 +509,19 @@ class YAPLVisitorImpl(YAPLVisitor):
         if isinstance(right_type, tuple):
             right_type, right_val = right_type
 
-        if (left_type.lower() == 'int' and right_type.lower() == 'int'):
+        if (left_type.lower() == "int" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
                 return "bool", left_val < right_val
             return "bool"
-        elif (left_type.lower() == 'bool' and right_type.lower() == 'bool'):
+        elif (left_type.lower() == "bool" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
                 return "bool", self.symbolTable.get_cell(left_val, "Bool")[-1] < self.symbolTable.get_cell(right_val, "Bool")[-1]
             return "bool"
-        elif (left_type.lower() == 'int' and right_type.lower() == 'bool'):
+        elif (left_type.lower() == "int" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
                 return "bool", left_val < self.symbolTable.get_cell(right_val, "Bool")[-1]
             return "bool"
-        elif (left_type.lower() == 'bool' and right_type.lower() == 'int'):
+        elif (left_type.lower() == "bool" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
                 return "bool", self.symbolTable.get_cell(left_val, "Bool")[-1] < right_val
             return "bool"
@@ -533,19 +542,19 @@ class YAPLVisitorImpl(YAPLVisitor):
         if isinstance(right_type, tuple):
             right_type, right_val = right_type
 
-        if (left_type.lower() == 'int' and right_type.lower() == 'int'):
+        if (left_type.lower() == "int" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
                 return "bool", left_val > right_val
             return "bool"
-        elif (left_type.lower() == 'bool' and right_type.lower() == 'bool'):
+        elif (left_type.lower() == "bool" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
                 return "bool", self.symbolTable.get_cell(left_val, "Bool")[-1] > self.symbolTable.get_cell(right_val, "Bool")[-1]
             return "bool"
-        elif (left_type.lower() == 'int' and right_type.lower() == 'bool'):
+        elif (left_type.lower() == "int" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
                 return "bool", left_val > self.symbolTable.get_cell(right_val, "Bool")[-1]
             return "bool"
-        elif (left_type.lower() == 'bool' and right_type.lower() == 'int'):
+        elif (left_type.lower() == "bool" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
                 return "bool", self.symbolTable.get_cell(left_val, "Bool")[-1] > right_val
             return "bool"
@@ -566,19 +575,19 @@ class YAPLVisitorImpl(YAPLVisitor):
         if isinstance(right_type, tuple):
             right_type, right_val = right_type
 
-        if (left_type.lower() == 'int' and right_type.lower() == 'int'):
+        if (left_type.lower() == "int" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
                 return "bool", left_val >= right_val
             return "bool"
-        elif (left_type.lower() == 'bool' and right_type.lower() == 'bool'):
+        elif (left_type.lower() == "bool" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
                 return "bool", self.symbolTable.get_cell(left_val, "Bool")[-1] >= self.symbolTable.get_cell(right_val, "Bool")[-1]
             return "bool"
-        elif (left_type.lower() == 'int' and right_type.lower() == 'bool'):
+        elif (left_type.lower() == "int" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
                 return "bool", left_val >= self.symbolTable.get_cell(right_val, "Bool")[-1]
             return "bool"
-        elif (left_type.lower() == 'bool' and right_type.lower() == 'int'):
+        elif (left_type.lower() == "bool" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
                 return "bool", self.symbolTable.get_cell(left_val, "Bool")[-1] >= right_val
             return "bool"
@@ -599,23 +608,23 @@ class YAPLVisitorImpl(YAPLVisitor):
         if isinstance(right_type, tuple):
             right_type, right_val = right_type
                     
-        if (left_type.lower() == 'int' and right_type.lower() == 'int'):
+        if (left_type.lower() == "int" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
                 return "bool", left_val == right_val
             return "bool"
-        elif (left_type.lower() == 'bool' and right_type.lower() == 'bool'):
+        elif (left_type.lower() == "bool" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
                 return "bool", left_val == right_val
             return "bool"
-        elif (left_type.lower() == 'string' and right_type.lower() == 'string'):
+        elif (left_type.lower() == "string" and right_type.lower() == "string"):
             if (left_val != None and right_val != None):
                 return "bool", left_val == right_val
             return "bool"
-        elif (left_type.lower() == 'int' and right_type.lower() == 'bool'):
+        elif (left_type.lower() == "int" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
                 return "bool", left_val == self.symbolTable.get_cell(right_val, "Bool")[-1]
             return "bool"
-        elif (left_type.lower() == 'bool' and right_type.lower() == 'int'):
+        elif (left_type.lower() == "bool" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
                 return "bool", self.symbolTable.get_cell(left_val, "Bool")[-1] == right_val
             return "bool"
@@ -636,19 +645,19 @@ class YAPLVisitorImpl(YAPLVisitor):
         if isinstance(right_type, tuple):
             right_type, right_val = right_type
 
-        if (left_type.lower() == 'int' and right_type.lower() == 'int'):
+        if (left_type.lower() == "int" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
                 return "bool", not (left_val == 0) and not(right_val == 0)
             return "bool"
-        elif (left_type.lower() == 'bool' and right_type.lower() == 'bool'):
+        elif (left_type.lower() == "bool" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
                 return "bool", left_val and right_val
             return "bool"
-        elif (left_type.lower() == 'int' and right_type.lower() == 'bool'):
+        elif (left_type.lower() == "int" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
                 return "bool", not(left_val == 0) and not(self.symbolTable.get_cell(right_val, "Bool")[-1] == 0)
             return "bool"
-        elif (left_type.lower() == 'bool' and right_type.lower() == 'int'):
+        elif (left_type.lower() == "bool" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
                 return "bool", not(self.symbolTable.get_cell(left_val, "Bool")[-1] == 0) and not(right_val == 0)
             return "bool"
@@ -669,19 +678,19 @@ class YAPLVisitorImpl(YAPLVisitor):
         if isinstance(right_type, tuple):
             right_type, right_val = right_type
 
-        if (left_type.lower() == 'int' and right_type.lower() == 'int'):
+        if (left_type.lower() == "int" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
                 return "bool", not (left_val == 0) or not(right_val == 0)
             return "bool"
-        elif (left_type.lower() == 'bool' and right_type.lower() == 'bool'):
+        elif (left_type.lower() == "bool" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
                 return "bool", left_val or right_val
             return "bool"
-        elif (left_type.lower() == 'int' and right_type.lower() == 'bool'):
+        elif (left_type.lower() == "int" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
                 return "bool", not(left_val == 0) or not(self.symbolTable.get_cell(right_val, "Bool")[-1] == 0)
             return "bool"
-        elif (left_type.lower() == 'bool' and right_type.lower() == 'int'):
+        elif (left_type.lower() == "bool" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
                 return "bool", not(self.symbolTable.get_cell(left_val, "Bool")[-1] == 0) or not(right_val == 0)
             return "bool"
@@ -690,7 +699,16 @@ class YAPLVisitorImpl(YAPLVisitor):
     
     def visitNeg(self, ctx:YAPLParser.NegContext):
         print("visitNeg")
-        return self.visitChildren(ctx)
+        expr_type = self.visit(ctx.expr())
+        expr_val = None
+        
+        if isinstance(expr_type, tuple):
+            expr_type, expr_val = expr_type
+            
+        if (expr_type.lower() == "bool" and expr_val != None):
+            return "bool", not expr_val
+        else:
+            return "Error"
     
     def visitParens(self, ctx:YAPLParser.ParensContext):
         print("visitParens")
