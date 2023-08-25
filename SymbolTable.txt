@@ -1,15 +1,30 @@
-+------------------------------------------------------------------------------------------------------------------+
-|                                                  Symbols Table                                                   |
-+-----------+-----------+----------+-----------+--------------------------------+--------------+-----------+-------+
-|    Name   |    Type   | Inherits |   Parent  |            Contains            | Displacement |   Ambit   | Space |
-+-----------+-----------+----------+-----------+--------------------------------+--------------+-----------+-------+
-| Fibonacci |   class   |   None   |    None   |    ['n', 'fibonacci', 'f']     |     None     |   Global  |  None |
-|     n     |    Int    |   None   | Fibonacci |              None              |     None     | Parameter |   8   |
-| fibonacci |    Int    |   None   | Fibonacci |              None              |     None     |   Local   |  None |
-|     f     |    Int    |   None   | Fibonacci |              None              |     None     |   Local   |   8   |
-|    Main   |   class   |    IO    |    None   | ['n', 'facto', 'fibo', 'main'] |     None     |   Global  |  None |
-|     n     |    Int    |   None   |    Main   |              None              |     None     |   Local   |   8   |
-|   facto   | Factorial |   None   |    Main   |              None              |     None     |   Local   |  None |
-|    fibo   | Fibonacci |   None   |    Main   |              None              |     None     |   Local   |  None |
-|    main   | SELF_TYPE |   None   |    Main   |              None              |     None     |   Local   |  None |
-+-----------+-----------+----------+-----------+--------------------------------+--------------+-----------+-------+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                                                                          Symbols Table                                                                          |
++------------+------------+-------------+----------+-----------+------------+---------------------------------------------+--------------+--------+-------+-------+
+|    Name    | Type_Value |     Type    | Inherits | Parent_Cl | Parent_Fun |                   Contains                  | Displacement | Scope  | Space | Value |
++------------+------------+-------------+----------+-----------+------------+---------------------------------------------+--------------+--------+-------+-------+
+|    Int     |    Int     | Declaration |   None   |    Int    |    None    |                     None                    |     None     | Global |   8   |   0   |
+|    Bool    |    Bool    | Declaration |   None   |    Bool   |    None    |                     None                    |     None     | Global |   8   | False |
+|   False    |    Bool    | Declaration |   None   |    Bool   |    None    |                     None                    |     None     | Global |   8   |   0   |
+|    True    |    Bool    | Declaration |   None   |    Bool   |    None    |                     None                    |     None     | Global |   8   |   1   |
+|   String   |   String   | Declaration |   None   |   String  |    None    |                     None                    |     None     | Global |   8   |       |
+|   abort    |   Object   | Declaration |   None   |   Object  |    None    |                     None                    |     None     | Global |   8   | Error |
+| type_name  |   String   | Declaration |   None   |   Object  |    None    |                     None                    |     None     | Global |   8   |  None |
+|    copy    | SELF_TYPE  | Declaration |   None   |   Object  |    None    |                     None                    |     None     | Global |   8   |  None |
+| out_string | SELF_TYPE  |    Method   |   None   |     IO    |    main    |                     None                    |     None     | Global |  None |  None |
+|  out_int   | SELF_TYPE  |    Method   |   None   |     IO    |    None    |                     None                    |     None     | Global |  None |  None |
+| in_string  |   String   |    Method   |   None   |     IO    |    None    |                     None                    |     None     | Global |  None |  None |
+|  int_int   |    Int     |    Method   |   None   |     IO    |    None    |                     None                    |     None     | Global |  None |  None |
+|   lenght   |   String   |    Method   |   None   |   String  |    None    |                     None                    |     None     | Global |  None |  None |
+|   concat   |   String   |    Method   |   None   |   String  |    None    |                     None                    |     None     | Global |  None |  None |
+|   substr   |   String   |    Method   |   None   |   String  |    None    |                     None                    |     None     | Global |  None |  None |
+|    Main    |    None    |    Class    |    IO    |    Main   |    None    | ['a', 'b', 'c', 'd', 'e', 'm', 'o', 'main'] |     None     | Global |  None |  None |
+|     a      |    bool    |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   8   |   1   |
+|     b      |    int     |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   8   |   1   |
+|     c      |    bool    |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   1   |   0   |
+|     d      |    bool    |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   1   |   1   |
+|     e      |    bool    |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   8   |   0   |
+|     m      |   String   |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   8   |  None |
+|     o      |    bool    |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   8   |   0   |
+|    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |                ['out_string']               |     None     | Global |  None |  None |
++------------+------------+-------------+----------+-----------+------------+---------------------------------------------+--------------+--------+-------+-------+

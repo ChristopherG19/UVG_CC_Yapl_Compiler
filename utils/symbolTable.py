@@ -10,7 +10,7 @@ from prettytable import PrettyTable
 
 class Table():
     def __init__(self):
-        self.headers = ['Name', 'Type', 'Inherits', 'Parent', 'Contains', 'Displacement', 'Scope', 'Space']
+        self.headers = ['Name', 'Type_Value', 'Type', 'Inherits', 'Parent_Cl', 'Parent_Fun', 'Contains', 'Displacement', 'Scope', 'Space', 'Value']
         self.columns = []
         self.prettyT = PrettyTable()
     
@@ -25,6 +25,12 @@ class Table():
             if all(row[i] == attr for i, attr in enumerate(attributes)):
                 return True
         return False
+    
+    def is_attribute_declared(self, attribute_name, class_name):
+        for row in self.columns:
+            if row[0] == attribute_name and row[3] == class_name and row[6] != "Parameter":
+                return True
+        return False
 
     def add_column(self, column):
         if not self.row_exists_with_attributes(column):
@@ -33,9 +39,10 @@ class Table():
             return True
         return False
         
+    # Revisa id, tipo (method, class, etc.), clase parent
     def get_cell(self, id, addType=None, addParent=None):
         for row in self.columns:
-            if row[0] == id and (not addType or row[1] == addType) and (not addParent or row[3] == addParent):
+            if row[0] == id and (not addType or row[1] == addType) and (not addParent or row[4] == addParent):
                 return row
         return None
         

@@ -1,8 +1,9 @@
-class A {
-  a: Bool;
-  b: String;
-  f: Int;
-  g: Int;
-  c: String <- a + b;
-  d: Int <- f * f;
+class Main inherits IO {
+    a: Int <- 0;
+    c: Int <- 0;
+    d: Int <- a+c;
+    main() : SELF_TYPE {{
+      out_string(f);
+    }
+  };
 };
