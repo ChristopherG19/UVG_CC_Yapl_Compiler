@@ -19,12 +19,12 @@
 |   concat   |   String   |    Method   |   None   |   String  |    None    |                     None                    |     None     | Global |  None |  None |
 |   substr   |   String   |    Method   |   None   |   String  |    None    |                     None                    |     None     | Global |  None |  None |
 |    Main    |    None    |    Class    |    IO    |    Main   |    None    | ['a', 'b', 'c', 'd', 'e', 'm', 'o', 'main'] |     None     | Global |  None |  None |
-|     a      |    bool    |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   8   |   1   |
-|     b      |    int     |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   8   |   1   |
-|     c      |    bool    |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   1   |   0   |
-|     d      |    bool    |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   1   |   1   |
-|     e      |    bool    |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   8   |   1   |
+|     a      |    Int     |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   8   |   -2  |
+|     b      |    Bool    |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   8   |   1   |
+|     c      |    Bool    |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   1   |   0   |
+|     d      |    Bool    |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   1   |   1   |
+|     e      |    Bool    |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   8   |   1   |
 |     m      |   String   |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   8   |  None |
-|     o      |    bool    |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   8   |   0   |
+|     o      |    Int     |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   8   |   4   |
 |    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |                ['out_string']               |     None     | Global |  None |  None |
 +------------+------------+-------------+----------+-----------+------------+---------------------------------------------+--------------+--------+-------+-------+
