@@ -286,8 +286,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         method_name = ctx.ID().getText()
         type_ = ctx.TYPE()
         # print("type", type_)
-
-        # print(obj_expr_type)
+        # print(ctx.getText())
 
         # parametros del actual 
         n = 1
@@ -324,16 +323,22 @@ class YAPLVisitorImpl(YAPLVisitor):
         
 
         c = self.visitChildren(ctx)
+        # print("c ", c, "ob ",  obj_expr_type)
 
-        # print(obj_expr_type)
-        
+        if type(obj_expr_type) == tuple:
+            obj_expr_type = obj_expr_type[0]
+
         valOET = None
         if(type(obj_expr_type) == tuple):
             obj_expr_type, valOET = obj_expr_type 
             
         if self.symbolTable.get_cell(obj_expr_type) is None:
-            self.customErrors.append(f"La clase {obj_expr_type} no existe")
-            return "Error"
+            if obj_expr_type == 'SELF_TYPE':
+                return (obj_expr_type, valOET)
+
+            else:
+                self.customErrors.append(f"La clase {obj_expr_type} no existe")
+                return "Error"
 
         if self.symbolTable.get_cell(obj_expr_type)[6] is not None:
             if (method_name not in self.symbolTable.get_cell(obj_expr_type)[6]):
@@ -356,19 +361,20 @@ class YAPLVisitorImpl(YAPLVisitor):
                     if meth is not None:
                         p_type = meth[1]
 
-                        return p_type
+                        return (p_type, valOET)
 
             else:
                 self.customErrors.append(f"El método {method_name} no pertenece a {obj_expr_type}")
                 return "Error"
 
-        return c
+        return (obj_expr_type, valOET)
     
     def visitDispatchImplicit(self, ctx: YAPLParser.DispatchImplicitContext):
         # print("visitDispatchImplicit")
 
         method_name = ctx.ID().getText()
         # print(method_name)
+        # print(ctx.getText())
 
         # verificar existencia en la tabla
         met = self.symbolTable.get_cell(method_name)
@@ -1022,7 +1028,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return "Self", None
 
 def main():
-    file_name = "./tests/List.cl"
+    file_name = "./tests/cool.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
