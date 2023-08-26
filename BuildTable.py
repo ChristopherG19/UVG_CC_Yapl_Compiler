@@ -92,13 +92,17 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.current_class = id
         if ctx.INHERITS():
             inherits = ctx.TYPE(1).getText()
-            if(inherits.lower() in ["string", "int", "bool"]):
+            
+            if(inherits == "IO"):
+                self.add_special_class_IO()
+                self.symbolTable.add_column([id, None, "Class", inherits, self.current_class, self.current_function, None, None, "Global", None, None])
+            elif(inherits.lower() in ["string", "int", "bool"]):
                 self.customErrors.append(f"Clase Main no puede heredar de esta clase ({inherits})")
                 return "Error"
             else:
-                if(inherits == "IO"):
-                    self.add_special_class_IO()
-                self.symbolTable.add_column([id, None, "Class", inherits, self.current_class, self.current_function, None, None, "Global", None, None])
+                self.customErrors.append(f"Clase Main no puede heredar de esta clase ({inherits})")
+                return "Error"
+    
         else:
             self.symbolTable.add_column([id, None, "Class", "Object", self.current_class, self.current_function, None, None, "Global", None, None])
         
@@ -1028,7 +1032,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return "Self", None
 
 def main():
-    file_name = "./tests/cool.cl"
+    file_name = "./tests/testHerencia.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
