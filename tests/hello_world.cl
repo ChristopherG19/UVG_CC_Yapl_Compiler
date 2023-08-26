@@ -12,3 +12,23 @@ class Main {
       out_string("Hello")
    };
 };
+
+class A {
+
+  a: Int;
+  b: Int;
+
+  fun(x: Int, y: Int): Int {
+    {
+      b <- y;
+      while b > 0 loop 
+        b <- b - 1
+      pool;
+      if b > 10 then 
+        b <- b + 1
+      else b <- 2
+      fi;
+      b;
+    }
+  };
+};

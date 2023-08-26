@@ -18,6 +18,7 @@ class YAPLVisitorImpl(YAPLVisitor):
     def __init__(self):
         self.symbolTable = Table()
         self.class_methods = {}
+        self.methods_parameters = {}
         self.current_class = None
         self.current_function = None
         self.customErrors = []
@@ -125,6 +126,8 @@ class YAPLVisitorImpl(YAPLVisitor):
                     self.class_methods[parent_class].append(param_name)
                 else:
                     self.class_methods[parent_class] = [param_name]
+                    
+                self.visit(formal_param)
         
         if parent_class in self.class_methods:
             self.class_methods[parent_class].append(id)
@@ -139,20 +142,24 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.symbolTable.add_info_to_cell(parent_class, "Contains", self.class_methods[parent_class])
         
         type_id_b = self.visit(ctx.expr())
-        return type_id_b
+        
+        cant_ch = ctx.getChildCount()
+        # last_child = self.visit(ctx.expr()) 
+        
+        type_ = self.visit(ctx.getChild(cant_ch-2))
+        # if type_ is not None:
+
+        if type_ == "Error":
+            return "Error"
+        
+        return type_
     
     def visitDefAssign(self, ctx: YAPLParser.DefAssignContext):
         #print("visitDefAssign")
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
         space = get_space_vars(type_id.lower())
-        
-        if (ctx.expr() is not None):
-            type_id_exp = self.visit(ctx.expr())
-            if type_id_exp != type_id:
-                self.customErrors.append(f"{id} definido como {type_id} pero se econtró {self.visit(ctx.expr())}")
-                return "Error"
-        
+                
         parent_class = ctx.parentCtx.TYPE(0).getText() if ctx.parentCtx.TYPE(0) else None
         self.current_class = parent_class
         
@@ -197,13 +204,12 @@ class YAPLVisitorImpl(YAPLVisitor):
         return type_id
     
     def visitFormalAssign(self, ctx:YAPLParser.FormalAssignContext):
-        #print("visitFormalAssign")
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText() 
         return type_id
         
     def visitAssignment(self, ctx: YAPLParser.AssignmentContext):
-        #print("visitAssignment")
+        # print("visitAssignment")
         id = ctx.ID().getText()
         result = self.visit(ctx.expr())
         
@@ -212,9 +218,7 @@ class YAPLVisitorImpl(YAPLVisitor):
             return "Error"
         
         id_type =  self.symbolTable.get_cell(id)[1]
-        if (id_type != type_id ):
-            self.customErrors.append(f"{id} definido como {id_type}, pero se encontró {type_id}")
-            return "Error"
+        
         
         if (id not in self.symbolTable.get_cell(self.current_class)[6]):
             self.customErrors.append(f"{id} no definido dentro de {self.current_class}")
@@ -225,7 +229,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         else:
             type_id = result
             val = None
-            
+         
         if(self.symbolTable.containsKey(id)):
             if(val != None):
                 self.symbolTable.add_info_to_cell(id, "Value", val)
@@ -235,35 +239,17 @@ class YAPLVisitorImpl(YAPLVisitor):
         #print("visitDispatchExplicit")
         obj_expr_type = self.visit(ctx.expr(0))
         method_name = ctx.ID().getText()
-        print(obj_expr_type, method_name)
-        print("Ex-------------\n")
 
         return self.visitChildren(ctx)
     
     def visitDispatchImplicit(self, ctx: YAPLParser.DispatchImplicitContext):
         #print("visitDispatchImplicit")
-        method_name = ctx.ID().getText()
-        
-        if self.current_class:
-            row = self.symbolTable.get_cell(self.current_class)
-            if row:
-                contains = row[self.symbolTable.headers.index("Contains")]
-                add_to_parent = self.symbolTable.get_cell(method_name)
-                if add_to_parent:
-                    self.symbolTable.add_info_to_cell(self.current_function, "Contains", [method_name])
-                    self.symbolTable.add_info_to_cell(method_name, "Parent_Fun", self.current_function)
-                
-                if method_name in contains:
-                    method_row = self.symbolTable.get_cell(method_name, addType="Method", addParent=self.current_class)
-                    if method_row:
-                        print("aaaaaaa", method_row[1])
-                    
         return self.visitChildren(ctx)
 
     def visitIf(self, ctx: YAPLParser.IfContext):
         #print("visitIf")
         self.visitChildren(ctx)
-        condition_expr = self.visit(ctx.expr(1))
+        condition_expr = self.visit(ctx.expr(0))
         if condition_expr != 'Bool':
         # Handle the type mismatch error here
             self.customErrors.append("La condición dentro del if debe de retornar bool")
@@ -276,10 +262,20 @@ class YAPLVisitorImpl(YAPLVisitor):
         #print("visitWhile")
         self.visitChildren(ctx)
 
-        condition_expr = self.visit(ctx.expr(1))
+        condition_expr = self.visit(ctx.expr(0))
+
+        if (type(condition_expr) == tuple):
+            if condition_expr[0] == 'Int':
+                self.customErrors.append(f"La condición dentro del while debe de retornar bool pero se encontró {condition_expr[0]}")
+                return "Error"
+
+            if condition_expr[0] != 'Bool':
+                self.customErrors.append(f"La condición dentro del while debe de retornar bool pero se encontró {condition_expr[0]}")
+                return "Error"
+
         if condition_expr != 'Bool':
         # Handle the type mismatch error here
-            self.customErrors.append("La condición dentro del if debe de retornar bool")
+            self.customErrors.append(f"La condición dentro del while debe de retornar bool pero se encontró {condition_expr}")
             return "Error"
 
         return None
@@ -305,9 +301,9 @@ class YAPLVisitorImpl(YAPLVisitor):
             space = get_space_vars(_type.lower())
             if self.current_class in self.class_methods:
                 self.class_methods[self.current_class].append(id)
-                self.symbolTable.add_column([id, _type, None, "Variable", None, self.current_class, self.current_function, None, "Local", space, None])
+                self.symbolTable.add_column([id, _type, "Variable", None, None, self.current_class, self.current_function, None, "Local", space, None])
             else:
-                self.symbolTable.add_column([id, _type, None, "Variable", None, self.current_class, self.current_function, None, "Global", space, None])
+                self.symbolTable.add_column([id, _type, "Variable", None, None, self.current_class, self.current_function, None, "Global", space, None])
                 self.class_methods[self.current_class] = [id]
             
             self.symbolTable.add_info_to_cell(self.current_class, "Contains", self.class_methods[self.current_class])
@@ -333,7 +329,6 @@ class YAPLVisitorImpl(YAPLVisitor):
             return "Error"
     
     def visitIsvoid(self, ctx: YAPLParser.IsvoidContext):
-        print("visitIsvoid")
         expr_type = self.visit(ctx.expr())
 
         if expr_type:
@@ -354,6 +349,9 @@ class YAPLVisitorImpl(YAPLVisitor):
         if isinstance(right_type, tuple):
             right_type, right_val = right_type
             
+        if(left_type == "Error" or right_type == "Error"):
+            return "Error"
+        
         if left_type is not None and right_type is not None:
             if left_type.lower() == "int" and right_type.lower() == "int":
                 if(left_val != None and right_val != None):
@@ -394,6 +392,9 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         if isinstance(right_type, tuple):
             right_type, right_val = right_type
+            
+        if(left_type == "Error" or right_type == "Error"):
+            return "Error"
         
         if left_type is not None and right_type is not None:
             if left_type.lower() == "int" and right_type.lower() == "int":
@@ -460,6 +461,9 @@ class YAPLVisitorImpl(YAPLVisitor):
         if isinstance(right_type, tuple):
             right_type, right_val = right_type
             
+        if(left_type == "Error" or right_type == "Error"):
+            return "Error"
+            
         if left_type is not None and right_type is not None:
             if left_type.lower() == "int" and right_type.lower() == "int":
                 if(left_val != None and right_val != None):
@@ -502,6 +506,9 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         if isinstance(right_type, tuple):
             right_type, right_val = right_type
+            
+        if(left_type == "Error" or right_type == "Error"):
+            return "Error"
 
         if left_type is not None and right_type is not None:
             if left_type.lower() == "int" and right_type.lower() == "int":
@@ -543,6 +550,9 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         if isinstance(right_type, tuple):
             right_type, right_val = right_type
+            
+        if(left_type == "Error" or right_type == "Error"):
+            return "Error"
 
         if (left_type.lower() == "int" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
@@ -568,7 +578,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         #print("visitLessThan")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
-
+        
         left_val = None
         right_val = None
 
@@ -577,6 +587,9 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         if isinstance(right_type, tuple):
             right_type, right_val = right_type
+            
+        if(left_type == "Error" or right_type == "Error"):
+            return "Error"
 
         if (left_type.lower() == "int" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
@@ -611,6 +624,9 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         if isinstance(right_type, tuple):
             right_type, right_val = right_type
+            
+        if(left_type == "Error" or right_type == "Error"):
+            return "Error"
 
         if (left_type.lower() == "int" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
@@ -645,6 +661,9 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         if isinstance(right_type, tuple):
             right_type, right_val = right_type
+            
+        if(left_type == "Error" or right_type == "Error"):
+            return "Error"
 
         if (left_type.lower() == "int" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
@@ -679,6 +698,9 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         if isinstance(right_type, tuple):
             right_type, right_val = right_type
+            
+        if(left_type == "Error" or right_type == "Error"):
+            return "Error"
                     
         if (left_type.lower() == "int" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
@@ -717,6 +739,9 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         if isinstance(right_type, tuple):
             right_type, right_val = right_type
+            
+        if(left_type == "Error" or right_type == "Error"):
+            return "Error"
 
         if (left_type.lower() == "int" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
@@ -751,6 +776,9 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         if isinstance(right_type, tuple):
             right_type, right_val = right_type
+            
+        if(left_type == "Error" or right_type == "Error"):
+            return "Error"
 
         if (left_type.lower() == "int" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
@@ -793,10 +821,11 @@ class YAPLVisitorImpl(YAPLVisitor):
         #print("visitId")
         id = ctx.ID().getText()
         row = self.symbolTable.get_cell(id)
-        if not self.symbolTable.is_attribute_declared(id, self.current_class):
+        if id not in self.symbolTable.get_cell(self.current_class)[6]:
             clase = self.current_class
-            self.customErrors.append(f"El atributo '{id}' no ha sido declarado en la clase '{clase}'")
-            return "Error"
+            if(id != 'self'):
+                self.customErrors.append(f"El atributo '{id}' no ha sido declarado en la clase '{clase}'")
+                return "Error"
         if row:
             return row[1]
         return "Error"
@@ -829,7 +858,7 @@ def main():
     
     try:
         res = YV.visit(tree)
-        if(str(res) == "Error"):
+        if(str(res) == "Error" or len(YV.customErrors) > 0):
             print("----------------------------------")
             print("  Errores semánticos encontrados")
             print("----------------------------------\n")

@@ -77,12 +77,6 @@ def create_g4():
         parser._listeners = [error_listener]
         tree = parser.prog()
         
-                    
-        YV = YAPLVisitorImpl()
-        treeF = YV.symbolTable.build_Table()
-        with open("SymbolTable.txt", 'w', encoding="utf-8") as f:
-            f.write(treeF.get_string())
-        
         if not error_listener.has_error():
             Terminal.delete(1.0, tk.END)
             Terminal.insert(tk.END, "\n\nNo se encontraron errores, árbol disponible en consola y GUI desplegada")
@@ -91,6 +85,7 @@ def create_g4():
             # print(beautify_lisp_string(lisp_tree_str))
             show_tree()
             try:
+                YV = YAPLVisitorImpl()
                 res = YV.visit(tree)
                 Terminal.delete(1.0, tk.END)
                 if(str(res) == "Error"):
@@ -100,6 +95,9 @@ def create_g4():
                     print()
                 else:
                     Terminal.insert(tk.END, "\nResultado Lectura: Todo está semánticamente correcto\n")
+                treeF = YV.symbolTable.build_Table()
+                with open("SymbolTable.txt", 'w', encoding="utf-8") as f:
+                    f.write(treeF.get_string())
             except TypeError as e:
                 print(e);
 
