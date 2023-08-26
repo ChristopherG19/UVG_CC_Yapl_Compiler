@@ -12,7 +12,7 @@ from YAPLParser import YAPLParser
 from YAPLVisitor import YAPLVisitor
 from utils.node import *
 from utils.symbolTable import *
-from utils.utils import get_space_vars
+from utils.utils import clean_errors, get_space_vars
 
 class YAPLVisitorImpl(YAPLVisitor):
     def __init__(self):
@@ -192,10 +192,16 @@ class YAPLVisitorImpl(YAPLVisitor):
                     self.customErrors.append(f"Mismatch entre tipos de datos en asignacion ({id}: {type_id} <- {type_id_res})")
                     return "Error"
             
-            if(val == True):
-                val = 1
-            elif(val == False):
-                val = 0
+            if(type_id == 'Int'):
+                if(val == True):
+                    val = 1
+                elif(val == False):
+                    val = 0
+            elif(type_id == 'Bool'):
+                if(val == 1):
+                    val = True
+                elif(val == 0):
+                    val = False
             
         else:
             if (self.symbolTable.get_cell(type_id, "Declaration") != None):
@@ -206,8 +212,10 @@ class YAPLVisitorImpl(YAPLVisitor):
                 self.customErrors.append(f"El identificador '{id}' ya fue definido en este ámbito")
                 return "Error"
             else:
+                if(val == None):
+                    val = self.symbolTable.get_cell(type_id)[-1]
                 self.class_methods[parent_class].append(id)
-                self.symbolTable.add_column([id, type_id, "Instance", None, parent_class, self.current_function, None, None, "Local", space, val])
+                self.symbolTable.add_column([id, type_id, "Instance", None, parent_class, self.current_function, None, None, "Global", space, val])
         else:
             self.class_methods[parent_class] = [id]
             
@@ -862,8 +870,7 @@ def main():
             print("----------------------------------")
             print("  Errores semánticos encontrados")
             print("----------------------------------\n")
-            for err in YV.customErrors:
-                print("->",err)
+            clean_errors(YV.customErrors)
             print()
         else:
             print("\nResultado Lectura: Todo está semánticamente correcto\n")
