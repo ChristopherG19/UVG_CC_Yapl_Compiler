@@ -95,13 +95,16 @@ class YAPLVisitorImpl(YAPLVisitor):
             
             if(inherits == "IO"):
                 self.add_special_class_IO()
-                self.symbolTable.add_column([id, None, "Class", inherits, self.current_class, self.current_function, None, None, "Global", None, None])
-            elif(inherits.lower() in ["string", "int", "bool"]):
+            
+            if(inherits.lower() in ["string", "int", "bool"]):
                 self.customErrors.append(f"Clase Main no puede heredar de esta clase ({inherits})")
+                return "Error"
+            elif (not self.symbolTable.containsKey(inherits)):
+                self.customErrors.append(f"Clase Main no puede heredar de esta clase ({inherits}) porque no está definida")
                 return "Error"
             else:
-                self.customErrors.append(f"Clase Main no puede heredar de esta clase ({inherits})")
-                return "Error"
+                self.symbolTable.add_column([id, None, "Class", inherits, self.current_class, self.current_function, None, None, "Global", None, None])
+    
     
         else:
             self.symbolTable.add_column([id, None, "Class", "Object", self.current_class, self.current_function, None, None, "Global", None, None])
