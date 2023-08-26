@@ -1,23 +1,26 @@
-class Main {
+class Silly {
+  copy() : SELF_TYPE { self };
+};
 
-  a: Int;
-  b: Int;
+class Sally inherits Silly { };
 
-  main(): SELF_TYPE { self };
-
-  fun(x: Int, y: Int): SELF_TYPE {
-    {
-      b <- y;
-      while b + 0 loop 
-        b <- b - 1
-      pool;
-      if b *  10 then 
-        b <- b + 1
-      else b <- 2
-      fi;
-      self;
-    }
+class A {
+  metodo(xx: Int, yy: String) : Int {
+    0
   };
 };
 
-
+class B inherits A{
+  metodo2 (): Int {
+    metodo(1, "Hola")
+  };
+}; 
+  
+class Main {
+  x : String <- "10";
+  y : Int <- 9;
+  a : A <- (new A);
+  b : Int <- a.metodo(y, x);
+  x : Sally <- (new Sally).copy();
+  main() : Sally { self };
+};
