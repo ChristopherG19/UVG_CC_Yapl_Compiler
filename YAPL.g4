@@ -45,6 +45,7 @@ expr:
     |   INT #int
     |   STRING #string
     |   bool=(TRUE | FALSE) #boolean
+    |   SELF #self
     ;
 
 /* Comments */
@@ -87,6 +88,8 @@ TRUE:
     [tT][rR][uU][eE];
 FALSE:
     [fF][aA][lL][sS][eE];
+SELF:
+    [sS][eE][lL][fF];
 
 /* Data Types */
 STRING:

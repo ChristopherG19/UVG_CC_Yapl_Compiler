@@ -76,7 +76,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return final_type
     
     def visitDefClass(self, ctx: YAPLParser.DefClassContext):
-        #print("defClass")
+        print("defClass")
         id = ctx.TYPE(0).getText()
         type_id = ctx.CLASS_N().__str__()
         self.current_class = id
@@ -106,6 +106,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return type_class
     
     def visitDefFunc(self, ctx: YAPLParser.DefFuncContext):
+        print("visitDefFunc")
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
         parent_class = ctx.parentCtx.TYPE(0).getText() if ctx.parentCtx.TYPE(0) else None
@@ -151,16 +152,41 @@ class YAPLVisitorImpl(YAPLVisitor):
         
         type_id_b = self.visit(ctx.expr())
         
-        cant_ch = ctx.getChildCount()
-        # last_child = self.visit(ctx.expr()) 
+        # cant_ch = ctx.getChildCount()
+        # # last_child = self.visit(ctx.expr()) 
         
-        type_ = self.visit(ctx.getChild(cant_ch-2))
+        # type_ = self.visit(ctx.getChild(cant_ch-2))
         # if type_ is not None:
 
-        if type_ == "Error":
+        if type_id_b == "Error":
             return "Error"
         
-        return type_
+        if (type(type_id_b) == tuple):
+            if type_id_b[0] == 'Self':
+                return type_id_b
+
+            if type_id_b[0] != type_id:
+                self.customErrors.append(f"Función definida como {type_id} pero se encontró {type_id_b[0]}")
+                return "Error"
+            
+            return type_id_b
+
+        
+        if type_id_b is None:
+        
+            if type_id == "SELF_TYPE":
+                return "SELF_TYPE"
+            
+            else:
+                self.customErrors.append(f"Función definida como {type_id} pero se encontró None")
+                return "Error"
+        
+        if type_id_b != type_id:
+
+            self.customErrors.append(f"Función definida como {type_id} pero se encontró {type_id_b}")
+            return "Error"
+
+        return type_id_b
     
     def visitDefAssign(self, ctx: YAPLParser.DefAssignContext):
         #print("visitDefAssign")
@@ -186,6 +212,9 @@ class YAPLVisitorImpl(YAPLVisitor):
                 
             if(type_id_res == "Error"):
                 return "Error"
+            
+            if(type_id_res == "SELF_TYPE"):
+                return type_id
                 
             if(type_id != type_id_res):
                 if not ((type_id == 'Int' and type_id_res == 'Bool') or (type_id == 'Bool' and type_id_res == 'Int')):
@@ -245,15 +274,123 @@ class YAPLVisitorImpl(YAPLVisitor):
         return type_id
     
     def visitDispatchExplicit(self, ctx: YAPLParser.DispatchExplicitContext):
-        #print("visitDispatchExplicit")
+        print("visitDispatchExplicit")
         obj_expr_type = self.visit(ctx.expr(0))
         method_name = ctx.ID().getText()
+        type_ = ctx.TYPE()
+        print("type", type_)
 
-        return self.visitChildren(ctx)
+        print(obj_expr_type)
+
+        # parametros del actual 
+        n = 1
+        params_acc = []
+        while(ctx.expr(n) is not None):
+            params_acc.append(ctx.expr(n))
+            n += 1
+
+        # parámetros que debería tener
+        params_def = self.symbolTable.get_parameters(method_name)
+
+        # verificar cantidad de parámetros
+        if (len(params_def) != len(params_acc)):
+            self.customErrors.append(f"{method_name} requiere {len(params_def)} pero se le dieron {len(params_acc)}")
+            return "Error"
+
+        
+        # verificar tipo de parámetros 
+        for par in range(len(params_def)):
+            vis = self.visit(params_acc[par])
+
+            if (type(vis) == tuple):
+                print("tupla ex")
+                if (vis[0] != params_def[par][1]):
+                    self.customErrors.append(f"En {method_name} el parámetro {params_def[par][0]} require ser {params_def[par][1]} pero se encontró {vis[0]}")
+                    print("print")
+                    return "Error"
+
+            else:
+                if (vis != params_def[par][1]):
+                    self.customErrors.append(f"En {method_name} el parámetro {params_def[par][0]} require ser {params_def[par][1]} pero se encontró {vis}")
+                    return "Error"
+            
+        
+
+        c = self.visitChildren(ctx)
+
+        print(obj_expr_type)
+
+        if self.symbolTable.get_cell(obj_expr_type) is None:
+            self.customErrors.append(f"La clase {obj_expr_type}")
+            return "Error"
+
+        if self.symbolTable.get_cell(obj_expr_type)[6] is not None:
+            if (method_name not in self.symbolTable.get_cell(obj_expr_type)[6]):
+                self.customErrors.append(f"El método {method_name} no pertenece a {obj_expr_type}")
+                print("error cant param")
+                return "Error"
+            
+            meth = self.symbolTable.get_cell(method_name, addParent=obj_expr_type)
+            return meth[1]
+        
+        else:
+            if self.symbolTable.get_cell(obj_expr_type) is not None:
+
+                parent = self.symbolTable.get_cell(obj_expr_type)[3]
+                if (method_name not in self.symbolTable.get_cell(parent)[6]):
+                    self.customErrors.append(f"El método {method_name} no pertenece a {obj_expr_type}")
+                    return "Error"  
+
+                meth = self.symbolTable.get_cell(method_name, addParent=parent)
+                if meth is not None:
+                    p_type = meth[1]
+
+                    return p_type
+
+            else:
+                self.customErrors.append(f"El método {method_name} no pertenece a {obj_expr_type}")
+                return "Error"
+
+        return c
     
     def visitDispatchImplicit(self, ctx: YAPLParser.DispatchImplicitContext):
-        #print("visitDispatchImplicit")
-        return self.visitChildren(ctx)
+        print("visitDispatchImplicit")
+
+        method_name = ctx.ID().getText()
+
+        # parametros del actual 
+        n = 0
+        params_acc = []
+        while(ctx.expr(n) is not None):
+            params_acc.append(ctx.expr(n))
+            n += 1
+
+        # parámetros que debería tener
+        params_def = self.symbolTable.get_parameters(method_name)
+
+        # verificar tipo de parámetros 
+        for par in range(len(params_def)):
+            vis = self.visit(params_acc[par])
+
+            if (type(vis) == tuple):
+                if (vis[0] != params_def[par][1]):
+                    self.customErrors.append(f"En {method_name} el parámetro {params_def[par][0]} require ser {params_def[par][1]} pero se encontró {vis[0]}")
+                    return "Error"
+
+            else:
+                if (vis != params_def[par][1]):
+                    self.customErrors.append(f"En {method_name} el parámetro {params_def[par][0]} require ser {params_def[par][1]} pero se encontró {vis}")
+                    return "Error"
+
+        c = self.visitChildren(ctx)
+
+        x = self.symbolTable.get_method2(method_name, self.current_class)
+
+        self.visitChildren(ctx)
+            
+        return x[1]
+
+        
 
     def visitIf(self, ctx: YAPLParser.IfContext):
         #print("visitIf")
@@ -298,7 +435,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return last_expr  # Return the value of the last expression
     
     def visitLetId(self, ctx: YAPLParser.LetIdContext):
-        #print("visitLetId")
+        print("visitLetId")
         for i in range(len(ctx.ID())):
             id = ctx.ID(i).getText()
             _type = ctx.TYPE(i).getText()
@@ -854,9 +991,12 @@ class YAPLVisitorImpl(YAPLVisitor):
         elif(ctx.getText().capitalize() == "True"):
             res = True
         return "Bool", res
+    
+    def visitSelf(self, ctx: YAPLParser.SelfContext):
+        return "Self", None
 
 def main():
-    file_name = "./tests/hello_world.cl"
+    file_name = "./tests/exampleUser.expr"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)

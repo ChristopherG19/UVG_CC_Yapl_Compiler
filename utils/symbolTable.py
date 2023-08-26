@@ -51,6 +51,46 @@ class Table():
             return True
         return False
     
+    def get_parameters(self, par_fun):
+        params = []
+        for row in self.columns:
+            if row[2] == "Param" and row[5] == par_fun:
+                params.append(row)
+        return params
+    
+    def get_method(self, name, parent):
+        for row in self.columns:
+            if row[0] == name and row[2] == "Method" and row[4] == parent :
+                return row
+        return None 
+    
+    def get_method2(self, name, parent):
+        ret = None
+        for row in self.columns:
+            if row[0] == name and row[2] == "Method" and row[4] == parent :
+                ret = row
+
+        if ret is not None:
+            return ret 
+        
+        else:
+            #probar con el padre
+            if (self.get_cell(parent))[3] is not None:
+                parent = self.get_cell(parent)[3]
+
+                for row in self.columns:
+                    if row[0] == name and row[2] == "Method" and row[4] == parent :
+                        ret = row
+
+                if ret is not None:
+                    return ret 
+
+            # else, ya no se puede hacer nada
+
+        return ret
+
+
+        
     def add_info_to_cell(self, name, column_name, value):
         for row in self.columns:
             if row[0] == name:

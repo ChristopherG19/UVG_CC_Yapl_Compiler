@@ -164,6 +164,11 @@ class YAPLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by YAPLParser#self.
+    def visitSelf(self, ctx:YAPLParser.SelfContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by YAPLParser#dispatchExplicit.
     def visitDispatchExplicit(self, ctx:YAPLParser.DispatchExplicitContext):
         return self.visitChildren(ctx)
