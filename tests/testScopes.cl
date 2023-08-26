@@ -5,11 +5,10 @@ class Main inherits IO {
     {
       let x : Int in 0;
       x <- x + 5;
-      return (x + 5);
     }
   };
   
-   main(): SELF_TYPE {
-	out_string("Hello, World.\n")
-   };
+  main(): SELF_TYPE {
+	  out_string("Hello, World.\n")
+  };
 };

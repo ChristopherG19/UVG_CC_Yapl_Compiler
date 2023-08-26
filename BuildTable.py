@@ -38,21 +38,21 @@ class YAPLVisitorImpl(YAPLVisitor):
         
     def add_special_class_IO(self):
         self.symbolTable.add_column(["out_string", "SELF_TYPE", "Method", None, "IO", None, ['x'], None, "Global", None, None])
-        self.symbolTable.add_column(["x", "String", "Param", None, "IO", "out_string", None, None, "Local", None, None])
+        self.symbolTable.add_column(["xPar", "String", "Param", None, "IO", "out_string", None, None, "Local", None, None])
         
         self.symbolTable.add_column(["out_int", "SELF_TYPE", "Method", None, "IO", None, ['x'], None, "Global", None, None])
-        self.symbolTable.add_column(["x", "Int", "Param", None, "IO", "out_int", None, None, "Local", None, None])
+        self.symbolTable.add_column(["xPar", "Int", "Param", None, "IO", "out_int", None, None, "Local", None, None])
         
         self.symbolTable.add_column(["in_string", "String", "Method", None, "IO", None, None, None, "Global", None, None])
         self.symbolTable.add_column(["int_int", "Int", "Method", None, "IO", None, None, None, "Global", None, None])
         
         self.symbolTable.add_column(["lenght", "String", "Method", None, "String", None, None, None, "Global", None, None])
         self.symbolTable.add_column(["concat", "String", "Method", None, "String", None, ['s'], None, "Global", None, None])
-        self.symbolTable.add_column(["s", "String", "Param", None, "String", "concat", None, None, "Local", None, None])
+        self.symbolTable.add_column(["sPar", "String", "Param", None, "String", "concat", None, None, "Local", None, None])
         
         self.symbolTable.add_column(["substr", "String", "Method", None, "String", None, ['i', 'l'], None, "Global", None, None])
-        self.symbolTable.add_column(["i", "Int", "Param", None, "String", "substr", None, None, "Local", None, None])
-        self.symbolTable.add_column(["l", "Int", "Param", None, "String", "substr", None, None, "Local", None, None])
+        self.symbolTable.add_column(["iPar", "Int", "Param", None, "String", "substr", None, None, "Local", None, None])
+        self.symbolTable.add_column(["lPar", "Int", "Param", None, "String", "substr", None, None, "Local", None, None])
         
     # Visit a parse tree produced by YAPLParser#start.
     def visitStart(self, ctx:YAPLParser.StartContext):
