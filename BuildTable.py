@@ -281,12 +281,12 @@ class YAPLVisitorImpl(YAPLVisitor):
         return type_id
     
     def visitDispatchExplicit(self, ctx: YAPLParser.DispatchExplicitContext):
-        #print("visitDispatchExplicit")
+        print("visitDispatchExplicit")
         obj_expr_type = self.visit(ctx.expr(0))
         method_name = ctx.ID().getText()
         type_ = ctx.TYPE()
-        # print("type", type_)
-        # print(ctx.getText())
+        print("type", type_)
+        print(ctx.getText())
 
         # parametros del actual 
         n = 1
@@ -323,7 +323,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         
 
         c = self.visitChildren(ctx)
-        # print("c ", c, "ob ",  obj_expr_type)
+        print("c ", c, "ob ",  obj_expr_type)
 
         if type(obj_expr_type) == tuple:
             obj_expr_type = obj_expr_type[0]
@@ -331,7 +331,10 @@ class YAPLVisitorImpl(YAPLVisitor):
         valOET = None
         if(type(obj_expr_type) == tuple):
             obj_expr_type, valOET = obj_expr_type 
-            
+
+        if obj_expr_type == 'Error':
+            return 'Error'
+
         if self.symbolTable.get_cell(obj_expr_type) is None:
             if obj_expr_type == 'SELF_TYPE':
                 return (obj_expr_type, valOET)
@@ -343,7 +346,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         if self.symbolTable.get_cell(obj_expr_type)[6] is not None:
             if (method_name not in self.symbolTable.get_cell(obj_expr_type)[6]):
                 self.customErrors.append(f"El método {method_name} no pertenece a {obj_expr_type}")
-                # print("error cant param")
+                print("error cant param")
                 return "Error"
             
             meth = self.symbolTable.get_cell(method_name, addParent=obj_expr_type)
