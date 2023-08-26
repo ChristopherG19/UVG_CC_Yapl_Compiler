@@ -88,7 +88,7 @@ def create_g4():
                 YV = YAPLVisitorImpl()
                 res = YV.visit(tree)
                 Terminal.delete(1.0, tk.END)
-                if(str(res) == "Error"):
+                if(str(res) == "Error" or len (YV.customErrors) > 0):
                     Terminal.insert(tk.END, "\nResultado Lectura: Errores semánticos encontrados\n")
                     for err in YV.customErrors:
                         Terminal.insert(tk.END, f"-> {err}\n")

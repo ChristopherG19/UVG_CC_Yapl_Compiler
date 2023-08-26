@@ -447,7 +447,7 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         val = None
         condition_expr = self.visit(ctx.expr(0))
-        
+
         if type(condition_expr) == tuple:
             condition_expr, val = condition_expr
             
@@ -1035,7 +1035,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return "Self", None
 
 def main():
-    file_name = "./tests/testHerencia.cl"
+    file_name = "./tests/exampleUser.expr"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
