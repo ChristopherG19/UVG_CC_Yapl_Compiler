@@ -8,6 +8,7 @@
 |   False    |    Bool    | Declaration |   None   |    Bool   |    None    |              None              |     None     | Global |   1   |   0   |
 |    True    |    Bool    | Declaration |   None   |    Bool   |    None    |              None              |     None     | Global |   1   |   1   |
 |    Void    |    Void    | Declaration |   None   |    Void   |    None    |              None              |     None     | Global |   8   |  None |
+|   Object   |   Object   |    Class    |   None   |   Object  |    None    |              None              |     None     | Global |  None |  None |
 |   String   |   String   | Declaration |   None   |   String  |    None    |              None              |     None     | Global |   8   |       |
 |   abort    |   Object   | Declaration |   None   |   Object  |    None    |              None              |     None     | Global |  None | Error |
 | type_name  |   String   | Declaration |   None   |   Object  |    None    |              None              |     None     | Global |  None |  None |
@@ -21,13 +22,18 @@
 |     n      |    Int     |    Param    |   None   | Fibonacci | fibonacci  |              None              |     None     | Local  |   8   |  None |
 | fibonacci  |    Int     |    Method   |   None   | Fibonacci |    None    |              None              |     None     | Global |  None |  None |
 |     f      |    Int     |   Variable  |   None   |    None   | Fibonacci  |           fibonacci            |     None     | Local  |   8   |  None |
-| out_string | SELF_TYPE  |    Method   |   None   |     IO    |    None    |              None              |     None     | Global |  None |  None |
-|  out_int   | SELF_TYPE  |    Method   |   None   |     IO    |    None    |              None              |     None     | Global |  None |  None |
+| out_string | SELF_TYPE  |    Method   |   None   |     IO    |    None    |             ['x']              |     None     | Global |  None |  None |
+|     x      |   String   |    Param    |   None   |     IO    | out_string |              None              |     None     | Local  |  None |  None |
+|  out_int   | SELF_TYPE  |    Method   |   None   |     IO    |    None    |             ['x']              |     None     | Global |  None |  None |
+|     x      |    Int     |    Param    |   None   |     IO    |  out_int   |              None              |     None     | Local  |  None |  None |
 | in_string  |   String   |    Method   |   None   |     IO    |    None    |              None              |     None     | Global |  None |  None |
 |  int_int   |    Int     |    Method   |   None   |     IO    |    None    |              None              |     None     | Global |  None |  None |
 |   lenght   |   String   |    Method   |   None   |   String  |    None    |              None              |     None     | Global |  None |  None |
-|   concat   |   String   |    Method   |   None   |   String  |    None    |              None              |     None     | Global |  None |  None |
-|   substr   |   String   |    Method   |   None   |   String  |    None    |              None              |     None     | Global |  None |  None |
+|   concat   |   String   |    Method   |   None   |   String  |    None    |             ['s']              |     None     | Global |  None |  None |
+|     s      |   String   |    Param    |   None   |   String  |   concat   |              None              |     None     | Local  |  None |  None |
+|   substr   |   String   |    Method   |   None   |   String  |    None    |           ['i', 'l']           |     None     | Global |  None |  None |
+|     i      |    Int     |    Param    |   None   |   String  |   substr   |              None              |     None     | Local  |  None |  None |
+|     l      |    Int     |    Param    |   None   |   String  |   substr   |              None              |     None     | Local  |  None |  None |
 |    Main    |    None    |    Class    |    IO    |    Main   | fibonacci  | ['n', 'facto', 'fibo', 'main'] |     None     | Global |  None |  None |
 |     n      |    Int     |   Instance  |   None   |    Main   | fibonacci  |              None              |     None     | Global |   8   |   10  |
 |   facto    | Factorial  |   Instance  |   None   |    Main   | fibonacci  |              None              |     None     | Global |  None |  None |
