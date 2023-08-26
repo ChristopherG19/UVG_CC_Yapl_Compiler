@@ -1025,7 +1025,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return "Self", None
 
 def main():
-    file_name = "./tests/exampleUser.expr"
+    file_name = "./tests/hello_world.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)

@@ -3,12 +3,3 @@ class Main inherits IO{
       out_string("Hello")
    };
 };
-
-class A {
-
-   z: Int;
-
-  fun(x: String, y: Int): Int {
-    z <- x + y
-  };
-};
