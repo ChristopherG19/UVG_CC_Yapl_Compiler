@@ -287,6 +287,15 @@ class YAPLListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by YAPLParser#self.
+    def enterSelf(self, ctx:YAPLParser.SelfContext):
+        pass
+
+    # Exit a parse tree produced by YAPLParser#self.
+    def exitSelf(self, ctx:YAPLParser.SelfContext):
+        pass
+
+
     # Enter a parse tree produced by YAPLParser#dispatchExplicit.
     def enterDispatchExplicit(self, ctx:YAPLParser.DispatchExplicitContext):
         pass

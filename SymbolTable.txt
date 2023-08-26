@@ -1,29 +1,56 @@
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|                                                                         Symbols Table                                                                          |
-+-----------+------------+-------------+----------+-----------+------------+---------------------------------------------+--------------+--------+-------+-------+
-|    Name   | Type_Value |     Type    | Inherits | Parent_Cl | Parent_Fun |                   Contains                  | Displacement | Scope  | Space | Value |
-+-----------+------------+-------------+----------+-----------+------------+---------------------------------------------+--------------+--------+-------+-------+
-|    Int    |    Int     | Declaration |   None   |    Int    |    None    |                     None                    |     None     | Global |   8   |   0   |
-|    Bool   |    Bool    | Declaration |   None   |    Bool   |    None    |                     None                    |     None     | Global |   8   | False |
-|   False   |    Bool    | Declaration |   None   |    Bool   |    None    |                     None                    |     None     | Global |   8   |   0   |
-|    True   |    Bool    | Declaration |   None   |    Bool   |    None    |                     None                    |     None     | Global |   8   |   1   |
-|   String  |   String   | Declaration |   None   |   String  |    None    |                     None                    |     None     | Global |   8   |       |
-|   abort   |   Object   | Declaration |   None   |   Object  |    None    |                     None                    |     None     | Global |   8   | Error |
-| type_name |   String   | Declaration |   None   |   Object  |    None    |                     None                    |     None     | Global |   8   |  None |
-|    copy   | SELF_TYPE  | Declaration |   None   |   Object  |    None    |                     None                    |     None     | Global |   8   |  None |
-|    Main   |    None    |    Class    |   None   |    Main   |    None    | ['a', 'b', 'c', 'd', 'e', 'm', 'o', 'main'] |     None     | Global |  None |  None |
-|     a     |    Int     |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   8   |   1   |
-|     b     |    Int     |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   8   |   2   |
-|     c     |    Bool    |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   1   |   0   |
-|     d     |    Bool    |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   1   |   0   |
-|     e     |    Int     |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   8   |   1   |
-|     m     |   String   |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   8   |  None |
-|     o     |    Int     |   Instance  |   None   |    Main   |    None    |                     None                    |     None     | Local  |   8   |   4   |
-|    main   | SELF_TYPE  |    Method   |   None   |    Main   |    None    |                     None                    |     None     | Global |  None |  None |
-|     A     |    None    |    Class    |   None   |     A     |    main    |         ['a', 'b', 'x', 'y', 'fun']         |     None     | Global |  None |  None |
-|     a     |    Int     |   Instance  |   None   |     A     |    main    |                     None                    |     None     | Local  |   8   |  None |
-|     b     |    Int     |   Instance  |   None   |     A     |    main    |                     None                    |     None     | Local  |   8   |  None |
-|     x     |    Int     |    Param    |   None   |     A     |    fun     |                     None                    |     None     | Local  |   8   |  None |
-|     y     |    Int     |    Param    |   None   |     A     |    fun     |                     None                    |     None     | Local  |   8   |  None |
-|    fun    |    Int     |    Method   |   None   |     A     |    None    |                     None                    |     None     | Global |  None |  None |
-+-----------+------------+-------------+----------+-----------+------------+---------------------------------------------+--------------+--------+-------+-------+
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                                                                                              Symbols Table                                                                                               |
++------------+------------+-------------+----------+-----------+------------+--------------------------------------------------------------------------------------+--------------+--------+-------+-------+
+|    Name    | Type_Value |     Type    | Inherits | Parent_Cl | Parent_Fun |                                       Contains                                       | Displacement | Scope  | Space | Value |
++------------+------------+-------------+----------+-----------+------------+--------------------------------------------------------------------------------------+--------------+--------+-------+-------+
+|    Int     |    Int     | Declaration |   None   |    Int    |    None    |                                         None                                         |     None     | Global |   8   |   0   |
+|    Bool    |    Bool    | Declaration |   None   |    Bool   |    None    |                                         None                                         |     None     | Global |   8   | False |
+|   False    |    Bool    | Declaration |   None   |    Bool   |    None    |                                         None                                         |     None     | Global |   8   |   0   |
+|    True    |    Bool    | Declaration |   None   |    Bool   |    None    |                                         None                                         |     None     | Global |   8   |   1   |
+|   String   |   String   | Declaration |   None   |   String  |    None    |                                         None                                         |     None     | Global |   8   |       |
+|   abort    |   Object   | Declaration |   None   |   Object  |    None    |                                         None                                         |     None     | Global |   8   | Error |
+| type_name  |   String   | Declaration |   None   |   Object  |    None    |                                         None                                         |     None     | Global |   8   |  None |
+|    copy    | SELF_TYPE  | Declaration |   None   |   Object  |    None    |                                         None                                         |     None     | Global |   8   |  None |
+|     A      |    None    |    Class    |   None   |     A     |    None    | ['var', 'value', 'num', 'set_var', 'num', 'method1', 'num1', 'num2', 'method2', 'x'] |     None     | Global |  None |  None |
+|    var     |    Int     |   Instance  |   None   |     A     |    None    |                                         None                                         |     None     | Local  |   8   |   0   |
+|   value    |    Int     |    Method   |   None   |     A     |    None    |                                         None                                         |     None     | Global |  None |  None |
+|    num     |    Int     |    Param    |   None   |     A     |  set_var   |                                         None                                         |     None     | Local  |   8   |  None |
+|  set_var   | SELF_TYPE  |    Method   |   None   |     A     |    None    |                                         None                                         |     None     | Global |  None |  None |
+|    num     |    Int     |    Param    |   None   |     A     |  method1   |                                         None                                         |     None     | Local  |   8   |  None |
+|  method1   | SELF_TYPE  |    Method   |   None   |     A     |    None    |                                         None                                         |     None     | Global |  None |  None |
+|    num1    |    Int     |    Param    |   None   |     A     |  method2   |                                         None                                         |     None     | Local  |   8   |  None |
+|    num2    |    Int     |    Param    |   None   |     A     |  method2   |                                         None                                         |     None     | Local  |   8   |  None |
+|  method2   |     B      |    Method   |   None   |     A     |    None    |                                         None                                         |     None     | Global |  None |  None |
+|     x      |    Int     |   Variable  |   None   |    None   |     A      |                                       method2                                        |     None     | Local  |   8   |  None |
+|     B      |    None    |    Class    |    A     |     B     |  method2   |                               ['num', 'method5', 'x']                                |     None     | Global |  None |  None |
+|    num     |    Int     |    Param    |   None   |     B     |  method5   |                                         None                                         |     None     | Local  |   8   |  None |
+|  method5   |     E      |    Method   |   None   |     B     |    None    |                                         None                                         |     None     | Global |  None |  None |
+|     x      |    Int     |   Variable  |   None   |    None   |     B      |                                       method5                                        |     None     | Local  |   8   |  None |
+|     C      |    None    |    Class    |    B     |     C     |  method5   |                               ['num', 'method6', 'x']                                |     None     | Global |  None |  None |
+|    num     |    Int     |    Param    |   None   |     C     |  method6   |                                         None                                         |     None     | Local  |   8   |  None |
+|  method6   |     A      |    Method   |   None   |     C     |    None    |                                         None                                         |     None     | Global |  None |  None |
+|     x      |    Int     |   Variable  |   None   |    None   |     C      |                                       method6                                        |     None     | Local  |   8   |  None |
+|     D      |    None    |    Class    |    B     |     D     |  method6   |                               ['num', 'method7', 'x']                                |     None     | Global |  None |  None |
+|    num     |    Int     |    Param    |   None   |     D     |  method7   |                                         None                                         |     None     | Local  |   8   |  None |
+|  method7   |    Bool    |    Method   |   None   |     D     |    None    |                                         None                                         |     None     | Global |  None |  None |
+|     x      |    Int     |   Variable  |   None   |    None   |     D      |                                       method7                                        |     None     | Local  |   8   |  None |
+|     E      |    None    |    Class    |    D     |     E     |  method7   |                               ['num', 'method6', 'x']                                |     None     | Global |  None |  None |
+|    num     |    Int     |    Param    |   None   |     E     |  method6   |                                         None                                         |     None     | Local  |   8   |  None |
+|  method6   |     A      |    Method   |   None   |     E     |    None    |                                         None                                         |     None     | Global |  None |  None |
+|     x      |    Int     |   Variable  |   None   |    None   |     E      |                                       method6                                        |     None     | Local  |   8   |  None |
+| out_string | SELF_TYPE  |    Method   |   None   |     IO    |    None    |                                         None                                         |     None     | Global |  None |  None |
+|  out_int   | SELF_TYPE  |    Method   |   None   |     IO    |    None    |                                         None                                         |     None     | Global |  None |  None |
+| in_string  |   String   |    Method   |   None   |     IO    |    None    |                                         None                                         |     None     | Global |  None |  None |
+|  int_int   |    Int     |    Method   |   None   |     IO    |    None    |                                         None                                         |     None     | Global |  None |  None |
+|   lenght   |   String   |    Method   |   None   |   String  |    None    |                                         None                                         |     None     | Global |  None |  None |
+|   concat   |   String   |    Method   |   None   |   String  |    None    |                                         None                                         |     None     | Global |  None |  None |
+|   substr   |   String   |    Method   |   None   |   String  |    None    |                                         None                                         |     None     | Global |  None |  None |
+|    Main    |    None    |    Class    |    IO    |    Main   |  method6   |               ['char', 'avar', 'a_var', 'flag', 'num', 'is_even', 'x']               |     None     | Global |  None |  None |
+|    char    |   String   |   Instance  |   None   |    Main   |  method6   |                                         None                                         |     None     | Local  |   8   |  None |
+|    avar    |     A      |   Instance  |   None   |    Main   |  method6   |                                         None                                         |     None     | Local  |  None |  None |
+|   a_var    |     A      |   Instance  |   None   |    Main   |  method6   |                                         None                                         |     None     | Local  |  None |  None |
+|    flag    |    Bool    |   Instance  |   None   |    Main   |  method6   |                                         None                                         |     None     | Local  |   1   |   1   |
+|    num     |    Int     |    Param    |   None   |    Main   |  is_even   |                                         None                                         |     None     | Local  |   8   |  None |
+|  is_even   |    Bool    |    Method   |   None   |    Main   |    None    |                                         None                                         |     None     | Global |  None |  None |
+|     x      |    Int     |   Variable  |   None   |    None   |    Main    |                                       is_even                                        |     None     | Local  |   8   |  None |
++------------+------------+-------------+----------+-----------+------------+--------------------------------------------------------------------------------------+--------------+--------+-------+-------+
