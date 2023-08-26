@@ -166,7 +166,7 @@ class YAPLVisitorImpl(YAPLVisitor):
                 return type_id_b
 
             if type_id_b[0] != type_id:
-                self.customErrors.append(f"Función definida como {type_id} pero se encontró {type_id_b[0]}")
+                self.customErrors.append(f"Función {id} definida como {type_id} pero se encontró {type_id_b[0]}")
                 return "Error"
             
             return type_id_b
@@ -448,8 +448,10 @@ class YAPLVisitorImpl(YAPLVisitor):
                 self.class_methods[self.current_class] = [id]
             
             self.symbolTable.add_info_to_cell(self.current_class, "Contains", self.class_methods[self.current_class])
-        
-        return self.visitChildren(ctx)
+
+        self.visitChildren(ctx)
+        return _type
+
     
     def visitNew(self, ctx: YAPLParser.NewContext):
         #print("visitNew")
