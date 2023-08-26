@@ -159,12 +159,6 @@ class YAPLVisitorImpl(YAPLVisitor):
         type_id = ctx.TYPE().getText()
         space = get_space_vars(type_id.lower())
         
-        if (ctx.expr() is not None):
-            type_id_exp = self.visit(ctx.expr())
-            if type_id_exp != type_id:
-                self.customErrors.append(f"{id} definido como {type_id} pero se econtró {self.visit(ctx.expr())}")
-                return "Error"
-        
         parent_class = ctx.parentCtx.TYPE(0).getText() if ctx.parentCtx.TYPE(0) else None
         self.current_class = parent_class
         
@@ -217,20 +211,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         #print("visitAssignment")
         id = ctx.ID().getText()
         result = self.visit(ctx.expr())
-        
-        if (not self.symbolTable.containsKey(id)): 
-            self.customErrors.append(f"{id} no está definido")
-            return "Error"
-        
-        id_type =  self.symbolTable.get_cell(id)[1]
-        if (id_type != type_id ):
-            self.customErrors.append(f"{id} definido como {id_type}, pero se encontró {type_id}")
-            return "Error"
-        
-        if (id not in self.symbolTable.get_cell(self.current_class)[6]):
-            self.customErrors.append(f"{id} no definido dentro de {self.current_class}")
-            return "Error"
-        
+
         if isinstance(result, tuple):
             type_id, val = result
         else:
@@ -269,7 +250,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         #print("visitWhile")
         self.visitChildren(ctx)
 
-        condition_expr = self.visit(ctx.expr(1))
+        condition_expr = self.visit(ctx.expr(0))
         if condition_expr != 'Bool':
         # Handle the type mismatch error here
             self.customErrors.append(f"La condición dentro del while debe de retornar bool pero se encontró {condition_expr}")
@@ -846,7 +827,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return "Bool", res
 
 def main():
-    file_name = "./tests/exampleUser.expr"
+    file_name = "./tests/hello_world.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
