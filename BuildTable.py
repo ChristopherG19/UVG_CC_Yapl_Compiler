@@ -76,7 +76,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return final_type
     
     def visitDefClass(self, ctx: YAPLParser.DefClassContext):
-        print("defClass")
+        # print("defClass")
         id = ctx.TYPE(0).getText()
         type_id = ctx.CLASS_N().__str__()
         self.current_class = id
@@ -106,7 +106,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return type_class
     
     def visitDefFunc(self, ctx: YAPLParser.DefFuncContext):
-        print("visitDefFunc")
+        #print("visitDefFunc")
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
         parent_class = ctx.parentCtx.TYPE(0).getText() if ctx.parentCtx.TYPE(0) else None
@@ -274,13 +274,13 @@ class YAPLVisitorImpl(YAPLVisitor):
         return type_id
     
     def visitDispatchExplicit(self, ctx: YAPLParser.DispatchExplicitContext):
-        print("visitDispatchExplicit")
+        #print("visitDispatchExplicit")
         obj_expr_type = self.visit(ctx.expr(0))
         method_name = ctx.ID().getText()
         type_ = ctx.TYPE()
-        print("type", type_)
+        # print("type", type_)
 
-        print(obj_expr_type)
+        # print(obj_expr_type)
 
         # parametros del actual 
         n = 1
@@ -303,10 +303,10 @@ class YAPLVisitorImpl(YAPLVisitor):
             vis = self.visit(params_acc[par])
 
             if (type(vis) == tuple):
-                print("tupla ex")
+                # print("tupla ex")
                 if (vis[0] != params_def[par][1]):
                     self.customErrors.append(f"En {method_name} el parámetro {params_def[par][0]} require ser {params_def[par][1]} pero se encontró {vis[0]}")
-                    print("print")
+                    # print("print")
                     return "Error"
 
             else:
@@ -318,16 +318,16 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         c = self.visitChildren(ctx)
 
-        print(obj_expr_type)
+        # print(obj_expr_type)
 
         if self.symbolTable.get_cell(obj_expr_type) is None:
-            self.customErrors.append(f"La clase {obj_expr_type}")
+            self.customErrors.append(f"La clase {obj_expr_type} no existe")
             return "Error"
 
         if self.symbolTable.get_cell(obj_expr_type)[6] is not None:
             if (method_name not in self.symbolTable.get_cell(obj_expr_type)[6]):
                 self.customErrors.append(f"El método {method_name} no pertenece a {obj_expr_type}")
-                print("error cant param")
+                # print("error cant param")
                 return "Error"
             
             meth = self.symbolTable.get_cell(method_name, addParent=obj_expr_type)
@@ -354,7 +354,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return c
     
     def visitDispatchImplicit(self, ctx: YAPLParser.DispatchImplicitContext):
-        print("visitDispatchImplicit")
+        # print("visitDispatchImplicit")
 
         method_name = ctx.ID().getText()
 
@@ -435,7 +435,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return last_expr  # Return the value of the last expression
     
     def visitLetId(self, ctx: YAPLParser.LetIdContext):
-        print("visitLetId")
+        #print("visitLetId")
         for i in range(len(ctx.ID())):
             id = ctx.ID(i).getText()
             _type = ctx.TYPE(i).getText()
