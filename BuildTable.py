@@ -30,27 +30,27 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.symbolTable.add_column([False, "Bool", "Declaration", None, "Bool", None, None, None, "Global", 1, 0])
         self.symbolTable.add_column([True, "Bool", "Declaration", None, "Bool", None, None, None, "Global", 1, 1])
         self.symbolTable.add_column(["Void", "Void", "Declaration", None, "Void", None, None, None, "Global", 8, None])
-        self.symbolTable.add_column(["Object", "Object", "Class", None, "Object", None, None, None, "Global", None, None])
-        self.symbolTable.add_column(["String", "String", "Declaration", None, "String", None, None, None, "Global", 8, ""])
+        self.symbolTable.add_column(["Object", "Object", "Class", None, "Object", None, ["abort", "type_name", "copy"], None, "Global", None, None])
+        self.symbolTable.add_column(["String", "String", "Declaration", None, "String", None, ["lenght", "concat", "substr"], None, "Global", 8, ""])
         self.symbolTable.add_column(["abort", "Object", "Declaration", None, "Object", None, None, None, "Global", None, "Error"])
         self.symbolTable.add_column(["type_name", "String", "Declaration", None, "Object", None, None, None, "Global", None, None])
         self.symbolTable.add_column(["copy", "SELF_TYPE", "Declaration", None, "Object", None, None, None, "Global", None, None])
         
     def add_special_class_IO(self):
-        self.symbolTable.add_column(["out_string", "SELF_TYPE", "Method", None, "IO", None, ['x'], None, "Global", None, None])
+        self.symbolTable.add_column(["out_string", "SELF_TYPE", "Method", None, "IO", None, ["x"], None, "Global", None, None])
         self.symbolTable.add_column(["xPar", "String", "Param", None, "IO", "out_string", None, None, "Local", None, None])
         
-        self.symbolTable.add_column(["out_int", "SELF_TYPE", "Method", None, "IO", None, ['x'], None, "Global", None, None])
+        self.symbolTable.add_column(["out_int", "SELF_TYPE", "Method", None, "IO", None, ["x"], None, "Global", None, None])
         self.symbolTable.add_column(["xPar", "Int", "Param", None, "IO", "out_int", None, None, "Local", None, None])
         
         self.symbolTable.add_column(["in_string", "String", "Method", None, "IO", None, None, None, "Global", None, None])
         self.symbolTable.add_column(["int_int", "Int", "Method", None, "IO", None, None, None, "Global", None, None])
         
         self.symbolTable.add_column(["lenght", "String", "Method", None, "String", None, None, None, "Global", None, None])
-        self.symbolTable.add_column(["concat", "String", "Method", None, "String", None, ['s'], None, "Global", None, None])
+        self.symbolTable.add_column(["concat", "String", "Method", None, "String", None, ["s"], None, "Global", None, None])
         self.symbolTable.add_column(["sPar", "String", "Param", None, "String", "concat", None, None, "Local", None, None])
         
-        self.symbolTable.add_column(["substr", "String", "Method", None, "String", None, ['i', 'l'], None, "Global", None, None])
+        self.symbolTable.add_column(["substr", "String", "Method", None, "String", None, ["i", "l"], None, "Global", None, None])
         self.symbolTable.add_column(["iPar", "Int", "Param", None, "String", "substr", None, None, "Local", None, None])
         self.symbolTable.add_column(["lPar", "Int", "Param", None, "String", "substr", None, None, "Local", None, None])
         
@@ -100,7 +100,7 @@ class YAPLVisitorImpl(YAPLVisitor):
                     self.add_special_class_IO()
                 self.symbolTable.add_column([id, None, "Class", inherits, self.current_class, self.current_function, None, None, "Global", None, None])
         else:
-            self.symbolTable.add_column([id, None, "Class", None, self.current_class, self.current_function, None, None, "Global", None, None])
+            self.symbolTable.add_column([id, None, "Class", "Object", self.current_class, self.current_function, None, None, "Global", None, None])
         
         self.class_methods[id] = []
         
@@ -234,16 +234,10 @@ class YAPLVisitorImpl(YAPLVisitor):
                     self.customErrors.append(f"Mismatch entre tipos de datos en asignacion ({id}: {type_id} <- {type_id_res})")
                     return "Error"
             
-            if(type_id == 'Int'):
-                if(val == True):
-                    val = 1
-                elif(val == False):
-                    val = 0
-            elif(type_id == 'Bool'):
-                if(val == 1):
-                    val = True
-                elif(val == 0):
-                    val = False
+            if(val == True):
+                val = 1
+            elif(val == False):
+                val = 0
             
         else:
             if (self.symbolTable.get_cell(type_id, "Declaration") != None):
@@ -420,11 +414,7 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         x = self.symbolTable.get_method2(method_name, self.current_class)
 
-        self.visitChildren(ctx)
-            
-        return x[1]
-
-        
+        return c
 
     def visitIf(self, ctx: YAPLParser.IfContext):
         #print("visitIf")
