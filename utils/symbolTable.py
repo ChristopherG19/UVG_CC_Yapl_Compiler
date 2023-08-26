@@ -40,14 +40,14 @@ class Table():
         return False
         
     # Revisa id, tipo (method, class, etc.), clase parent
-    def get_cell(self, id, addType=None, addParent=None):
+    def get_cell(self, id, addType=None, addParent=None, addFunctionP=None):
         for row in self.columns:
-            if row[0] == id and (not addType or row[1] == addType) and (not addParent or row[4] == addParent):
+            if row[0] == id and (not addType or row[1] == addType) and (not addParent or row[4] == addParent) and (not addFunctionP or row[5] == addFunctionP):
                 return row
         return None
         
-    def containsKey(self, id, addType=None, addParent=None):
-        if self.get_cell(id, addType, addParent) is not None:
+    def containsKey(self, id, addType=None, addParent=None, addFunctionP=None):
+        if self.get_cell(id, addType, addParent, addFunctionP) is not None:
             return True
         return False
     

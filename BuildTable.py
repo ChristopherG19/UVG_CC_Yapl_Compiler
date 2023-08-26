@@ -26,13 +26,14 @@ class YAPLVisitorImpl(YAPLVisitor):
         
     def add_other_classes(self):
         self.symbolTable.add_column(["Int", "Int", "Declaration", None, "Int", None, None, None, "Global", 8, 0])
-        self.symbolTable.add_column(["Bool", "Bool", "Declaration", None, "Bool", None, None, None, "Global", 8, False])
-        self.symbolTable.add_column([False, "Bool", "Declaration", None, "Bool", None, None, None, "Global", 8, 0])
-        self.symbolTable.add_column([True, "Bool", "Declaration", None, "Bool", None, None, None, "Global", 8, 1])
+        self.symbolTable.add_column(["Bool", "Bool", "Declaration", None, "Bool", None, None, None, "Global", 1, False])
+        self.symbolTable.add_column([False, "Bool", "Declaration", None, "Bool", None, None, None, "Global", 1, 0])
+        self.symbolTable.add_column([True, "Bool", "Declaration", None, "Bool", None, None, None, "Global", 1, 1])
+        self.symbolTable.add_column(["Void", "Void", "Declaration", None, "Void", None, None, None, "Global", 8, None])
         self.symbolTable.add_column(["String", "String", "Declaration", None, "String", None, None, None, "Global", 8, ""])
-        self.symbolTable.add_column(["abort", "Object", "Declaration", None, "Object", None, None, None, "Global", 8, "Error"])
-        self.symbolTable.add_column(["type_name", "String", "Declaration", None, "Object", None, None, None, "Global", 8, None])
-        self.symbolTable.add_column(["copy", "SELF_TYPE", "Declaration", None, "Object", None, None, None, "Global", 8, None])
+        self.symbolTable.add_column(["abort", "Object", "Declaration", None, "Object", None, None, None, "Global", None, "Error"])
+        self.symbolTable.add_column(["type_name", "String", "Declaration", None, "Object", None, None, None, "Global", None, None])
+        self.symbolTable.add_column(["copy", "SELF_TYPE", "Declaration", None, "Object", None, None, None, "Global", None, None])
         
     def add_special_class_IO(self):
         self.symbolTable.add_column(["out_string", "SELF_TYPE", "Method", None, "IO", None, None, None, "Global", None, None])
@@ -128,6 +129,14 @@ class YAPLVisitorImpl(YAPLVisitor):
 
                 self.visit(formal_param)    
         
+        if(self.symbolTable.containsKey(id)):
+            temp = self.symbolTable.get_cell(id)
+            if temp[1] != type_id:
+                parentV = self.symbolTable.get_cell(parent_class)
+                if(temp[4] == parentV[3]):
+                    self.customErrors.append(f"Intento de override del método '{temp[0]}' en clase {parent_class} que hereda de {temp[4]}")
+                    return "Error"
+        
         if parent_class in self.class_methods:
             self.class_methods[parent_class].append(id)
             if(self.current_function != id):
@@ -193,8 +202,12 @@ class YAPLVisitorImpl(YAPLVisitor):
                 val = self.symbolTable.get_cell(type_id, "Declaration")[-1]
         
         if parent_class in self.class_methods:
-            self.class_methods[parent_class].append(id)
-            self.symbolTable.add_column([id, type_id, "Instance", None, parent_class, self.current_function, None, None, "Local", space, val])
+            if(self.symbolTable.containsKey(id, None, parent_class, self.current_function)):
+                self.customErrors.append(f"El identificador '{id}' ya fue definido en este ámbito")
+                return "Error"
+            else:
+                self.class_methods[parent_class].append(id)
+                self.symbolTable.add_column([id, type_id, "Instance", None, parent_class, self.current_function, None, None, "Local", space, val])
         else:
             self.class_methods[parent_class] = [id]
             
@@ -250,7 +263,12 @@ class YAPLVisitorImpl(YAPLVisitor):
         #print("visitWhile")
         self.visitChildren(ctx)
 
+        val = None
         condition_expr = self.visit(ctx.expr(0))
+        
+        if type(condition_expr) == tuple:
+            condition_expr, val = condition_expr
+            
         if condition_expr != 'Bool':
         # Handle the type mismatch error here
             self.customErrors.append(f"La condición dentro del while debe de retornar bool pero se encontró {condition_expr}")
@@ -291,6 +309,8 @@ class YAPLVisitorImpl(YAPLVisitor):
     def visitNew(self, ctx: YAPLParser.NewContext):
         #print("visitNew")
         _type = ctx.TYPE().getText()
+        if(_type == "SELF_TYPE"):
+            return "Self"
         return _type
     
     def visitNegative(self, ctx: YAPLParser.NegativeContext):
@@ -309,9 +329,10 @@ class YAPLVisitorImpl(YAPLVisitor):
     def visitIsvoid(self, ctx: YAPLParser.IsvoidContext):
         expr_type = self.visit(ctx.expr())
 
-        if expr_type:
-            return "Bool"
-        return "Error"
+        if expr_type == "Void":
+            return "Bool", True
+        else:
+            return "Bool", False
     
     def visitTimes(self, ctx: YAPLParser.TimesContext):
         #print("visitTimes")
