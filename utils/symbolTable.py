@@ -89,7 +89,11 @@ class Table():
 
         return ret
 
-
+    def get_inherited(self, name, parent):
+        for row in self.columns:
+            if row[0] == name and row[4] == parent:
+                return row[3]
+        return None
         
     def add_info_to_cell(self, name, column_name, value):
         for row in self.columns:

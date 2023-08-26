@@ -357,6 +357,23 @@ class YAPLVisitorImpl(YAPLVisitor):
         # print("visitDispatchImplicit")
 
         method_name = ctx.ID().getText()
+        # print(method_name)
+
+        # verificar existencia en la tabla
+        met = self.symbolTable.get_cell(method_name)
+        if met is None:
+            self.customErrors.append(f"Método {method_name} no está definido")
+            return "Error"
+        else:
+            if met[4] != self.current_class:
+                # verificar padre
+                # print("m", met[4])
+                inh = self.symbolTable.get_cell(self.current_class)
+                # print("i", inh[3])
+                if (met[4] != inh[3]):
+                    self.customErrors.append(f"Método {method_name} no está definido")
+                    return "Error"
+                
 
         # parametros del actual 
         n = 0
