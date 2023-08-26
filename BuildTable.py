@@ -105,7 +105,6 @@ class YAPLVisitorImpl(YAPLVisitor):
         return type_class
     
     def visitDefFunc(self, ctx: YAPLParser.DefFuncContext):
-        #print("visitDefFunc")
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
         parent_class = ctx.parentCtx.TYPE(0).getText() if ctx.parentCtx.TYPE(0) else None
@@ -126,8 +125,8 @@ class YAPLVisitorImpl(YAPLVisitor):
                     self.class_methods[parent_class].append(param_name)
                 else:
                     self.class_methods[parent_class] = [param_name]
-                    
-                self.visit(formal_param)
+
+                self.visit(formal_param)    
         
         if parent_class in self.class_methods:
             self.class_methods[parent_class].append(id)
@@ -159,7 +158,13 @@ class YAPLVisitorImpl(YAPLVisitor):
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
         space = get_space_vars(type_id.lower())
-                
+        
+        if (ctx.expr() is not None):
+            type_id_exp = self.visit(ctx.expr())
+            if type_id_exp != type_id:
+                self.customErrors.append(f"{id} definido como {type_id} pero se econtró {self.visit(ctx.expr())}")
+                return "Error"
+        
         parent_class = ctx.parentCtx.TYPE(0).getText() if ctx.parentCtx.TYPE(0) else None
         self.current_class = parent_class
         
@@ -205,11 +210,11 @@ class YAPLVisitorImpl(YAPLVisitor):
     
     def visitFormalAssign(self, ctx:YAPLParser.FormalAssignContext):
         id = ctx.ID().getText()
-        type_id = ctx.TYPE().getText() 
+        type_id = ctx.TYPE().getText()
         return type_id
         
     def visitAssignment(self, ctx: YAPLParser.AssignmentContext):
-        # print("visitAssignment")
+        #print("visitAssignment")
         id = ctx.ID().getText()
         result = self.visit(ctx.expr())
         
@@ -218,7 +223,9 @@ class YAPLVisitorImpl(YAPLVisitor):
             return "Error"
         
         id_type =  self.symbolTable.get_cell(id)[1]
-        
+        if (id_type != type_id ):
+            self.customErrors.append(f"{id} definido como {id_type}, pero se encontró {type_id}")
+            return "Error"
         
         if (id not in self.symbolTable.get_cell(self.current_class)[6]):
             self.customErrors.append(f"{id} no definido dentro de {self.current_class}")
@@ -229,7 +236,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         else:
             type_id = result
             val = None
-         
+            
         if(self.symbolTable.containsKey(id)):
             if(val != None):
                 self.symbolTable.add_info_to_cell(id, "Value", val)
@@ -262,17 +269,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         #print("visitWhile")
         self.visitChildren(ctx)
 
-        condition_expr = self.visit(ctx.expr(0))
-
-        if (type(condition_expr) == tuple):
-            if condition_expr[0] == 'Int':
-                self.customErrors.append(f"La condición dentro del while debe de retornar bool pero se encontró {condition_expr[0]}")
-                return "Error"
-
-            if condition_expr[0] != 'Bool':
-                self.customErrors.append(f"La condición dentro del while debe de retornar bool pero se encontró {condition_expr[0]}")
-                return "Error"
-
+        condition_expr = self.visit(ctx.expr(1))
         if condition_expr != 'Bool':
         # Handle the type mismatch error here
             self.customErrors.append(f"La condición dentro del while debe de retornar bool pero se encontró {condition_expr}")
@@ -822,6 +819,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         id = ctx.ID().getText()
         row = self.symbolTable.get_cell(id)
         if id not in self.symbolTable.get_cell(self.current_class)[6]:
+
             clase = self.current_class
             if(id != 'self'):
                 self.customErrors.append(f"El atributo '{id}' no ha sido declarado en la clase '{clase}'")
@@ -848,7 +846,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return "Bool", res
 
 def main():
-    file_name = "./tests/hello_world.cl"
+    file_name = "./tests/exampleUser.expr"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
