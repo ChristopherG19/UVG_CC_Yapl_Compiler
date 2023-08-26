@@ -56,3 +56,11 @@ def get_space_vars(type):
         space = 1
     
     return space
+
+def clean_errors(errors):
+    unique_errors = set()
+    
+    for error in errors:
+        if error not in unique_errors:
+            print("->",error)
+            unique_errors.add(error)
