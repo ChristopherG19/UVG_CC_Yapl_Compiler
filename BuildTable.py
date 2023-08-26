@@ -181,12 +181,15 @@ class YAPLVisitorImpl(YAPLVisitor):
             
             return type_id_b
 
-        
+
         if type_id_b is None:
         
             if type_id == "SELF_TYPE":
                 return "SELF_TYPE"
-            
+        
+            elif type_id == "Object":
+                return "Object"
+        
             else:
                 self.customErrors.append(f"Función definida como {type_id} pero se encontró None")
                 return "Error"
@@ -329,7 +332,11 @@ class YAPLVisitorImpl(YAPLVisitor):
         c = self.visitChildren(ctx)
 
         # print(obj_expr_type)
-
+        
+        valOET = None
+        if(type(obj_expr_type) == tuple):
+            obj_expr_type, valOET = obj_expr_type 
+            
         if self.symbolTable.get_cell(obj_expr_type) is None:
             self.customErrors.append(f"La clase {obj_expr_type} no existe")
             return "Error"
@@ -345,17 +352,17 @@ class YAPLVisitorImpl(YAPLVisitor):
         
         else:
             if self.symbolTable.get_cell(obj_expr_type) is not None:
-
                 parent = self.symbolTable.get_cell(obj_expr_type)[3]
-                if (method_name not in self.symbolTable.get_cell(parent)[6]):
-                    self.customErrors.append(f"El método {method_name} no pertenece a {obj_expr_type}")
-                    return "Error"  
+                if parent != None:
+                    if (method_name not in self.symbolTable.get_cell(parent)[6]):
+                        self.customErrors.append(f"El método {method_name} no pertenece a {obj_expr_type}")
+                        return "Error"  
 
-                meth = self.symbolTable.get_cell(method_name, addParent=parent)
-                if meth is not None:
-                    p_type = meth[1]
+                    meth = self.symbolTable.get_cell(method_name, addParent=parent)
+                    if meth is not None:
+                        p_type = meth[1]
 
-                    return p_type
+                        return p_type
 
             else:
                 self.customErrors.append(f"El método {method_name} no pertenece a {obj_expr_type}")
@@ -1025,7 +1032,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return "Self", None
 
 def main():
-    file_name = "./tests/hello_world.cl"
+    file_name = "./tests/List.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)

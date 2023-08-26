@@ -1,30 +1,52 @@
-+--------------------------------------------------------------------------------------------------------------------------------+
-|                                                         Symbols Table                                                          |
-+------------+------------+-------------+----------+-----------+------------+------------+--------------+--------+-------+-------+
-|    Name    | Type_Value |     Type    | Inherits | Parent_Cl | Parent_Fun |  Contains  | Displacement | Scope  | Space | Value |
-+------------+------------+-------------+----------+-----------+------------+------------+--------------+--------+-------+-------+
-|    Int     |    Int     | Declaration |   None   |    Int    |    None    |    None    |     None     | Global |   8   |   0   |
-|    Bool    |    Bool    | Declaration |   None   |    Bool   |    None    |    None    |     None     | Global |   1   | False |
-|   False    |    Bool    | Declaration |   None   |    Bool   |    None    |    None    |     None     | Global |   1   |   0   |
-|    True    |    Bool    | Declaration |   None   |    Bool   |    None    |    None    |     None     | Global |   1   |   1   |
-|    Void    |    Void    | Declaration |   None   |    Void   |    None    |    None    |     None     | Global |   8   |  None |
-|   Object   |   Object   |    Class    |   None   |   Object  |    None    |    None    |     None     | Global |  None |  None |
-|   String   |   String   | Declaration |   None   |   String  |    None    |    None    |     None     | Global |   8   |       |
-|   abort    |   Object   | Declaration |   None   |   Object  |    None    |    None    |     None     | Global |  None | Error |
-| type_name  |   String   | Declaration |   None   |   Object  |    None    |    None    |     None     | Global |  None |  None |
-|    copy    | SELF_TYPE  | Declaration |   None   |   Object  |    None    |    None    |     None     | Global |  None |  None |
-| out_string | SELF_TYPE  |    Method   |   None   |     IO    |    None    |   ['x']    |     None     | Global |  None |  None |
-|     x      |   String   |    Param    |   None   |     IO    | out_string |    None    |     None     | Local  |  None |  None |
-|  out_int   | SELF_TYPE  |    Method   |   None   |     IO    |    None    |   ['x']    |     None     | Global |  None |  None |
-|     x      |    Int     |    Param    |   None   |     IO    |  out_int   |    None    |     None     | Local  |  None |  None |
-| in_string  |   String   |    Method   |   None   |     IO    |    None    |    None    |     None     | Global |  None |  None |
-|  int_int   |    Int     |    Method   |   None   |     IO    |    None    |    None    |     None     | Global |  None |  None |
-|   lenght   |   String   |    Method   |   None   |   String  |    None    |    None    |     None     | Global |  None |  None |
-|   concat   |   String   |    Method   |   None   |   String  |    None    |   ['s']    |     None     | Global |  None |  None |
-|     s      |   String   |    Param    |   None   |   String  |   concat   |    None    |     None     | Local  |  None |  None |
-|   substr   |   String   |    Method   |   None   |   String  |    None    | ['i', 'l'] |     None     | Global |  None |  None |
-|     i      |    Int     |    Param    |   None   |   String  |   substr   |    None    |     None     | Local  |  None |  None |
-|     l      |    Int     |    Param    |   None   |   String  |   substr   |    None    |     None     | Local  |  None |  None |
-|    Main    |    None    |    Class    |    IO    |    Main   |    None    |  ['main']  |     None     | Global |  None |  None |
-|    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |    None    |     None     | Global |  None |  None |
-+------------+------------+-------------+----------+-----------+------------+------------+--------------+--------+-------+-------+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                                                                                         Symbols Table                                                                                         |
++------------+------------+-------------+----------+-----------+------------+---------------------------------------------------------------------------+--------------+--------+-------+-------+
+|    Name    | Type_Value |     Type    | Inherits | Parent_Cl | Parent_Fun |                                  Contains                                 | Displacement | Scope  | Space | Value |
++------------+------------+-------------+----------+-----------+------------+---------------------------------------------------------------------------+--------------+--------+-------+-------+
+|    Int     |    Int     | Declaration |   None   |    Int    |    None    |                                    None                                   |     None     | Global |   8   |   0   |
+|    Bool    |    Bool    | Declaration |   None   |    Bool   |    None    |                                    None                                   |     None     | Global |   1   | False |
+|   False    |    Bool    | Declaration |   None   |    Bool   |    None    |                                    None                                   |     None     | Global |   1   |   0   |
+|    True    |    Bool    | Declaration |   None   |    Bool   |    None    |                                    None                                   |     None     | Global |   1   |   1   |
+|    Void    |    Void    | Declaration |   None   |    Void   |    None    |                                    None                                   |     None     | Global |   8   |  None |
+|   Object   |   Object   |    Class    |   None   |   Object  |    None    |                                    None                                   |     None     | Global |  None |  None |
+|   String   |   String   | Declaration |   None   |   String  |    None    |                                    None                                   |     None     | Global |   8   |       |
+|   abort    |   Object   | Declaration |   None   |   Object  |    None    |                                    None                                   |     None     | Global |  None | Error |
+| type_name  |   String   | Declaration |   None   |   Object  |    None    |                                    None                                   |     None     | Global |  None |  None |
+|    copy    | SELF_TYPE  | Declaration |   None   |   Object  |    None    |                                    None                                   |     None     | Global |  None |  None |
+|    List    |    None    |    Class    |   None   |    List   |    None    | ['isNil', 'head', 'tail', 'car', 'cdr', 'i', 'rest', 'init', 'i', 'cons'] |     None     | Global |  None |  None |
+|   isNil    |    Bool    |    Method   |   None   |    List   |    None    |                                    None                                   |     None     | Global |  None |  None |
+|    head    |    Int     |    Method   |   None   |    List   |    None    |                                    None                                   |     None     | Global |  None |  None |
+|    tail    |    List    |    Method   |   None   |    List   |    None    |                                    None                                   |     None     | Global |  None |  None |
+|    car     |    Int     |   Instance  |   None   |    List   |    tail    |                                    None                                   |     None     | Global |   8   |   0   |
+|    cdr     |    List    |   Instance  |   None   |    List   |    tail    |                                    None                                   |     None     | Global |  None |  None |
+|     i      |    Int     |    Param    |   None   |    List   |    init    |                                    None                                   |     None     | Local  |   8   |  None |
+|    rest    |    List    |    Param    |   None   |    List   |    init    |                                    None                                   |     None     | Local  |  None |  None |
+|    init    |    List    |    Method   |   None   |    List   |    None    |                                    None                                   |     None     | Global |  None |  None |
+|     i      |    Int     |    Param    |   None   |    List   |    cons    |                                    None                                   |     None     | Local  |   8   |  None |
+|    cons    |    List    |    Method   |   None   |    List   |    None    |                                    None                                   |     None     | Global |  None |  None |
+|    Cons    |    None    |    Class    |   List   |    Cons   |    cons    |        ['car', 'cdr', 'isNil', 'head', 'tail', 'i', 'rest', 'init']       |     None     | Global |  None |  None |
+|    car     |    Int     |   Instance  |   None   |    Cons   |    cons    |                                    None                                   |     None     | Global |   8   |   0   |
+|    cdr     |    List    |   Instance  |   None   |    Cons   |    cons    |                                    None                                   |     None     | Global |  None |  None |
+|   isNil    |    Bool    |    Method   |   None   |    Cons   |    None    |                                    None                                   |     None     | Global |  None |  None |
+|    head    |    Int     |    Method   |   None   |    Cons   |    None    |                                    None                                   |     None     | Global |  None |  None |
+|    tail    |    List    |    Method   |   None   |    Cons   |    None    |                                    None                                   |     None     | Global |  None |  None |
+|     i      |    Int     |    Param    |   None   |    Cons   |    init    |                                    None                                   |     None     | Local  |   8   |  None |
+|    rest    |    List    |    Param    |   None   |    Cons   |    init    |                                    None                                   |     None     | Local  |  None |  None |
+|    init    |    List    |    Method   |   None   |    Cons   |    None    |                                    None                                   |     None     | Global |  None |  None |
+| out_string | SELF_TYPE  |    Method   |   None   |     IO    |    None    |                                   ['x']                                   |     None     | Global |  None |  None |
+|     x      |   String   |    Param    |   None   |     IO    | out_string |                                    None                                   |     None     | Local  |  None |  None |
+|  out_int   | SELF_TYPE  |    Method   |   None   |     IO    |    None    |                                   ['x']                                   |     None     | Global |  None |  None |
+|     x      |    Int     |    Param    |   None   |     IO    |  out_int   |                                    None                                   |     None     | Local  |  None |  None |
+| in_string  |   String   |    Method   |   None   |     IO    |    None    |                                    None                                   |     None     | Global |  None |  None |
+|  int_int   |    Int     |    Method   |   None   |     IO    |    None    |                                    None                                   |     None     | Global |  None |  None |
+|   lenght   |   String   |    Method   |   None   |   String  |    None    |                                    None                                   |     None     | Global |  None |  None |
+|   concat   |   String   |    Method   |   None   |   String  |    None    |                                   ['s']                                   |     None     | Global |  None |  None |
+|     s      |   String   |    Param    |   None   |   String  |   concat   |                                    None                                   |     None     | Local  |  None |  None |
+|   substr   |   String   |    Method   |   None   |   String  |    None    |                                 ['i', 'l']                                |     None     | Global |  None |  None |
+|     i      |    Int     |    Param    |   None   |   String  |   substr   |                                    None                                   |     None     | Local  |  None |  None |
+|     l      |    Int     |    Param    |   None   |   String  |   substr   |                                    None                                   |     None     | Local  |  None |  None |
+|    Main    |    None    |    Class    |    IO    |    Main   |    init    |                       ['mylist', 'l', 'print_list']                       |     None     | Global |  None |  None |
+|   mylist   |    List    |   Instance  |   None   |    Main   |    init    |                                    None                                   |     None     | Global |  None |  None |
+|     l      |    List    |    Param    |   None   |    Main   | print_list |                                    None                                   |     None     | Local  |  None |  None |
+| print_list |   Object   |    Method   |   None   |    Main   |    None    |                                    None                                   |     None     | Global |  None |  None |
++------------+------------+-------------+----------+-----------+------------+---------------------------------------------------------------------------+--------------+--------+-------+-------+
