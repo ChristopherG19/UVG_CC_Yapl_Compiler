@@ -5,10 +5,10 @@ class Main {
 
   fun(x: Int, y: Int): Int {
     {
-      let f: Int <- 0 in 0;
+      let f: String <- "0" in 0;
+      0;
     }
   };
 
    main () : SELF_TYPE { self };
 };
-

@@ -19,6 +19,6 @@
 |     x     |    Int     |    Param    |   None   |    Main   |    fun     |                   None                   |     None     | Local  |   8   |  None |
 |     y     |    Int     |    Param    |   None   |    Main   |    fun     |                   None                   |     None     | Local  |   8   |  None |
 |    fun    |    Int     |    Method   |   None   |    Main   |    None    |                   None                   |     None     | Global |  None |  None |
-|     f     |    Int     |   Variable  |   None   |    None   |    Main    |                   fun                    |     None     | Local  |   8   |  None |
+|     f     |   String   |   Variable  |   None   |    None   |    Main    |                   fun                    |     None     | Local  |   8   |  None |
 |    main   | SELF_TYPE  |    Method   |   None   |    Main   |    None    |                   None                   |     None     | Global |  None |  None |
 +-----------+------------+-------------+----------+-----------+------------+------------------------------------------+--------------+--------+-------+-------+
