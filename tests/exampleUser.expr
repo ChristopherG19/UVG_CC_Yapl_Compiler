@@ -1,26 +1,14 @@
-class Silly {
-  copy() : SELF_TYPE { self };
-};
-
-class Sally inherits Silly { };
-
-class A {
-  metodo(xx: Int, yy: String) : Int {
-    0
-  };
-};
-
-class B inherits A{
-  metodo2 (): Int {
-    metodo(1, "Hola")
-  };
-}; 
-  
 class Main {
-  x : String <- "10";
-  y : Int <- 9;
-  a : A <- (new A);
-  b : Int <- a.metodo(y, x);
-  x : Sally <- (new Sally).copy();
-  main() : Sally { self };
+
+  a: Int;
+  b: Int;
+
+  fun(x: Int, y: Int): Int {
+    {
+      let f: Int <- 0 in 0;
+    }
+  };
+
+   main () : SELF_TYPE { self };
 };
+
