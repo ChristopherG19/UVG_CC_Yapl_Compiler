@@ -99,7 +99,7 @@ class YAPLVisitorImpl(YAPLVisitor):
             if(inherits.lower() in ["string", "int", "bool"]):
                 self.customErrors.append(f"Clase Main no puede heredar de esta clase ({inherits})")
                 return "Error"
-            elif (not self.symbolTable.containsKey(inherits)):
+            elif (not self.symbolTable.containsKey(inherits) and inherits != "IO"):
                 self.customErrors.append(f"Clase Main no puede heredar de esta clase ({inherits}) porque no está definida")
                 return "Error"
             else:
