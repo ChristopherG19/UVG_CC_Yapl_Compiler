@@ -314,6 +314,9 @@ class YAPLVisitorImpl(YAPLVisitor):
         # verificar tipo de parámetros 
         for par in range(len(params_def)):
             vis = self.visit(params_acc[par])
+            
+            if vis == "Error":
+                return "Error"
 
             if (type(vis) == tuple):
                 # print("tupla ex")
@@ -325,9 +328,7 @@ class YAPLVisitorImpl(YAPLVisitor):
             else:
                 if (vis != params_def[par][1]):
                     self.customErrors.append(f"En {method_name} el parámetro {params_def[par][0]} require ser {params_def[par][1]} pero se encontró {vis}")
-                    return "Error"
-            
-        
+                    return "Error"  
 
         c = self.visitChildren(ctx)
         # print("c ", c, "ob ",  obj_expr_type)
@@ -401,7 +402,6 @@ class YAPLVisitorImpl(YAPLVisitor):
                     self.customErrors.append(f"Método {method_name} no está definido")
                     return "Error"
                 
-
         # parametros del actual 
         n = 0
         params_acc = []
@@ -415,6 +415,9 @@ class YAPLVisitorImpl(YAPLVisitor):
         # verificar tipo de parámetros 
         for par in range(len(params_def)):
             vis = self.visit(params_acc[par])
+            
+            if vis == "Error":
+                return "Error"
 
             if (type(vis) == tuple):
                 if (vis[0] != params_def[par][1]):
@@ -442,7 +445,7 @@ class YAPLVisitorImpl(YAPLVisitor):
             return "Error"
 
         # return self.visitChildren(ctx)s
-        return None
+        return "Bool"
     
     def visitWhile(self, ctx: YAPLParser.WhileContext):
         #print("visitWhile")
@@ -459,7 +462,7 @@ class YAPLVisitorImpl(YAPLVisitor):
             self.customErrors.append(f"La condición dentro del while debe de retornar bool pero se encontró {condition_expr}")
             return "Error"
 
-        return None
+        return "Bool"
     
     def visitBlock(self, ctx: YAPLParser.BlockContext):
         #print("visitBlock")
@@ -492,7 +495,6 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.visitChildren(ctx)
         return _type
 
-    
     def visitNew(self, ctx: YAPLParser.NewContext):
         #print("visitNew")
         _type = ctx.TYPE().getText()
@@ -508,10 +510,12 @@ class YAPLVisitorImpl(YAPLVisitor):
         if isinstance(expr_value, tuple):
             expr_value, expr_val = expr_value
 
-        if(expr_value.lower() == "int" and expr_val != None):
-            return "Int", -expr_val
-        else:
-            return "Error"
+        # if(expr_value.lower() == "int" and expr_val != None):
+        #     return "Int", -expr_val
+        # else:
+        #     return "Error"
+        
+        return "Int"
     
     def visitIsvoid(self, ctx: YAPLParser.IsvoidContext):
         expr_type = self.visit(ctx.expr())
@@ -519,10 +523,12 @@ class YAPLVisitorImpl(YAPLVisitor):
         if expr_type == "Error":
             return "Error"
 
-        if expr_type == "Void":
-            return "Bool", True
-        else:
-            return "Bool", False
+        # if expr_type == "Void":
+        #     return "Bool", True
+        # else:
+        #     return "Bool", False
+        
+        return "Bool"
     
     def visitTimes(self, ctx: YAPLParser.TimesContext):
         #print("visitTimes")
@@ -544,23 +550,26 @@ class YAPLVisitorImpl(YAPLVisitor):
         if left_type is not None and right_type is not None:
             if left_type.lower() == "int" and right_type.lower() == "int":
                 if(left_val != None and right_val != None):
-                    res = left_val * right_val
-                    return "Int", res
+                    # res = left_val * right_val
+                    return "Int"
                 return "Int"
             elif left_type.lower() == "bool" and right_type.lower() == "int":
                 if(left_val != None and right_val != None):
-                    res = self.symbolTable.get_cell(left_val, "Bool")[-1] * right_val
-                    return "Bool", not (res == 0)
+                    # res = self.symbolTable.get_cell(left_val, "Bool")[-1] * right_val
+                    # val = not (res == 0)
+                    return "Bool"
                 return "Int"
             elif left_type.lower() == "int" and right_type.lower() == "bool":
                 if(left_val != None and right_val != None):
-                    res = left_val * self.symbolTable.get_cell(right_val, "Bool")[-1]
-                    return "Bool", not (res == 0)
+                    # res = left_val * self.symbolTable.get_cell(right_val, "Bool")[-1]
+                    # val = not (res == 0)
+                    return "Bool"
                 return "Int"
             elif left_type.lower() == "bool" and right_type.lower() == "bool":
                 if(left_val != None and right_val != None):
-                    res = self.symbolTable.get_cell(left_val, "Bool")[-1] * self.symbolTable.get_cell(right_val, "Bool")[-1]
-                    return "Bool", not (res == 0)
+                    # res = self.symbolTable.get_cell(left_val, "Bool")[-1] * self.symbolTable.get_cell(right_val, "Bool")[-1]
+                    # val = not (res == 0)
+                    return "Bool" 
                 return "Int"
             else:
                 self.customErrors.append(f"Incongruencia de tipos {left_type} y {right_type} en multiplicación")
@@ -589,46 +598,50 @@ class YAPLVisitorImpl(YAPLVisitor):
             if left_type.lower() == "int" and right_type.lower() == "int":
                 if(left_val != None and right_val != None):
                     if(right_val != 0):
-                        res = left_val / right_val
-                        if(res % 1 != 0):
-                            self.customErrors.append(f"Tipo float no permitido; Valor de: {left_val}/{right_val} = {res:.2f}")
-                            return "Error"
-                        return "Int", int(res)
+                        # res = left_val / right_val
+                        # if(res % 1 != 0):
+                        #     self.customErrors.append(f"Tipo float no permitido; Valor de: {left_val}/{right_val} = {res:.2f}")
+                        #     return "Error"
+                        # val = int(res)
+                        return "Int" 
                     else:
-                        return "Int", 0
+                        return "Int"
                 return "Int"
             elif left_type.lower() == "bool" and right_type.lower() == "int":
                 if(left_val != None and right_val != None):
                     if(right_val != 0):
-                        res = self.symbolTable.get_cell(left_val, "Bool")[-1] / right_val
-                        if(res % 1 != 0):
-                            self.customErrors.append(f"Tipo float no permitido; Valor de: {left_val}/{right_val} = {res:.2f}")
-                            return "Error"
-                        return "Bool", not (int(res) == 0)
+                        # res = self.symbolTable.get_cell(left_val, "Bool")[-1] / right_val
+                        # if(res % 1 != 0):
+                        #     self.customErrors.append(f"Tipo float no permitido; Valor de: {left_val}/{right_val} = {res:.2f}")
+                        #     return "Error"
+                        # val = not (int(res) == 0)
+                        return "Bool" 
                     else:
-                        return "Int", 0
+                        return "Int"
                 return "Int"
             elif left_type.lower() == "int" and right_type.lower() == "bool":
                 if(left_val != None and right_val != None):
                     if(right_val != False):
-                        res = left_val / self.symbolTable.get_cell(right_val, "Bool")[-1]
-                        if(res % 1 != 0):
-                            self.customErrors.append(f"Tipo float no permitido; Valor de: {left_val}/{right_val} = {res:.2f}")
-                            return "Error"
-                        return "Bool", not (int(res) == 0)
+                        # res = left_val / self.symbolTable.get_cell(right_val, "Bool")[-1]
+                        # if(res % 1 != 0):
+                        #     self.customErrors.append(f"Tipo float no permitido; Valor de: {left_val}/{right_val} = {res:.2f}")
+                        #     return "Error"
+                        # val = not (int(res) == 0)
+                        return "Bool" 
                     else:
-                        return "Int", 0
+                        return "Int"
                 return "Int"
             elif left_type.lower() == "bool" and right_type.lower() == "bool":
                 if(left_val != None and right_val != None):
                     if(right_val != False):
-                        res = self.symbolTable.get_cell(left_val, "Bool")[-1] / self.symbolTable.get_cell(right_val, "Bool")[-1]
-                        if(res % 1 != 0):
-                            self.customErrors.append(f"Tipo float no permitido; Valor de: {left_val}/{right_val} = {res:.2f}")
-                            return "Error"
-                        return "Bool", not (int(res) == 0)
+                        # res = self.symbolTable.get_cell(left_val, "Bool")[-1] / self.symbolTable.get_cell(right_val, "Bool")[-1]
+                        # if(res % 1 != 0):
+                        #     self.customErrors.append(f"Tipo float no permitido; Valor de: {left_val}/{right_val} = {res:.2f}")
+                        #     return "Error"
+                        # val = not (int(res) == 0)
+                        return "Bool" 
                     else:
-                        return "Int", 0
+                        return "Int"
                 return "Int"
             else:
                 self.customErrors.append(f"Incongruencia de tipos {left_type} y {right_type} en división")
@@ -656,23 +669,26 @@ class YAPLVisitorImpl(YAPLVisitor):
         if left_type is not None and right_type is not None:
             if left_type.lower() == "int" and right_type.lower() == "int":
                 if(left_val != None and right_val != None):
-                    res = left_val + right_val
-                    return "Int", res
+                    # res = left_val + right_val
+                    return "Int"
                 return "Int"
             elif left_type.lower() == "bool" and right_type.lower() == "int":
                 if(left_val != None and right_val != None):
-                    res = self.symbolTable.get_cell(left_val, "Bool")[-1] + right_val
-                    return "Bool", not (res == 0)
+                    # res = self.symbolTable.get_cell(left_val, "Bool")[-1] + right_val
+                    # val = not (res == 0)
+                    return "Bool" 
                 return "Int"
             elif left_type.lower() == "int" and right_type.lower() == "bool":
                 if(left_val != None and right_val != None):
-                    res = left_val + self.symbolTable.get_cell(right_val, "Bool")[-1]
-                    return "Bool", not (res == 0)
+                    # res = left_val + self.symbolTable.get_cell(right_val, "Bool")[-1]
+                    # val = not (res == 0)
+                    return "Bool" 
                 return "Int"
             elif left_type.lower() == "bool" and right_type.lower() == "bool":
                 if(left_val != None and right_val != None):
-                    res = self.symbolTable.get_cell(left_val, "Bool")[-1] + self.symbolTable.get_cell(right_val, "Bool")[-1]
-                    return "Bool", not (res == 0)
+                    # res = self.symbolTable.get_cell(left_val, "Bool")[-1] + self.symbolTable.get_cell(right_val, "Bool")[-1]
+                    # val = not (res == 0)
+                    return "Bool"
                 return "Int"
             elif left_type.lower() == "string" and right_type.lower() == "string":
                 return "string"
@@ -702,23 +718,26 @@ class YAPLVisitorImpl(YAPLVisitor):
         if left_type is not None and right_type is not None:
             if left_type.lower() == "int" and right_type.lower() == "int":
                 if(left_val != None and right_val != None):
-                    res = left_val - right_val
-                    return "Int", res
+                    # res = left_val - right_val
+                    return "Int"
                 return "Int"
             elif left_type.lower() == "bool" and right_type.lower() == "int":
                 if(left_val != None and right_val != None):
-                    res = self.symbolTable.get_cell(left_val, "Bool")[-1] - right_val
-                    return "Bool", not (res == 0)
+                    # res = self.symbolTable.get_cell(left_val, "Bool")[-1] - right_val
+                    # val = not (res == 0)
+                    return "Bool" 
                 return "Int"
             elif left_type.lower() == "int" and right_type.lower() == "bool":
                 if(left_val != None and right_val != None):
-                    res = left_val - self.symbolTable.get_cell(right_val, "Bool")[-1]
-                    return "Bool", not (res == 0)
+                    # res = left_val - self.symbolTable.get_cell(right_val, "Bool")[-1]
+                    # val = not (res == 0)
+                    return "Bool"
                 return "Int"
             elif left_type.lower() == "bool" and right_type.lower() == "bool":
                 if(left_val != None and right_val != None):
-                    res = self.symbolTable.get_cell(left_val, "Bool")[-1] - self.symbolTable.get_cell(right_val, "Bool")[-1]
-                    return "Bool", not (res == 0)
+                    # res = self.symbolTable.get_cell(left_val, "Bool")[-1] - self.symbolTable.get_cell(right_val, "Bool")[-1]
+                    # val = not (res == 0)
+                    return "Bool" 
                 return "Int"
             else:
                 self.customErrors.append(f"Incongruencia de tipos {left_type} y {right_type} en resta")
@@ -745,19 +764,23 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         if (left_type.lower() == "int" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
-                return "Bool", left_val <= right_val
+                # val = left_val <= right_val
+                return "Bool"
             return "Bool"
         elif (left_type.lower() == "bool" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
-                return "Bool", self.symbolTable.get_cell(left_val, "Bool")[-1] <= self.symbolTable.get_cell(right_val, "Bool")[-1]
+                # val = self.symbolTable.get_cell(left_val, "Bool")[-1] <= self.symbolTable.get_cell(right_val, "Bool")[-1]
+                return "Bool"
             return "Bool"
         elif (left_type.lower() == "int" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
-                return "Bool", left_val <= self.symbolTable.get_cell(right_val, "Bool")[-1]
+                # val = left_val <= self.symbolTable.get_cell(right_val, "Bool")[-1]
+                return "Bool"
             return "Bool"
         elif (left_type.lower() == "bool" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
-                return "Bool", self.symbolTable.get_cell(left_val, "Bool")[-1] <= right_val
+                # val = self.symbolTable.get_cell(left_val, "Bool")[-1] <= right_val
+                return "Bool"
             return "Bool"
         else:
             self.customErrors.append(f"Incongruencia de tipos {left_type} y {right_type} en operación <=")
@@ -782,19 +805,23 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         if (left_type.lower() == "int" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
-                return "Bool", left_val < right_val
+                # val = left_val < right_val
+                return "Bool" 
             return "Bool"
         elif (left_type.lower() == "bool" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
-                return "Bool", self.symbolTable.get_cell(left_val, "Bool")[-1] < self.symbolTable.get_cell(right_val, "Bool")[-1]
+                # val = self.symbolTable.get_cell(left_val, "Bool")[-1] < self.symbolTable.get_cell(right_val, "Bool")[-1]
+                return "Bool" 
             return "Bool"
         elif (left_type.lower() == "int" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
-                return "Bool", left_val < self.symbolTable.get_cell(right_val, "Bool")[-1]
+                # val = left_val < self.symbolTable.get_cell(right_val, "Bool")[-1]
+                return "Bool" 
             return "Bool"
         elif (left_type.lower() == "bool" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
-                return "Bool", self.symbolTable.get_cell(left_val, "Bool")[-1] < right_val
+                # val = self.symbolTable.get_cell(left_val, "Bool")[-1] < right_val
+                return "Bool"
             return "Bool"
         else:
             self.customErrors.append(f"Incongruencia de tipos {left_type} y {right_type} en operación <")
@@ -819,19 +846,23 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         if (left_type.lower() == "int" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
-                return "Bool", left_val > right_val
+                # val = left_val > right_val
+                return "Bool" 
             return "Bool"
         elif (left_type.lower() == "bool" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
-                return "Bool", self.symbolTable.get_cell(left_val, "Bool")[-1] > self.symbolTable.get_cell(right_val, "Bool")[-1]
+                # val = self.symbolTable.get_cell(left_val, "Bool")[-1] > self.symbolTable.get_cell(right_val, "Bool")[-1]
+                return "Bool" 
             return "Bool"
         elif (left_type.lower() == "int" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
-                return "Bool", left_val > self.symbolTable.get_cell(right_val, "Bool")[-1]
+                # val = left_val > self.symbolTable.get_cell(right_val, "Bool")[-1]
+                return "Bool" 
             return "Bool"
         elif (left_type.lower() == "bool" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
-                return "Bool", self.symbolTable.get_cell(left_val, "Bool")[-1] > right_val
+                # val = self.symbolTable.get_cell(left_val, "Bool")[-1] > right_val
+                return "Bool"
             return "Bool"
         else:
             self.customErrors.append(f"Incongruencia de tipos {left_type} y {right_type} en operación >")
@@ -856,19 +887,23 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         if (left_type.lower() == "int" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
-                return "Bool", left_val >= right_val
+                # val = left_val >= right_val
+                return "Bool"
             return "Bool"
         elif (left_type.lower() == "bool" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
-                return "Bool", self.symbolTable.get_cell(left_val, "Bool")[-1] >= self.symbolTable.get_cell(right_val, "Bool")[-1]
+                # val = self.symbolTable.get_cell(left_val, "Bool")[-1] >= self.symbolTable.get_cell(right_val, "Bool")[-1]
+                return "Bool"
             return "Bool"
         elif (left_type.lower() == "int" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
-                return "Bool", left_val >= self.symbolTable.get_cell(right_val, "Bool")[-1]
+                # val = left_val >= self.symbolTable.get_cell(right_val, "Bool")[-1]
+                return "Bool"
             return "Bool"
         elif (left_type.lower() == "bool" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
-                return "Bool", self.symbolTable.get_cell(left_val, "Bool")[-1] >= right_val
+                # val = self.symbolTable.get_cell(left_val, "Bool")[-1] >= right_val
+                return "Bool" 
             return "Bool"
         else:
             self.customErrors.append(f"Incongruencia de tipos {left_type} y {right_type} en operación >=")
@@ -893,23 +928,28 @@ class YAPLVisitorImpl(YAPLVisitor):
                     
         if (left_type.lower() == "int" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
-                return "Bool", left_val == right_val
+                # val = left_val == right_val
+                return "Bool"
             return "Bool"
         elif (left_type.lower() == "bool" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
-                return "Bool", left_val == right_val
+                # val = left_val == right_val
+                return "Bool"
             return "Bool"
         elif (left_type.lower() == "string" and right_type.lower() == "string"):
             if (left_val != None and right_val != None):
-                return "Bool", left_val == right_val
+                val = left_val == right_val
+                return "Bool" 
             return "Bool"
         elif (left_type.lower() == "int" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
-                return "Bool", left_val == self.symbolTable.get_cell(right_val, "Bool")[-1]
+                # val = left_val == self.symbolTable.get_cell(right_val, "Bool")[-1]
+                return "Bool" 
             return "Bool"
         elif (left_type.lower() == "bool" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
-                return "Bool", self.symbolTable.get_cell(left_val, "Bool")[-1] == right_val
+                # val = self.symbolTable.get_cell(left_val, "Bool")[-1] == right_val
+                return "Bool"
             return "Bool"
         else:
             self.customErrors.append(f"Incongruencia de tipos {left_type} y {right_type} en operación =")
@@ -934,19 +974,23 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         if (left_type.lower() == "int" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
-                return "Bool", not (left_val == 0) and not(right_val == 0)
+                # val = not (left_val == 0) and not(right_val == 0)
+                return "Bool" 
             return "Bool"
         elif (left_type.lower() == "bool" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
-                return "Bool", left_val and right_val
+                # val = left_val and right_val
+                return "Bool"
             return "Bool"
         elif (left_type.lower() == "int" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
-                return "Bool", not(left_val == 0) and not(self.symbolTable.get_cell(right_val, "Bool")[-1] == 0)
+                # val = not(left_val == 0) and not(self.symbolTable.get_cell(right_val, "Bool")[-1] == 0)
+                return "Bool" 
             return "Bool"
         elif (left_type.lower() == "bool" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
-                return "Bool", not(self.symbolTable.get_cell(left_val, "Bool")[-1] == 0) and not(right_val == 0)
+                # val = not(self.symbolTable.get_cell(left_val, "Bool")[-1] == 0) and not(right_val == 0)
+                return "Bool"
             return "Bool"
         else:
             self.customErrors.append(f"Incongruencia de tipos {left_type} y {right_type} en & lógico")
@@ -971,19 +1015,23 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         if (left_type.lower() == "int" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
-                return "Bool", not (left_val == 0) or not(right_val == 0)
+                # val = not (left_val == 0) or not(right_val == 0)
+                return "Bool" 
             return "Bool"
         elif (left_type.lower() == "bool" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
-                return "Bool", left_val or right_val
+                # val = left_val or right_val
+                return "Bool"
             return "Bool"
         elif (left_type.lower() == "int" and right_type.lower() == "bool"):
             if (left_val != None and right_val != None):
-                return "Bool", not(left_val == 0) or not(self.symbolTable.get_cell(right_val, "Bool")[-1] == 0)
+                # val = not(left_val == 0) or not(self.symbolTable.get_cell(right_val, "Bool")[-1] == 0)
+                return "Bool"
             return "Bool"
         elif (left_type.lower() == "bool" and right_type.lower() == "int"):
             if (left_val != None and right_val != None):
-                return "Bool", not(self.symbolTable.get_cell(left_val, "Bool")[-1] == 0) or not(right_val == 0)
+                # val = not(self.symbolTable.get_cell(left_val, "Bool")[-1] == 0) or not(right_val == 0)
+                return "Bool"
             return "Bool"
         else:
             self.customErrors.append(f"Incongruencia de tipos {left_type} y {right_type} en | lógico")
@@ -998,7 +1046,7 @@ class YAPLVisitorImpl(YAPLVisitor):
             expr_type, expr_val = expr_type
             
         if (expr_type.lower() == "bool" and expr_val != None):
-            return "Bool", not expr_val
+            return "Bool"
         else:
             return "Error"
     
@@ -1022,26 +1070,42 @@ class YAPLVisitorImpl(YAPLVisitor):
     
     def visitInt(self, ctx: YAPLParser.IntContext):
         #print("visitInt")
-        return "Int", int(ctx.INT().getText())
+        # res = int(ctx.INT().getText())
+        return "Int"
     
     def visitString(self, ctx: YAPLParser.StringContext):
         #print("visitString")
-        return "String", ctx.STRING().getText()
+        # res = ctx.STRING().getText()
+        return "String"
     
     def visitBoolean(self, ctx: YAPLParser.BooleanContext):
         #print("visitBoolean")
-        res = None
-        if(ctx.getText().capitalize() == "False"):
-            res = False
-        elif(ctx.getText().capitalize() == "True"):
-            res = True
-        return "Bool", res
+        # res = None
+        # if(ctx.getText().capitalize() == "False"):
+        #     res = False
+        # elif(ctx.getText().capitalize() == "True"):
+        #     res = True
+        return "Bool"
     
     def visitSelf(self, ctx: YAPLParser.SelfContext):
-        return "Self", None
+        
+        cl = self.symbolTable.get_cell(self.current_class)
+        fun = self.symbolTable.get_cell(self.current_function)
+        
+        if(cl):
+            if(cl[1]):
+                return cl[1]
+            elif(fun):
+                if(fun[1]):
+                    return fun[1]
+        elif(fun):
+            if(fun[1]):
+                return fun[1]
+        else:
+            return "Self"
 
 def main():
-    file_name = "./tests/exampleUser.expr"
+    file_name = "./tests/testCast.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
