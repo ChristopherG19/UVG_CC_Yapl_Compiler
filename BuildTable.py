@@ -97,10 +97,10 @@ class YAPLVisitorImpl(YAPLVisitor):
                 self.add_special_class_IO()
             
             if(inherits.lower() in ["string", "int", "bool"]):
-                self.customErrors.append(f"Clase Main no puede heredar de esta clase ({inherits})")
+                self.customErrors.append(f"Clase {self.current_class} no puede heredar de esta clase ({inherits})")
                 return "Error"
             elif (not self.symbolTable.containsKey(inherits) and inherits != "IO"):
-                self.customErrors.append(f"Clase Main no puede heredar de esta clase ({inherits}) porque no está definida")
+                self.customErrors.append(f"Clase {self.current_class} no puede heredar de esta clase ({inherits}) porque no está definida")
                 return "Error"
             else:
                 self.symbolTable.add_column([id, None, "Class", inherits, self.current_class, self.current_function, None, None, "Global", None, None])
@@ -515,6 +515,9 @@ class YAPLVisitorImpl(YAPLVisitor):
     
     def visitIsvoid(self, ctx: YAPLParser.IsvoidContext):
         expr_type = self.visit(ctx.expr())
+        
+        if expr_type == "Error":
+            return "Error"
 
         if expr_type == "Void":
             return "Bool", True
