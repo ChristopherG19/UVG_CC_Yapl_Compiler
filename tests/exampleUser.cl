@@ -4,6 +4,7 @@ class Str {
   b: String <- "bb";
   c: String;
   d: Int <- 3;
+  nnn: String <- "lol";
 
   getA(): String {
     a
@@ -14,6 +15,12 @@ class Str {
       c <- n;
     }
   };
+};
+
+class Rand {
+  
+  sss: Str <- (new Str);
+
 };
 
 
@@ -32,11 +39,17 @@ class Main inherits IO {
 
   fun2(): String {
     {
-      str_ins.d;
+      str_ins.b;
     }
   };
+
+  rand: Rand <- (new Rand);
+
+  prueba: String <- rand.sss.a;
 
 
   main () : SELF_TYPE { self };
 };
+
+
 

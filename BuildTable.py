@@ -436,30 +436,28 @@ class YAPLVisitorImpl(YAPLVisitor):
         return c
     
     def visitDispatchAttribute(self, ctx: YAPLParser.DispatchAttributeContext):
-        print("DispatchAttribute")
-        c = self.visitChildren(ctx)
+        # print("\nDispatchAttribute")
+        # print(ctx.getText())
         iz = ctx.expr().getText()
         der = ctx.ID()
+
+        temp = self.current_class
         
+        otra_clase = self.visit(ctx.expr())
+
+        # print(iz," ", der, " -> ", otra_clase)
+
+        # print("Clase izquierda ", otra_clase)
+
         # revisar que exista la variable
-        if (not self.symbolTable.containsKey(iz, addParent=self.current_class)):
-            self.customErrors.append(f"{iz} no existe en {self.current_class}")
-            return 'Error'
-
-        row = self.symbolTable.get_cell(iz, addParent=self.current_class)
-        otherClass = row[1]
-
-        # revisar que exista el atributo que se llama
-        aa = self.symbolTable.get_cell(str(der), addParent=otherClass)
-
-        if (not self.symbolTable.containsKey(str(der), addParent=otherClass)):
-            self.customErrors.append(f"{der} no existe en {otherClass}")
+        if (not self.symbolTable.containsKey(str(der), addParent=otra_clase)):
+            self.customErrors.append(f"{str(der)} no existe en {otra_clase}")
             return 'Error'
         
-        self.visitChildren(ctx)
+        row = self.symbolTable.get_cell(str(der), addParent=otra_clase)
+        # print(row[1])
+        return row[1]
 
-        return aa[1]
-        # return vc
 
     def visitIf(self, ctx: YAPLParser.IfContext):
         #print("visitIf")
