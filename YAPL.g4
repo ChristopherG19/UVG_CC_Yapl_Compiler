@@ -21,6 +21,7 @@ expr:
         ID ASSIGNMENT expr #assignment
     |   expr ('@' TYPE)? '.' ID '(' ( expr (',' expr)* )? ')' #dispatchExplicit
     |   ID '(' ( expr (',' expr)* ) ')' #dispatchImplicit
+    |   expr '.' ID #dispatchAttribute
     |   IF expr THEN expr ELSE expr FI #if
     |   WHILE expr LOOP expr POOL #while
     |   '{' (expr ';')+ '}' #block

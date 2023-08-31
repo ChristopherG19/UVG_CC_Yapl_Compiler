@@ -139,6 +139,11 @@ class YAPLVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by YAPLParser#dispatchAttribute.
+    def visitDispatchAttribute(self, ctx:YAPLParser.DispatchAttributeContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by YAPLParser#greaterThanOrEqual.
     def visitGreaterThanOrEqual(self, ctx:YAPLParser.GreaterThanOrEqualContext):
         return self.visitChildren(ctx)

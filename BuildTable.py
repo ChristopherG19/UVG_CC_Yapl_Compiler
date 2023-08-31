@@ -434,6 +434,32 @@ class YAPLVisitorImpl(YAPLVisitor):
         x = self.symbolTable.get_method2(method_name, self.current_class)
 
         return c
+    
+    def visitDispatchAttribute(self, ctx: YAPLParser.DispatchAttributeContext):
+        print("DispatchAttribute")
+        c = self.visitChildren(ctx)
+        iz = ctx.expr().getText()
+        der = ctx.ID()
+        
+        # revisar que exista la variable
+        if (not self.symbolTable.containsKey(iz, addParent=self.current_class)):
+            self.customErrors.append(f"{iz} no existe en {self.current_class}")
+            return 'Error'
+
+        row = self.symbolTable.get_cell(iz, addParent=self.current_class)
+        otherClass = row[1]
+
+        # revisar que exista el atributo que se llama
+        aa = self.symbolTable.get_cell(str(der), addParent=otherClass)
+
+        if (not self.symbolTable.containsKey(str(der), addParent=otherClass)):
+            self.customErrors.append(f"{der} no existe en {otherClass}")
+            return 'Error'
+        
+        self.visitChildren(ctx)
+
+        return aa[1]
+        # return vc
 
     def visitIf(self, ctx: YAPLParser.IfContext):
         #print("visitIf")
@@ -1105,7 +1131,8 @@ class YAPLVisitorImpl(YAPLVisitor):
             return "Self"
 
 def main():
-    file_name = "./tests/testCast.cl"
+    file_name = "./tests/exampleUser.cl"
+    # file_name = "./tests/arith.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
