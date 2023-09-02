@@ -21,12 +21,15 @@ Archivo a ejecutar: <a href="https://github.com/ChristopherG19/UVG_CC_Yapl_Compi
 
 Luego de ejecutar el programa, y esperando que se hayan instalado todas las librerías y plugins necesarios, aparece una ventana similar a esta:
 <p align="center">
-  <img src="https://github.com/ChristopherG19/UVG_CC_Yapl_Compiler/assets/60325784/e61ff2a1-5eb0-43d2-9977-bcc888026dff"/>
+  <img src="https://github.com/ChristopherG19/UVG_CC_Yapl_Compiler/assets/60373842/4541d87c-530a-4e2e-9796-adc50e6a80c4"/>
   <br>Ahora en modo oscuro
 </p>
 <br>
+
+
 En el cuadro de texto es posible ingresar una expresión a evaluar, luego de haberla ingresado se presiona el botón correspondiente y se muestra el árbol en una GUI independiente y adicional se imprime en consola en forma de texto. Existe la opción de limpiar el inputArea y también salir del programa.<br>
 
 Luego de haber corrido el programa una vez, o podría intentar de una vez con los archivos que ya están subidos, ejecutar el siguiente archivo: Archivo a modificar: <a href="https://github.com/ChristopherG19/UVG_CC_Yapl_Compiler/blob/visitor-pattern/BuildTable.py">BuildTable.py</a>
 
-
+### Video mostrando ejecución
+https://youtu.be/RbpQSBbfniE
