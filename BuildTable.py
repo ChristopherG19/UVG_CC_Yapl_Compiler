@@ -272,9 +272,10 @@ class YAPLVisitorImpl(YAPLVisitor):
         return type_id
         
     def visitAssignment(self, ctx: YAPLParser.AssignmentContext):
-        #print("visitAssignment")
+        print("visitAssignment")
         id = ctx.ID().getText()
         result = self.visit(ctx.expr())
+        print("ass ", ctx.getText())
 
         if isinstance(result, tuple):
             type_id, val = result
@@ -285,15 +286,46 @@ class YAPLVisitorImpl(YAPLVisitor):
         if(self.symbolTable.containsKey(id)):
             if(val != None):
                 self.symbolTable.add_info_to_cell(id, "Value", val)
+
+        print("ass type ", type_id)
+
+        if type_id == 'Error':
+            return 'Error'
+        
+        row = self.symbolTable.get_cell(id, addParent=self.current_class)
+        print(row)
+
+       
+        if(type_id != row[1]):
+                if not ((type_id == 'Int' and row[1] == 'Bool') or (type_id == 'Bool' and row[1] == 'Int')):
+                    self.customErrors.append(f"Mismatch entre tipos de datos en asignacion ({id}: {type_id} <- {row[1]})")
+                    return "Error"
+
         return type_id
     
     def visitDispatchExplicit(self, ctx: YAPLParser.DispatchExplicitContext):
-        # print("visitDispatchExplicit")
+        print("visitDispatchExplicit")
         obj_expr_type = self.visit(ctx.expr(0))
         method_name = ctx.ID().getText()
         type_ = ctx.TYPE()
-        # print("type", type_)
-        # print(ctx.getText())
+        print("type", type_)
+        print("vde ", ctx.getText())
+        print(ctx.expr(0).getText())
+        print(ctx.ID().getText())
+
+        id_ = str(ctx.ID().getText())
+
+        otra_clase = self.visit(ctx.expr(0))
+        print("oc, ", otra_clase)
+
+        ## Revisar que exista
+        if (not self.symbolTable.containsKey(id_, addParent=otra_clase)):
+            self.customErrors.append(f"{id_} no existe en {otra_clase}")
+            return 'Error'
+        
+        row = self.symbolTable.get_cell(id_, addParent=otra_clase)
+        type__ = row[1]
+        print("Tipo", type__) 
 
         # parametros del actual 
         n = 1
@@ -330,62 +362,15 @@ class YAPLVisitorImpl(YAPLVisitor):
                     self.customErrors.append(f"En {method_name} el parámetro {params_def[par][0]} require ser {params_def[par][1]} pero se encontró {vis}")
                     return "Error"  
 
-        c = self.visitChildren(ctx)
-        # print("c ", c, "ob ",  obj_expr_type)
+        return type__
 
-        if type(obj_expr_type) == tuple:
-            obj_expr_type = obj_expr_type[0]
-
-        valOET = None
-        if(type(obj_expr_type) == tuple):
-            obj_expr_type, valOET = obj_expr_type 
-
-        if obj_expr_type == 'Error':
-            return 'Error'
-
-        if self.symbolTable.get_cell(obj_expr_type) is None:
-            if obj_expr_type == 'SELF_TYPE':
-                return (obj_expr_type, valOET)
-
-            else:
-                self.customErrors.append(f"La clase {obj_expr_type} no existe")
-                return "Error"
-
-        if self.symbolTable.get_cell(obj_expr_type)[6] is not None:
-            if (method_name not in self.symbolTable.get_cell(obj_expr_type)[6]):
-                self.customErrors.append(f"El método {method_name} no pertenece a {obj_expr_type}")
-                # print("error cant param")
-                return "Error"
-            
-            meth = self.symbolTable.get_cell(method_name, addParent=obj_expr_type)
-            return meth[1]
-        
-        else:
-            if self.symbolTable.get_cell(obj_expr_type) is not None:
-                parent = self.symbolTable.get_cell(obj_expr_type)[3]
-                if parent != None:
-                    if (method_name not in self.symbolTable.get_cell(parent)[6]):
-                        self.customErrors.append(f"El método {method_name} no pertenece a {obj_expr_type}")
-                        return "Error"  
-
-                    meth = self.symbolTable.get_cell(method_name, addParent=parent)
-                    if meth is not None:
-                        p_type = meth[1]
-
-                        return (p_type, valOET)
-
-            else:
-                self.customErrors.append(f"El método {method_name} no pertenece a {obj_expr_type}")
-                return "Error"
-
-        return (obj_expr_type, valOET)
     
     def visitDispatchImplicit(self, ctx: YAPLParser.DispatchImplicitContext):
-        # print("visitDispatchImplicit")
+        print("visitDispatchImplicit")
 
         method_name = ctx.ID().getText()
         # print(method_name)
-        # print(ctx.getText())
+        print(ctx.getText())
 
         # verificar existencia en la tabla
         met = self.symbolTable.get_cell(method_name)
@@ -412,6 +397,11 @@ class YAPLVisitorImpl(YAPLVisitor):
         # parámetros que debería tener
         params_def = self.symbolTable.get_parameters(method_name)
 
+        # verificar cantidad de parámetros
+        if (len(params_def) != len(params_acc)):
+            self.customErrors.append(f"{method_name} requiere {len(params_def)} pero se le dieron {len(params_acc)}")
+            return "Error"
+
         # verificar tipo de parámetros 
         for par in range(len(params_def)):
             vis = self.visit(params_acc[par])
@@ -432,8 +422,9 @@ class YAPLVisitorImpl(YAPLVisitor):
         c = self.visitChildren(ctx)
 
         x = self.symbolTable.get_method2(method_name, self.current_class)
+        print("x ",x)
 
-        return c
+        return x[1]
     
     def visitDispatchAttribute(self, ctx: YAPLParser.DispatchAttributeContext):
         # print("\nDispatchAttribute")
