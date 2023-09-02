@@ -18,7 +18,7 @@ from BuildTable import YAPLVisitorImpl
 
 from utils.utils import CustomErrorListener, beautify_lisp_string
 
-arch = "./tests/exampleUser.expr"
+arch = "./tests/exampleUser.cl"
 grammar = "YAPL.g4" 
 
 def init_program():
@@ -65,7 +65,7 @@ def create_g4():
         from YAPLParser import YAPLParser
         from YAPLLexer import YAPLLexer
         
-        file_name = './tests/exampleUser.expr'
+        file_name = './tests/exampleUser.cl'
         error_listener = CustomErrorListener(T, tk)
         
         input_stream = FileStream(file_name)
@@ -111,7 +111,7 @@ def create_g4():
                 Terminal.insert(tk.END, error + "\n")
 
 def show_tree():
-    file_name = './tests/exampleUser.expr'
+    file_name = './tests/exampleUser.cl'
     command = ["antlr4-parse", "YAPL.g4", "prog", "-gui"]
 
     process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -143,7 +143,7 @@ def on_open():
 
 def on_save():
     texto = T.get("1.0", tk.END)
-    arch = "./tests/exampleUser.expr"
+    arch = "./tests/exampleUser.cl"
     try:
         with open(arch, "w") as archivo:
             archivo.write(texto)

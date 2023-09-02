@@ -242,6 +242,15 @@ class YAPLListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by YAPLParser#dispatchAttribute.
+    def enterDispatchAttribute(self, ctx:YAPLParser.DispatchAttributeContext):
+        pass
+
+    # Exit a parse tree produced by YAPLParser#dispatchAttribute.
+    def exitDispatchAttribute(self, ctx:YAPLParser.DispatchAttributeContext):
+        pass
+
+
     # Enter a parse tree produced by YAPLParser#greaterThanOrEqual.
     def enterGreaterThanOrEqual(self, ctx:YAPLParser.GreaterThanOrEqualContext):
         pass

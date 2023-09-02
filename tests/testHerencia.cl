@@ -1,4 +1,4 @@
-class Main {
+class Main inherits IO{
 
    main(): SELF_TYPE {
       out_string("Hello")
@@ -16,7 +16,7 @@ class A {
 };
 
 class B inherits A {
-   fun(num: String): String {
+   fun2(num: String): String {
       (let z : String in
          {
             z <- "Hola";
