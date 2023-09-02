@@ -20,7 +20,7 @@ formal:
 expr: 
         
         expr ('@' TYPE)? '.' ID '(' ( expr (',' expr)* )? ')' #dispatchExplicit
-    |   ID '(' ( expr (',' expr)* ) ')' #dispatchImplicit
+    |   ID '(' ( expr (',' expr)* ) ? ')' #dispatchImplicit
     |   expr '.' ID #dispatchAttribute
     |   ID ASSIGNMENT expr #assignment
     |   IF expr THEN expr ELSE expr FI #if

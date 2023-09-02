@@ -1,9 +1,8 @@
-
 class Str {
   a: String <- "aa";
   b: String <- "bb";
   c: String;
-  d: Int <- 3;
+  d: Int <- ~3;
   e: Bool <- True;
   nnn: String <- "lol";
 
@@ -54,10 +53,11 @@ class Main inherits IO {
 
   fun2(): String {
     {
-      intint <- fun(2, 1);
+      intint <- fun(1, 1);
       intintint <- rand.sss.d;
       intintint <- rand.sss.getD();
       str_ins.b;
+      funss();
     }
   };
 
@@ -66,12 +66,3 @@ class Main inherits IO {
 
   main () : SELF_TYPE { self };
 };
-
-
-
-
-
-
-
-
-

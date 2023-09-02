@@ -118,7 +118,7 @@ class YAPLVisitorImpl(YAPLVisitor):
             else:
                 if type_step != None:
                     type_class = type_step
-            
+        
         return type_class
     
     def visitDefFunc(self, ctx: YAPLParser.DefFuncContext):
@@ -286,10 +286,15 @@ class YAPLVisitorImpl(YAPLVisitor):
         obj_expr_type = self.visit(ctx.expr(0))
         method_name = ctx.ID().getText()
         type_ = ctx.TYPE()
+        # print(ctx.getText())
 
         id_ = str(ctx.ID().getText())
 
         otra_clase = self.visit(ctx.expr(0))
+
+        if otra_clase == 'Error':
+            return 'Error'
+
         ## Revisar que exista
         if (not self.symbolTable.containsKey(id_, addParent=otra_clase)):
             self.customErrors.append(f"{id_} no existe en {otra_clase}")
@@ -332,6 +337,11 @@ class YAPLVisitorImpl(YAPLVisitor):
                 if (vis != params_def[par][1]):
                     self.customErrors.append(f"En {method_name} el parámetro {params_def[par][0]} require ser {params_def[par][1]} pero se encontró {vis}")
                     return "Error"  
+                
+        if (ctx.TYPE()):
+            if ctx.TYPE().getText() != type__:
+                self.customErrors.append(f"El TYPE definido no es el mismo al type que retorna: {ctx.TYPE().getText()}, {type__}")
+                return 'Error'
 
         return type__
 
@@ -466,9 +476,9 @@ class YAPLVisitorImpl(YAPLVisitor):
             space = get_space_vars(_type.lower())
             if self.current_class in self.class_methods:
                 self.class_methods[self.current_class].append(id)
-                self.symbolTable.add_column([id, _type, "Variable", None, None, self.current_class, self.current_function, None, "Local", space, None])
+                self.symbolTable.add_column([id, _type, "Variable", None, self.current_class, self.current_function, None, None, "Local", space, None])
             else:
-                self.symbolTable.add_column([id, _type, "Variable", None, None, self.current_class, self.current_function, None, "Global", space, None])
+                self.symbolTable.add_column([id, _type, "Variable", None, self.current_class, self.current_function, None, None, "Global", space, None])
                 self.class_methods[self.current_class] = [id]
             
             self.symbolTable.add_info_to_cell(self.current_class, "Contains", self.class_methods[self.current_class])
@@ -744,12 +754,8 @@ class YAPLVisitorImpl(YAPLVisitor):
     def visitNeg(self, ctx:YAPLParser.NegContext):
         #print("visitNeg")
         expr_type = self.visit(ctx.expr())
-        expr_val = None
         
-        if isinstance(expr_type, tuple):
-            expr_type, expr_val = expr_type
-            
-        if (expr_type.lower() == "bool" and expr_val != None):
+        if (expr_type.lower() == "bool"):
             return "Bool"
         else:
             return "Error"
@@ -809,7 +815,7 @@ class YAPLVisitorImpl(YAPLVisitor):
             return "Self"
 
 def main():
-    file_name = "./tests/exampleUser.cl"
+    file_name = "./tests/arith.cl"
     # file_name = "./tests/arith.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
