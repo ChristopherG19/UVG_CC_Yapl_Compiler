@@ -299,7 +299,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         # print("visitAssignment")
         id = ctx.ID().getText()
         result = self.visit(ctx.expr())
-        print(id, result)
+        # print(id, result)
 
         if isinstance(result, tuple):
             type_id, val = result
