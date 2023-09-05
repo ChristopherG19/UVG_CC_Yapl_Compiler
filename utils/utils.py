@@ -45,17 +45,25 @@ def beautify_lisp_string(in_string):
            out_string += in_string[i]
    return out_string
 
-def get_space_vars(type):
+def get_space_vars(type, val=None):
+
+    type = type.lower()
     space = None
     
-    eight_space = ['int', 'char', 'string']
-    
-    if(type in eight_space):
-        space = 8
+    if(type == 'string'):
+        if (val):
+            space = len(val) * 4
+        else:
+            space = 4
+    elif(type == 'int'):
+        space = 4
     elif(type == 'bool'):
         space = 1
     
     return space
+
+def is_between_quotes(value):
+    return (value.startswith('"') and value.endswith('"')) or (value.startswith("'") and value.endswith("'"))
 
 def clean_errors(errors):
     unique_errors = set()

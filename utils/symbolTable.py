@@ -13,7 +13,12 @@ class Table():
         self.headers = ['Name', 'Type_Value', 'Type', 'Inherits', 'Parent_Cl', 'Parent_Fun', 'Contains', 'Displacement', 'Scope', 'Space', 'Value']
         self.columns = []
         self.prettyT = PrettyTable()
-    
+        self.show_contains = False  # Un indicador para mostrar o no la columna 'Contains' al imprimir
+
+    def toggle_show_contains(self, show_contains):
+        # Este método te permite cambiar si deseas mostrar la columna 'Contains' o no.
+        self.show_contains = show_contains
+
     def prettyCell(self, row, type=None, name=None):
         if row == None:
             return f"Value with parameters ({type}, {name}) is not present"
@@ -60,14 +65,14 @@ class Table():
     
     def get_method(self, name, parent):
         for row in self.columns:
-            if row[0] == name and row[2] == "Method" and row[4] == parent :
+            if row[0] == name and row[2] == "Method" and row[4] == parent:
                 return row
         return None 
     
     def get_method2(self, name, parent):
         ret = None
         for row in self.columns:
-            if row[0] == name and row[2] == "Method" and row[4] == parent :
+            if row[0] == name and row[2] == "Method" and row[4] == parent:
                 ret = row
 
         if ret is not None:
@@ -79,7 +84,7 @@ class Table():
                 parent = self.get_cell(parent)[3]
 
                 for row in self.columns:
-                    if row[0] == name and row[2] == "Method" and row[4] == parent :
+                    if row[0] == name and row[2] == "Method" and row[4] == parent:
                         ret = row
 
                 if ret is not None:
@@ -113,16 +118,17 @@ class Table():
     def build_Table(self):
         # Limpiar tabla
         self.prettyT = PrettyTable()
-        
-        # Establecer los encabezados
-        self.prettyT.field_names = self.headers
-        
-        # Agregar las filas a la tabla
+
+        # Establecer los encabezados (incluir o excluir 'Contains' según show_contains)
+        headers_to_show = self.headers if self.show_contains else [header for header in self.headers if header != 'Contains']
+        self.prettyT.field_names = headers_to_show
+
+        # Agregar las filas a la tabla (incluir o excluir 'Contains' según show_contains)
         for row in self.columns:
-            self.prettyT.add_row(row)
-        
+            row_to_show = row if self.show_contains else row[:6] + row[7:]  # Incluye o excluye la columna 'Contains'
+            self.prettyT.add_row(row_to_show)
+
         # Centrar todo, agregar título e imprimir tabla
         self.prettyT.align = "c"
         self.prettyT.title = "Symbols Table"
         return self.prettyT
-       
