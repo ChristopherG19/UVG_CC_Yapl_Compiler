@@ -26,13 +26,13 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.add_other_classes()
         
     def add_other_classes(self):
-        self.symbolTable.add_column(["Int", "Int", "Declaration", None, "Int", None, None, None, "Global", 4, 0])
-        self.symbolTable.add_column(["Bool", "Bool", "Declaration", None, "Bool", None, None, None, "Global", 1, False])
+        self.symbolTable.add_column(["Int", "Int", "Class", None, "Int", None, None, None, "Global", 4, 0])
+        self.symbolTable.add_column(["Bool", "Bool", "Class", None, "Bool", None, None, None, "Global", 1, False])
         self.symbolTable.add_column([False, "Bool", "Declaration", None, "Bool", None, None, None, "Global", 1, 0])
         self.symbolTable.add_column([True, "Bool", "Declaration", None, "Bool", None, None, None, "Global", 1, 1])
-        self.symbolTable.add_column(["Void", "Void", "Declaration", None, "Void", None, None, None, "Global", 1, None])
+        self.symbolTable.add_column(["Void", "Void", "Class", None, "Void", None, None, None, "Global", 1, None])
         self.symbolTable.add_column(["Object", "Object", "Class", None, "Object", None, ["abort", "type_name", "copy"], None, "Global", None, None])
-        self.symbolTable.add_column(["String", "String", "Declaration", None, "String", None, ["lenght", "concat", "substr"], None, "Global", 4, ""])
+        self.symbolTable.add_column(["String", "String", "Class", None, "String", None, ["lenght", "concat", "substr"], None, "Global", 4, ""])
         self.symbolTable.add_column(["abort", "Object", "Declaration", None, "Object", None, None, None, "Global", None, "Error"])
         self.symbolTable.add_column(["type_name", "String", "Declaration", None, "Object", None, None, None, "Global", None, None])
         self.symbolTable.add_column(["copy", "SELF_TYPE", "Declaration", None, "Object", None, None, None, "Global", None, None])
@@ -141,7 +141,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.current_function = id
         self.current_count_bytes = 0
         
-        print("init",id, type_id, parent_class)
+        # print("init",id, type_id, parent_class)
         
         formal_parameters = ctx.formal()
         if formal_parameters:
@@ -154,7 +154,7 @@ class YAPLVisitorImpl(YAPLVisitor):
                 param_type = formal_param.TYPE().getText()
                 space = get_space_vars(param_type.lower())
                 self.current_count_bytes += space
-                print(self.current_class, self.current_function, self.current_count_bytes)
+                # print(self.current_class, self.current_function, self.current_count_bytes)
                 self.symbolTable.add_column([param_name, param_type, "Param", None, parent_class, self.current_function, None, None, "Local", space, None])
                 if parent_class in self.class_methods:
                     self.class_methods[parent_class].append(param_name)
@@ -307,7 +307,7 @@ class YAPLVisitorImpl(YAPLVisitor):
             type_id = result
             val = None
             
-        print(id, type_id, val)
+        # print(id, type_id, val)
             
         if(self.symbolTable.containsKey(id)):
             if(val != None):
@@ -326,7 +326,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return type_id
     
     def visitDispatchExplicit(self, ctx: YAPLParser.DispatchExplicitContext):
-        print("visitDispatchExplicit")
+        # print("visitDispatchExplicit")
         obj_expr_type = self.visit(ctx.expr(0))
         method_name = ctx.ID().getText()
         type_ = ctx.TYPE()
@@ -346,7 +346,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         row = self.symbolTable.get_cell(id_)
         if(row[4] != "IO"):
             ## Revisar que exista
-            if (not self.symbolTable.containsKey(id_, addParent=otra_clase)):
+            if (not self.symbolTable.checkCanUse(id_, addParent=otra_clase)):
                 self.customErrors.append(f"{id_} no existe en {otra_clase}")
                 return 'Error'
             
@@ -396,7 +396,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return type__
 
     def visitDispatchImplicit(self, ctx: YAPLParser.DispatchImplicitContext):
-        print("visitDispatchImplicit")
+        # print("visitDispatchImplicit")
 
         method_name = ctx.ID().getText()
 
@@ -460,7 +460,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return x[1]
     
     def visitDispatchAttribute(self, ctx: YAPLParser.DispatchAttributeContext):
-        print("\nDispatchAttribute")
+        # print("\nDispatchAttribute")
         # print(ctx.getText())
         iz = ctx.expr().getText()
         der = ctx.ID()
@@ -481,7 +481,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         
         row = self.symbolTable.get_cell(str(der))
         if(row[4] != "IO"):
-            if (not self.symbolTable.containsKey(str(der), addParent=otra_clase)):
+            if (not self.symbolTable.checkCanUse(str(der), addParent=otra_clase)):
                 self.customErrors.append(f"{str(der)} no existe en {otra_clase}")
                 return 'Error'
             
@@ -1001,7 +1001,7 @@ class YAPLVisitorImpl(YAPLVisitor):
             return "Self"
 
 def main():
-    file_name = "./tests/exampleUser.cl"
+    file_name = "./tests/testScopes.cl"
     # file_name = "./tests/arith.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)

@@ -56,6 +56,15 @@ class Table():
             return True
         return False
     
+    def checkCanUse(self, id, addType=None, addParent=None):
+        for row in self.columns:
+            row_id, row_add_type, row_add_parent, row_add_function_p = row[0], row[1], row[4], row[5]
+            if row_id == id and (addType is None or row_add_type == addType):
+                return True
+            elif addParent is not None and row_add_parent == addParent:
+                return True      
+        return False
+    
     def get_parameters(self, par_fun):
         params = []
         for row in self.columns:
