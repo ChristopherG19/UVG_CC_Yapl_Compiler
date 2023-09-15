@@ -1,68 +1,14 @@
-class Str {
-  a: String <- "aa";
-  b: String <- "bb";
-  c: String;
-  d: Int <- ~3;
-  e: Bool <- True;
-  nnn: String <- "lol";
-
-  getA(): String {
-    a
-  };
-
-  getD(): Int {
-    d
-  };
-
-  meth(n: String): String {
-    {
-      c <- n;
-    }
-  };
-};
-
-class Rand {
-  
-  sss: Str <- (new Str);
-
-};
-
-
 class Main inherits IO {
+  x: Int <- 5;
 
-  a: Int;
-  b: Int;
-  xd: String;
-
-  fun(x: Int, y: Int): Int {
+  process():Int {
     {
-      let f: Int <- 0 in 0;
+      let x : Int in 0;
+      x <- x + 5;
     }
   };
-
-  funss(): String {
-    {"a";}
+  
+  main(): SELF_TYPE {
+	  out_int(1)
   };
-
-  str_ins: Str <- (new Str);
-
-  rand: Rand <- (new Rand);
-
-  intint: Int;
-  intintint: Int;
-
-  fun2(): String {
-    {
-      intint <- fun(1, 1);
-      intintint <- rand.sss.d;
-      intintint <- rand.sss.getD();
-      str_ins.b;
-      funss();
-    }
-  };
-
-  prueba: String <- rand.sss.a;
-
-
-  main () : SELF_TYPE { self };
 };

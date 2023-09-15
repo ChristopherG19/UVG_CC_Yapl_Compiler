@@ -299,7 +299,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         # print("visitAssignment")
         id = ctx.ID().getText()
         result = self.visit(ctx.expr())
-        
+        print(id, result)
 
         if isinstance(result, tuple):
             type_id, val = result
@@ -452,6 +452,8 @@ class YAPLVisitorImpl(YAPLVisitor):
                 if (vis != params_def[par][1]):
                     self.customErrors.append(f"En {method_name} el parámetro {params_def[par][0]} require ser {params_def[par][1]} pero se encontró {vis}")
                     return "Error"
+                newSpace = get_space_vars(params_def[par][1], vis[1])
+                self.symbolTable.add_info_to_cell(params_def[par][0], "Space", newSpace)
 
         c = self.visitChildren(ctx)
 
