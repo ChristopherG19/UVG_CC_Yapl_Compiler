@@ -52,9 +52,9 @@ def get_space_vars(type, val=None):
     
     if(type == 'string'):
         if (val):
-            space = len(val) * 4
+            space = len(val) * 2
         else:
-            space = 4
+            space = 2
     elif(type == 'int'):
         space = 4
     elif(type == 'bool'):

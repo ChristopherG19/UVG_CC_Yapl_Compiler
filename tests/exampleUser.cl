@@ -1,14 +1,11 @@
 class Main inherits IO {
-  x: Int <- 5;
-
-  process():Int {
-    {
-      let x : Int in 0;
-      x <- x + 5;
-    }
+  val : Int <- 10;
+  main() : String {
+    (let val : String in
+      {
+        val <- "hola mundo";
+      }
+    )
   };
-  
-  main(): SELF_TYPE {
-	  out_int(1)
-  };
+  val2 : Int <- 10;
 };
