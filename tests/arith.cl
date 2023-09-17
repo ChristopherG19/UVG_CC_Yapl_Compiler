@@ -14,43 +14,43 @@ class A {
       self
    };
 
-   method2(num1 : Int, num2 : Int) : B {  -- plus
+   method2(num1 : Int, num2 : Int) : A {  -- plus
       (let x : Int in
 	 {
             x <- num1 + num2;
-	    (new B).set_var(x);
+	    (new A).set_var(x);
 	 }
       )
    };
 
-   method3(num : Int) : C {  -- negate
+   method3(num : Int) : A {  -- negate
       (let x : Int in
 	 {
             x <- ~num;
-	    (new C).set_var(x);
+	    (new A).set_var(x);
 	 }
       )
    };
 
-   method4(num1 : Int, num2 : Int) : D {  -- diff
+   method4(num1 : Int, num2 : Int) : A {  -- diff
             if num2 < num1 then
                (let x : Int in
 		  {
                      x <- num1 - num2;
-	             (new D).set_var(x);
+	             (new A).set_var(x);
 	          }
                )
             else
                (let x : Int in
 		  {
 	             x <- num2 - num1;
-	             (new D).set_var(x);
+	             (new A).set_var(x);
 		  }
                )
             fi
    };
 
-   method5(num : Int) : E {  -- factorial
+   method5(num : Int) : A {  -- factorial
       (let x : Int <- 1 in
 	 {
 	    (let y : Int <- 1 in
@@ -61,7 +61,7 @@ class A {
 	          }
 	       pool
 	    );
-	    (new E).set_var(x);
+	    (new A).set_var(x);
 	 }
       )
    };
@@ -70,11 +70,11 @@ class A {
 
 class B inherits A {  -- B is a number squared
 
-   method5(num : Int) : E { -- square
+   method5(num : Int) : A { -- square
       (let x : Int in
 	 {
             x <- num * num;
-	    (new E).set_var(x);
+	    (new A).set_var(x);
 	 }
       )
    };
@@ -92,11 +92,11 @@ class C inherits B {
       )
    };
 
-   method5(num : Int) : E {  -- cube
+   method5(num : Int) : A {  -- cube
       (let x : Int in
 	 {
             x <- num * num * num;
-	    (new E).set_var(x);
+	    (new A).set_var(x);
 	 }
       )
    };
@@ -118,13 +118,13 @@ class D inherits B {
 
 };
 
-class E inherits D {
+class E {
 
-   method6(num : Int) : A {  -- division
-      (let x : Int in
+   method6(num : String, num2: String) : Int {  -- division
+      (let x : String in
          {
-            x <- num / 8;
-	    (new A).set_var(x);
+            x <- num + num2;
+            (new D).value();
          }
       )
    };
@@ -137,6 +137,7 @@ class Main inherits IO {
    char : String;
    avar : A; 
    a_var : A;
+   a_test : Int;
    flag : Bool <- true;
 
 
@@ -151,8 +152,9 @@ class Main inherits IO {
       )
    };
 
-   main() : Object {
+   main() : SELF_TYPE {
       {
+         a_test <- (new E).method6("66","h");
          avar <- (new A);
          avar.set_var(2);
          out_int(avar.value());
@@ -192,4 +194,3 @@ class Main inherits IO {
    };
 
 };
-

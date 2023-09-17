@@ -238,18 +238,20 @@ class YAPLVisitorImpl(YAPLVisitor):
         if type_id_b != type_id:
             
             if type_id == "SELF_TYPE":
-                return "SELF_TYPE"
+                pass
         
             elif type_id == "Object":
-                return "Object"
+                pass
             
-            self.customErrors.append(f"Función definida como {type_id} pero se encontró {type_id_b}")
-            return "Error"
+            else:
+                self.customErrors.append(f"Función definida como {type_id} pero se encontró {type_id_b}")
+                return "Error"
         
         space_return = self.symbolTable.get_cell(type_id_b)[-2]
         if(space_return):
             self.count_bytes_func += self.symbolTable.get_cell(type_id_b)[-2]
 
+        print(self.current_function, "Space", self.count_bytes_func)
         self.symbolTable.add_info_to_cell(self.current_function, "Space", self.count_bytes_func)
         self.count_bytes_class += self.count_bytes_func
         self.current_function = None
@@ -295,14 +297,20 @@ class YAPLVisitorImpl(YAPLVisitor):
                 self.customErrors.append(f"El identificador '{id}' ya fue definido en este ámbito")
                 return "Error"
             else:
-                # if(val == None):
-                #     val = self.symbolTable.get_cell(type_id)[-1]
-                self.class_methods[parent_class].append(id)
-                newSpace = get_space_vars(type_id, val)
-                if(self.current_function):
-                    self.count_bytes_func += newSpace
-                else:
-                    self.count_bytes_class += newSpace
+                if(val == None):
+                    val = self.symbolTable.get_cell(type_id)[-1]
+                    if (val != None):
+                        self.class_methods[parent_class].append(id)
+                        newSpace = get_space_vars(type_id, val)
+                        if(self.current_function):
+                            self.count_bytes_func += newSpace
+                        else:
+                            self.count_bytes_class += newSpace
+                        self.symbolTable.add_column([id, type_id, "Instance", None, parent_class, self.current_function, None, None, "Global", newSpace, val])
+                
+                newSpace = get_space_vars(type_id)
+                if(not newSpace):
+                    newSpace = self.symbolTable.get_cell(type_id)[-2]
                 self.symbolTable.add_column([id, type_id, "Instance", None, parent_class, self.current_function, None, None, "Global", newSpace, val])
         else:
             self.class_methods[parent_class] = [id]
@@ -359,6 +367,8 @@ class YAPLVisitorImpl(YAPLVisitor):
                     self.symbolTable.add_info_to_cell(id, "Value", val)
             else:
                 space = get_space_vars(type_id)
+                if(not space):
+                    space = self.symbolTable.get_cell(type_id)[-2]
                 if(self.current_function):
                     self.count_bytes_func += space
                 else:
@@ -1029,8 +1039,9 @@ class YAPLVisitorImpl(YAPLVisitor):
 
             clase = self.current_class
             if(id != 'self'):
-                self.customErrors.append(f"El atributo '{id}' no ha sido declarado en la clase '{clase}'")
-                return "Error"
+                if(row[4] != clase):
+                    self.customErrors.append(f"El atributo '{id}' no ha sido declarado en la clase '{clase}'")
+                    return "Error"
         if row:
             return row[1], row[0]
         return "Error"
@@ -1079,7 +1090,7 @@ class YAPLVisitorImpl(YAPLVisitor):
             return "Self"
 
 def main():
-    file_name = "./tests/testCast.cl"
+    file_name = "./tests/recur.cl"
     # file_name = "./tests/arith.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
