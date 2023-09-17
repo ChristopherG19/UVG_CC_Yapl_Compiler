@@ -226,10 +226,10 @@ class YAPLVisitorImpl(YAPLVisitor):
         if type_id_b is None:
         
             if type_id == "SELF_TYPE":
-                return "SELF_TYPE"
+                pass
         
             elif type_id == "Object":
-                return "Object"
+                pass
         
             else:
                 self.customErrors.append(f"Función definida como {type_id} pero se encontró None")
@@ -281,7 +281,7 @@ class YAPLVisitorImpl(YAPLVisitor):
                 return "Error"
             
             if(type_id_res == "SELF_TYPE"):
-                return type_id
+                pass
                 
             if(type_id != type_id_res):
                 if not ((type_id == 'Int' and type_id_res == 'Bool') or (type_id == 'Bool' and type_id_res == 'Int')):
