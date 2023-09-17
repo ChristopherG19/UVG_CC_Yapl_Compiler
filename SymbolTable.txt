@@ -14,15 +14,6 @@
 |   abort    |   Object   | Declaration |   None   |   Object  |    None    |     None     | Global |  None | Error |
 | type_name  |   String   | Declaration |   None   |   Object  |    None    |     None     | Global |  None |  None |
 |    copy    | SELF_TYPE  | Declaration |   None   |   Object  |    None    |     None     | Global |  None |  None |
-| Factorial  |    Int     |    Class    |  Object  | Factorial |    None    |     None     | Global |   32  |  None |
-|    var     |    Int     |   Instance  |   None   | Factorial |    None    |     None     | Global |   4   |   0   |
-|     n      |    Int     |    Param    |   None   | Factorial | factorial  |     None     | Local  |   4   |  None |
-| factorial  |    Int     |    Method   |   None   | Factorial |    None    |     None     | Global |   28  |  None |
-|     f      |    Int     |   Variable  |   None   | Factorial | factorial  |     None     | Local  |   4   |  None |
-| Fibonacci  |    Int     |    Class    |  Object  | Fibonacci |    None    |     None     | Global |   36  |  None |
-|     n      |    Int     |    Param    |   None   | Fibonacci | fibonacci  |     None     | Local  |   4   |  None |
-| fibonacci  |    Int     |    Method   |   None   | Fibonacci |    None    |     None     | Global |   36  |  None |
-|     f      |    Int     |   Variable  |   None   | Fibonacci | fibonacci  |     None     | Local  |   4   |  None |
 | out_string | SELF_TYPE  |    Method   |   None   |     IO    |    None    |     None     | Global |   0   |  None |
 |   xParS    |   String   |    Param    |   None   |     IO    | out_string |     None     | Local  |   0   |  None |
 |  out_int   | SELF_TYPE  |    Method   |   None   |     IO    |    None    |     None     | Global |   10  |  None |
@@ -35,9 +26,9 @@
 |   substr   |   String   |    Method   |   None   |   String  |    None    |     None     | Global |   0   |  None |
 |    iPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     | Local  |   0   |  None |
 |    lPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     | Local  |   0   |  None |
-|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     | Global |   82  |  None |
-|     n      |    Int     |   Instance  |   None   |    Main   |    None    |     None     | Global |   4   |   0   |
-|   facto    | Factorial  |   Instance  |   None   |    Main   |    None    |     None     | Global |   32  |  None |
-|    fibo    | Fibonacci  |   Instance  |   None   |    Main   |    None    |     None     | Global |   36  |  None |
-|    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   78  |  None |
+|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     | Global |   28  |  None |
+|     x      |    Int     |   Instance  |   None   |    Main   |    None    |     None     | Global |   4   |   0   |
+|  process   |    Int     |    Method   |   None   |    Main   |    None    |     None     | Global |   8   |  None |
+|     x      |    Int     |   Variable  |   None   |    Main   |  process   |     None     | Local  |   4   |  None |
+|    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   16  |  None |
 +------------+------------+-------------+----------+-----------+------------+--------------+--------+-------+-------+

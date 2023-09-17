@@ -51,7 +51,7 @@ def get_space_vars(type, val=None):
     space = None
     
     if(type == 'string'):
-        if (val):
+        if (val and val != "''"):
             space = len(val) * 2
         else:
             space = 2

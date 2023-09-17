@@ -251,7 +251,6 @@ class YAPLVisitorImpl(YAPLVisitor):
         if(space_return):
             self.count_bytes_func += self.symbolTable.get_cell(type_id_b)[-2]
 
-        print(self.current_function, "Space", self.count_bytes_func)
         self.symbolTable.add_info_to_cell(self.current_function, "Space", self.count_bytes_func)
         self.count_bytes_class += self.count_bytes_func
         self.current_function = None
@@ -301,7 +300,11 @@ class YAPLVisitorImpl(YAPLVisitor):
                     val = self.symbolTable.get_cell(type_id)[-1]
                     if (val != None):
                         self.class_methods[parent_class].append(id)
-                        newSpace = get_space_vars(type_id, val)
+                        if(val != "''"):
+                            newSpace = get_space_vars(type_id, val)
+                        else:
+                            newSpace = get_space_vars(type_id)
+                            
                         if(self.current_function):
                             self.count_bytes_func += newSpace
                         else:
@@ -311,7 +314,8 @@ class YAPLVisitorImpl(YAPLVisitor):
                 newSpace = get_space_vars(type_id)
                 if(not newSpace):
                     newSpace = self.symbolTable.get_cell(type_id)[-2]
-                self.symbolTable.add_column([id, type_id, "Instance", None, parent_class, self.current_function, None, None, "Global", newSpace, val])
+                if(not (self.symbolTable.containsKey(id, type_id))):
+                    self.symbolTable.add_column([id, type_id, "Instance", None, parent_class, self.current_function, None, None, "Global", newSpace, val])
         else:
             self.class_methods[parent_class] = [id]
             
@@ -352,7 +356,6 @@ class YAPLVisitorImpl(YAPLVisitor):
                     
                         if(self.current_function and self.current_class):
                             if(coin[5] == self.current_function and coin[4] == self.current_class):
-                                self.count_bytes_func -= coin[-2]
                                 self.symbolTable.add_info_to_cell(id, "Value", val, self.current_function, self.current_class)
                                 self.symbolTable.add_info_to_cell(id, "Space", newSpace, self.current_function, self.current_class)
                         elif(self.current_function):
@@ -1043,7 +1046,7 @@ class YAPLVisitorImpl(YAPLVisitor):
                     self.customErrors.append(f"El atributo '{id}' no ha sido declarado en la clase '{clase}'")
                     return "Error"
         if row:
-            return row[1], row[0]
+            return row[1], row[-1]
         return "Error"
     
     def visitInt(self, ctx: YAPLParser.IntContext):
@@ -1090,8 +1093,7 @@ class YAPLVisitorImpl(YAPLVisitor):
             return "Self"
 
 def main():
-    file_name = "./tests/recur.cl"
-    # file_name = "./tests/arith.cl"
+    file_name = "./tests/testScopes.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
