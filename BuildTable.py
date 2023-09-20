@@ -59,7 +59,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.symbolTable.add_column(["lPar", "Int", "Param", None, "String", "substr", None, None, "Local", 0, None])
         
     def visitStart(self, ctx:YAPLParser.StartContext):
-        #print("Start")
+        print("Start")
         final_type = None
         stages = ctx.class_def()
         for stage in stages:
@@ -92,7 +92,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return final_type
     
     def visitDefClass(self, ctx: YAPLParser.DefClassContext):
-        # print("defClass")
+        print("defClass")
         self.count_bytes_class = 0
         id = ctx.TYPE(0).getText()
         type_id = ctx.CLASS_N().__str__()
@@ -137,7 +137,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return type_class
     
     def visitDefFunc(self, ctx: YAPLParser.DefFuncContext):
-        # print("visitDefFunc")
+        print("visitDefFunc")
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
         parent_class = ctx.parentCtx.TYPE(0).getText() if ctx.parentCtx.TYPE(0) else None
@@ -145,7 +145,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.current_function = id
         self.count_bytes_func = 0
         
-        # print("init",id, type_id, parent_class)
+        print("init",id, type_id, parent_class)
         
         formal_parameters = ctx.formal()
         if formal_parameters:
@@ -244,8 +244,11 @@ class YAPLVisitorImpl(YAPLVisitor):
                 pass
             
             else:
-                self.customErrors.append(f"Función definida como {type_id} pero se encontró {type_id_b}")
-                return "Error"
+                if not ((type_id == "Int" and type_id_b == "Bool") or (type_id == "Bool" and type_id_b == "Int")):
+                    print("Fun Type_id_B", type_id_b)
+                    print("ERRRRRRRRRRRROOOOOOOOORRRRRRRRRR",id, type_id, type_id_b)
+                    self.customErrors.append(f"Función {id} definida como {type_id} pero se encontró {type_id_b}")
+                    return "Error"
         
         space_return = self.symbolTable.get_cell(type_id_b)[-2]
         if(space_return):
@@ -257,7 +260,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return type_id_b
     
     def visitDefAssign(self, ctx: YAPLParser.DefAssignContext):
-        # print("visitDefAssign")
+        print("visitDefAssign")
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
         space = get_space_vars(type_id.lower())
@@ -329,16 +332,19 @@ class YAPLVisitorImpl(YAPLVisitor):
         return type_id
         
     def visitAssignment(self, ctx: YAPLParser.AssignmentContext):
-        # print("visitAssignment")
+        print("visitAssignment")
         id = ctx.ID().getText()
         result = self.visit(ctx.expr())
-        # print(id, result)
+        print(id, result)
         type_id = None
         if isinstance(result, tuple):
             type_id, val = result
         else:
             type_id = result
             val = None
+            
+        if(type_id == "Error"):
+            return "Error"
             
         # print(id, type_id, val)
             
@@ -373,6 +379,8 @@ class YAPLVisitorImpl(YAPLVisitor):
                 if(not space):
                     space = self.symbolTable.get_cell(type_id)[-2]
                 if(self.current_function):
+                    if(not space):
+                        space = 0
                     self.count_bytes_func += space
                 else:
                     self.count_bytes_class += space
@@ -397,12 +405,11 @@ class YAPLVisitorImpl(YAPLVisitor):
         return type_id
     
     def visitDispatchExplicit(self, ctx: YAPLParser.DispatchExplicitContext):
-        # print("visitDispatchExplicit")
-        obj_expr_type = self.visit(ctx.expr(0))
+        print("visitDispatchExplicit")
         method_name = ctx.ID().getText()
         type_ = ctx.TYPE()
         # print(ctx.getText())
-
+        
         id_ = str(ctx.ID().getText())
 
         otra_clase = self.visit(ctx.expr(0))
@@ -464,10 +471,21 @@ class YAPLVisitorImpl(YAPLVisitor):
                 self.customErrors.append(f"El TYPE definido no es el mismo al type que retorna: {ctx.TYPE().getText()}, {type__}")
                 return 'Error'
 
+        print("oooooooooaaaa", row, self.current_class, self.current_function)
+        print(self.symbolTable.get_cell(self.current_function))
+        if(type__ == "SELF_TYPE"):
+            # Retorno tipo padre
+            if (self.current_function):
+                rowPadre = self.symbolTable.get_cell(self.current_function)
+                print("salida", rowPadre[1])
+                return rowPadre[1]
+            print("salida", row[4])
+            return row[4]
+        print("salida2", type__)
         return type__
 
     def visitDispatchImplicit(self, ctx: YAPLParser.DispatchImplicitContext):
-        # print("visitDispatchImplicit")
+        print("visitDispatchImplicit")
 
         method_name = ctx.ID().getText()
 
@@ -551,7 +569,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         return x[1]
     
     def visitDispatchAttribute(self, ctx: YAPLParser.DispatchAttributeContext):
-        # print("\nDispatchAttribute")
+        print("\nDispatchAttribute")
         # print(ctx.getText())
         iz = ctx.expr().getText()
         der = ctx.ID()
@@ -585,21 +603,25 @@ class YAPLVisitorImpl(YAPLVisitor):
             return row[1]
 
     def visitIf(self, ctx: YAPLParser.IfContext):
-        #print("visitIf")
-        self.visitChildren(ctx)
+        print("visitIf")
         condition_expr = self.visit(ctx.expr(0))
+        print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE", condition_expr)
         if condition_expr != 'Bool':
         # Handle the type mismatch error here
             self.customErrors.append("La condición dentro del if debe de retornar bool")
             return "Error"
-
-        # return self.visitChildren(ctx)s
-        return "Bool"
+        
+        then_expr_type = self.visit(ctx.expr(1))
+        else_expr_type = self.visit(ctx.expr(2))
+        
+        if then_expr_type == 'Error' or else_expr_type == 'Error':
+            return 'Error: Error en el cuerpo del if o del else'
+        else:
+            return "Bool"
     
     def visitWhile(self, ctx: YAPLParser.WhileContext):
-        #print("visitWhile")
-        self.visitChildren(ctx)
-
+        print("visitWhile")
+        
         val = None
         condition_expr = self.visit(ctx.expr(0))
 
@@ -610,11 +632,12 @@ class YAPLVisitorImpl(YAPLVisitor):
         # Handle the type mismatch error here
             self.customErrors.append(f"La condición dentro del while debe de retornar bool pero se encontró {condition_expr}")
             return "Error"
-
-        return "Bool"
+        
+        body_type = self.visit(ctx.expr(1))
+        return "Object"
     
     def visitBlock(self, ctx: YAPLParser.BlockContext):
-        #print("visitBlock")
+        print("visitBlock")
         n = ctx.getChildCount()  # Get the number of child expressions in the block
         last_expr = None
         
@@ -624,10 +647,11 @@ class YAPLVisitorImpl(YAPLVisitor):
                 child_expr = self.visit(child_expr_ctx)
                 last_expr = child_expr  # Keep track of the last expression's value
         
+        print("blockSalida", last_expr)
         return last_expr  # Return the value of the last expression
     
     def visitLetId(self, ctx: YAPLParser.LetIdContext):
-        # print("visitLetId")
+        print("visitLetId")
         for i in range(len(ctx.ID())):
             id = ctx.ID(i).getText()
             _type = ctx.TYPE(i).getText()
@@ -641,25 +665,28 @@ class YAPLVisitorImpl(YAPLVisitor):
             
             self.symbolTable.add_info_to_cell(self.current_class, "Contains", self.class_methods[self.current_class])
 
-        self.visitChildren(ctx)
-        return _type
+        typ = self.visit(ctx.expr(0))
+        print("t",typ)
+        print("let", _type)
+        return typ
 
     def visitNew(self, ctx: YAPLParser.NewContext):
-        #print("visitNew")
+        print("visitNew")
         _type = ctx.TYPE().getText()
+        print("NewT",_type)
         if(_type == "SELF_TYPE"):
             return "Self"
         return _type
     
     def visitNegative(self, ctx: YAPLParser.NegativeContext):
-        #print("visitNegative")
+        print("visitNegative")
         expr_value = self.visit(ctx.expr())
         
         val = None
         if isinstance(expr_value, tuple):
             expr_value, val = expr_value
 
-        if(expr_value.lower() == "int"):
+        if(expr_value == "Int"):
             return "Int"
         else:
             return "Error"
@@ -679,7 +706,11 @@ class YAPLVisitorImpl(YAPLVisitor):
         # else:
         #     return "Bool", False
         
-        return "Bool"
+        if expr_type == "Void":
+            return "Bool"
+        else:
+            self.customErrors.append(f"Se esperaba tipo Void, no {expr_type}")
+            return "Error"
     
     def visitTimes(self, ctx: YAPLParser.TimesContext):
         #print("visitTimes")
@@ -1075,25 +1106,30 @@ class YAPLVisitorImpl(YAPLVisitor):
         
         cl = self.symbolTable.get_cell(self.current_class)
         fun = self.symbolTable.get_cell(self.current_function)
-        
-        if(fun[1] == "SELF_TYPE"):
-            if(cl and cl[1]):
-                return cl[1]
-        
-        if(cl):
-            if(cl[1]):
-                return cl[1]
-            elif(fun):
-                if(fun[1]):
-                    return fun[1]
-        elif(fun):
-            if(fun[1]):
+                
+        if(fun and fun[1]): 
+            if(fun[1] == "SELF_TYPE"):
+                return "SELF_TYPE"
+            else:
                 return fun[1]
-        else:
-            return "Self"
+        elif(cl and cl[1]):
+            return cl[1]
+        
+        # # REVISAR PESOS SELF CLASES Y FUNCIONES
+        # if(cl):
+        #     if(cl[1]):
+        #         return cl[1]
+        #     elif(fun):
+        #         if(fun[1]):
+        #             return fun[1]
+        # elif(fun):
+        #     if(fun[1]):
+        #         return fun[1]
+        # else:
+        #     return "Self"
 
 def main():
-    file_name = "./tests/testScopes.cl"
+    file_name = "./tests/arith.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)

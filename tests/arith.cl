@@ -32,9 +32,10 @@ class A {
       )
    };
 
-   method4(num1 : Int, num2 : Int) : A {  -- diff
+   method4(num1 : Int, num2 : Int) : Bool {  -- diff
             if num2 < num1 then
-               (let x : Int in
+               (let x : Int
+ in
 		  {
                      x <- num1 - num2;
 	             (new A).set_var(x);
@@ -118,13 +119,13 @@ class D inherits B {
 
 };
 
-class E {
+class E inherits D {
 
-   method6(num : String, num2: String) : Int {  -- division
-      (let x : String in
+   method6(num : Int) : A {  -- division
+      (let x : Int in
          {
-            x <- num + num2;
-            (new D).value();
+            x <- num / 8;
+	    (new A).set_var(x);
          }
       )
    };
@@ -137,7 +138,6 @@ class Main inherits IO {
    char : String;
    avar : A; 
    a_var : A;
-   a_test : Int;
    flag : Bool <- true;
 
 
@@ -154,7 +154,6 @@ class Main inherits IO {
 
    main() : SELF_TYPE {
       {
-         a_test <- (new E).method6("66","h");
          avar <- (new A);
          avar.set_var(2);
          out_int(avar.value());

@@ -12,6 +12,6 @@ class Main inherits IO{
     j: Bool <- False;
 
     main(): SELF_TYPE {
-        out_string("Hello World\n")
+        self
     };
 };
