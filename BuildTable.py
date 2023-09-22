@@ -377,7 +377,10 @@ class YAPLVisitorImpl(YAPLVisitor):
             else:
                 space = get_space_vars(type_id)
                 if(not space):
-                    space = self.symbolTable.get_cell(type_id)[-2]
+                    if(self.symbolTable.get_cell(type_id)):
+                        space = self.symbolTable.get_cell(type_id)[-2]
+                    else:
+                        space = 0
                 if(self.current_function):
                     if(not space):
                         space = 0
@@ -440,10 +443,12 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         # parámetros que debería tener
         params_def = self.symbolTable.get_parameters(method_name)
+        print(params_def, method_name)
 
         # verificar cantidad de parámetros
         if (len(params_def) != len(params_acc)):
-            self.customErrors.append(f"{method_name} requiere {len(params_def)} pero se le dieron {len(params_acc)}")
+            print("-------------------------------------Hola DE")
+            self.customErrors.append(f"{method_name} (clase {self.current_class} y funcion {self.current_function}) requiere {len(params_def)} pero se le dieron {len(params_acc)}")
             return "Error"
 
         
@@ -516,6 +521,7 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         # verificar cantidad de parámetros
         if (len(params_def) != len(params_acc)):
+            print("-------------------------------------Hola DI")
             self.customErrors.append(f"{method_name} requiere {len(params_def)} pero se le dieron {len(params_acc)}")
             return "Error"
 
@@ -652,6 +658,7 @@ class YAPLVisitorImpl(YAPLVisitor):
     
     def visitLetId(self, ctx: YAPLParser.LetIdContext):
         print("visitLetId")
+        expression_types = []
         for i in range(len(ctx.ID())):
             id = ctx.ID(i).getText()
             _type = ctx.TYPE(i).getText()
@@ -665,10 +672,13 @@ class YAPLVisitorImpl(YAPLVisitor):
             
             self.symbolTable.add_info_to_cell(self.current_class, "Contains", self.class_methods[self.current_class])
 
-        typ = self.visit(ctx.expr(0))
-        print("t",typ)
+        for i in range(len(ctx.expr())):
+            expression_type = self.visit(ctx.expr(i))
+            expression_types.append(expression_type)
+        print("t",expression_types[-1])
+        print("t2",self.visit(ctx.expr(0)))
         print("let", _type)
-        return typ
+        return expression_types[-1]
 
     def visitNew(self, ctx: YAPLParser.NewContext):
         print("visitNew")
@@ -709,8 +719,9 @@ class YAPLVisitorImpl(YAPLVisitor):
         if expr_type == "Void":
             return "Bool"
         else:
-            self.customErrors.append(f"Se esperaba tipo Void, no {expr_type}")
-            return "Error"
+            if(expr_type != "SELF_TYPE"):
+                self.customErrors.append(f"Se esperaba tipo Void, no {expr_type}")
+                return "Error"
     
     def visitTimes(self, ctx: YAPLParser.TimesContext):
         #print("visitTimes")
@@ -1129,7 +1140,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         #     return "Self"
 
 def main():
-    file_name = "./tests/arith.cl"
+    file_name = "./tests/list.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
