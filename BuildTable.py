@@ -157,6 +157,8 @@ class YAPLVisitorImpl(YAPLVisitor):
                 param_name = formal_param.ID().getText()
                 param_type = formal_param.TYPE().getText()
                 space = get_space_vars(param_type.lower())
+                if(not space):
+                    space = 0
                 if(self.current_function):
                     self.count_bytes_func += space
                 else:
@@ -203,6 +205,8 @@ class YAPLVisitorImpl(YAPLVisitor):
                 self.symbolTable.add_info_to_cell(self.current_function, "Space", self.count_bytes_func)
             else:
                 space_val = get_space_vars(type_id_b, val)
+                if(not space_val):
+                    space_val = 0
                 if(self.current_function):
                     self.count_bytes_func += space_val
                 else:
@@ -251,8 +255,9 @@ class YAPLVisitorImpl(YAPLVisitor):
                     return "Error"
         
         space_return = self.symbolTable.get_cell(type_id_b)[-2]
-        if(space_return):
-            self.count_bytes_func += self.symbolTable.get_cell(type_id_b)[-2]
+        if(not space_return):
+            space_return = 0
+        self.count_bytes_func += space_return
 
         self.symbolTable.add_info_to_cell(self.current_function, "Space", self.count_bytes_func)
         self.count_bytes_class += self.count_bytes_func
@@ -265,9 +270,10 @@ class YAPLVisitorImpl(YAPLVisitor):
         type_id = ctx.TYPE().getText()
         space = get_space_vars(type_id.lower())
         
+        print("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB", id, type_id, self.current_class, self.current_function)
         parent_class = ctx.parentCtx.TYPE(0).getText() if ctx.parentCtx.TYPE(0) else None
         self.current_class = parent_class
-        
+
         if(type_id == "Error"):
             return "Error"
         
@@ -312,12 +318,18 @@ class YAPLVisitorImpl(YAPLVisitor):
                             self.count_bytes_func += newSpace
                         else:
                             self.count_bytes_class += newSpace
-                        self.symbolTable.add_column([id, type_id, "Instance", None, parent_class, self.current_function, None, None, "Global", newSpace, val])
+                        print("##################", self.symbolTable.containsKey(id, type_id, parent_class), id, type_id, parent_class)
+                        if(not(self.symbolTable.containsKey(id, type_id, parent_class))):
+                            self.symbolTable.add_column([id, type_id, "Instance", None, parent_class, self.current_function, None, None, "Global", newSpace, val])
                 
                 newSpace = get_space_vars(type_id)
                 if(not newSpace):
                     newSpace = self.symbolTable.get_cell(type_id)[-2]
-                if(not (self.symbolTable.containsKey(id, type_id))):
+                    if(not newSpace):
+                        newSpace = 0
+                print("##################222", self.symbolTable.get_cell(id, type_id, parent_class), self.symbolTable.containsKey(id, type_id, parent_class), id, type_id, parent_class)
+                if(not(self.symbolTable.containsKey(id, type_id, parent_class))):
+                    print("##################333", id, type_id, "Instance", None, parent_class, self.current_function, None, None, "Global", newSpace, val)
                     self.symbolTable.add_column([id, type_id, "Instance", None, parent_class, self.current_function, None, None, "Global", newSpace, val])
         else:
             self.class_methods[parent_class] = [id]
@@ -329,6 +341,7 @@ class YAPLVisitorImpl(YAPLVisitor):
     def visitFormalAssign(self, ctx:YAPLParser.FormalAssignContext):
         id = ctx.ID().getText()
         type_id = ctx.TYPE().getText()
+        print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", id, type_id, self.current_class, self.current_function)
         return type_id
         
     def visitAssignment(self, ctx: YAPLParser.AssignmentContext):
@@ -354,6 +367,8 @@ class YAPLVisitorImpl(YAPLVisitor):
                 if(len(coins) > 1):
                     for coin in coins:
                         newSpace = get_space_vars(coin[1], val)
+                        if(not newSpace):
+                            newSpace = 0
                         if(self.current_function):
                             if(coin[5] == self.current_function):
                                 self.count_bytes_func += newSpace
@@ -379,11 +394,11 @@ class YAPLVisitorImpl(YAPLVisitor):
                 if(not space):
                     if(self.symbolTable.get_cell(type_id)):
                         space = self.symbolTable.get_cell(type_id)[-2]
+                        if(not space):
+                            space = 0
                     else:
                         space = 0
                 if(self.current_function):
-                    if(not space):
-                        space = 0
                     self.count_bytes_func += space
                 else:
                     self.count_bytes_class += space
@@ -539,6 +554,8 @@ class YAPLVisitorImpl(YAPLVisitor):
                     return "Error"
                 
                 newSpace = get_space_vars(params_def[par][1], vis[1])
+                if(not newSpace):
+                    newSpace = 0
                 if(self.current_function):
                     self.count_bytes_func += newSpace
                 else:
@@ -554,6 +571,8 @@ class YAPLVisitorImpl(YAPLVisitor):
                     self.customErrors.append(f"En {method_name} el parámetro {params_def[par][0]} require ser {params_def[par][1]} pero se encontró {vis}")
                     return "Error"
                 newSpace = get_space_vars(params_def[par][1])
+                if(not newSpace):
+                    newSpace = 0
                 if(self.current_function):
                     self.count_bytes_func += newSpace
                 else:
@@ -563,6 +582,8 @@ class YAPLVisitorImpl(YAPLVisitor):
                 
             self.symbolTable.add_info_to_cell(method_name, "Space", param_space)
             return_method_space = self.symbolTable.get_cell(met[1])[-2]
+            if(not return_method_space):
+                return_method_space = 0
             temp_space_sum = return_method_space + param_space
             self.symbolTable.add_info_to_cell(method_name, "Space", temp_space_sum)
             if(self.current_function):
@@ -570,9 +591,13 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         c = self.visitChildren(ctx)
 
+        print(self.symbolTable.get_cell(method_name))
+        print(method_name, self.current_class)
         x = self.symbolTable.get_method2(method_name, self.current_class)
-
-        return x[1]
+        if(x):
+            return x[1]
+        else:
+            return self.symbolTable.get_cell(method_name)[1]
     
     def visitDispatchAttribute(self, ctx: YAPLParser.DispatchAttributeContext):
         print("\nDispatchAttribute")
@@ -1084,9 +1109,19 @@ class YAPLVisitorImpl(YAPLVisitor):
 
             clase = self.current_class
             if(id != 'self'):
+                print(self.symbolTable.get_coincidences(id))
                 if(row[4] != clase):
-                    self.customErrors.append(f"El atributo '{id}' no ha sido declarado en la clase '{clase}'")
-                    return "Error"
+                    mi_lista = self.symbolTable.get_coincidences(id)
+                    coincidencias = [sublista for sublista in mi_lista if sublista[1] == sublista[4]]
+                    
+                    if len(coincidencias) == 0:
+                        print("ERRRRROOR-------------------------!!!!>",id, row, clase)
+                        self.customErrors.append(f"El atributo '{id}' no ha sido declarado en la clase '{clase}'")
+                        return "Error"
+                    
+                    # print("ERRRRROOR-------------------------!!!!>",id, row, clase)
+                    # self.customErrors.append(f"El atributo '{id}' no ha sido declarado en la clase '{clase}'")
+                    # return "Error"
         if row:
             return row[1], row[-1]
         return "Error"
@@ -1140,7 +1175,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         #     return "Self"
 
 def main():
-    file_name = "./tests/list.cl"
+    file_name = "./tests/arith.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)

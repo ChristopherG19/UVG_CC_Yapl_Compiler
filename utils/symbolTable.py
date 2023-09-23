@@ -65,12 +65,16 @@ class Table():
                 return True      
         return False
     
-    def get_parameters(self, par_fun):
+    def get_parameters(self, par_fun, parent=None):
         params = []
         for row in self.columns:
             if row[2] == "Param" and row[5] == par_fun:
-                params.append(row)
+                if parent is not None and str(parent) == row[4]:
+                    params.append(row)
+                elif parent is None:
+                    params.append(row)
         return params
+
     
     def get_method(self, name, parent):
         for row in self.columns:
