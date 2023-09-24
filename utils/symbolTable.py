@@ -172,6 +172,14 @@ class Table():
                         return False
         print(f"Row with name '{name}' does not exist in the table.")
         return False
+    
+    def getAllfromClass(self, classname):
+        ret = []
+        for row in self.columns:
+            if row[4] == classname and row[2] != "Class":
+                ret.append(row)
+
+        return ret
 
     def build_Table(self):
         # Limpiar tabla
