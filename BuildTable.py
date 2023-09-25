@@ -111,7 +111,21 @@ class YAPLVisitorImpl(YAPLVisitor):
                 return "Error"
             else:
                 self.symbolTable.add_column([id, "Object", "Class", inherits, self.current_class, self.current_function, None, None, "Global", None, None])
-    
+
+                # copiar todos los métodos de la clase heredada
+                all_ = self.symbolTable.getAllfromClass(inherits)
+                print("all_ ",id, inherits, len(all_))
+
+                for element in all_:
+                    temp = []
+                    for i, e in enumerate(element): 
+                        if i == 4:
+                            temp.append(id)
+                        else:
+                            temp.append(e)
+                    print("temp: ", temp)
+                    self.symbolTable.columns.append(temp)    
+                self.symbolTable.build_Table()
     
         else:
             self.symbolTable.add_column([id, None, "Class", "Object", self.current_class, self.current_function, None, None, "Global", None, None])
@@ -426,10 +440,12 @@ class YAPLVisitorImpl(YAPLVisitor):
         print("visitDispatchExplicit")
         method_name = ctx.ID().getText()
         type_ = ctx.TYPE()
-        # print(ctx.getText())
+        print(ctx.getText())
         
         id_ = str(ctx.ID().getText())
+        print("id ", id_)
 
+        print("ctx expr 0 ",ctx.expr(0).getText())
         otra_clase = self.visit(ctx.expr(0))
         
         val = None
@@ -438,15 +454,25 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         if otra_clase == 'Error':
             return 'Error'
+        
+        print("otra_clase: ", otra_clase)
 
         row = self.symbolTable.get_cell(id_)
+
         if(row[4] != "IO"):
             ## Revisar que exista
             if (not self.symbolTable.checkCanUse(id_, addParent=otra_clase)):
                 self.customErrors.append(f"{id_} no existe en {otra_clase}")
                 return 'Error'
             
-        row = self.symbolTable.get_cell(id_)
+        row = self.symbolTable.get_cell(id_, addParent= otra_clase)
+        print("row: ", row)
+
+        if row is None:
+            # try with Object
+            row = self.symbolTable.get_cell(id_, addParent= "Object")
+            print("row: ", row)
+
         type__ = row[1]
 
         # parametros del actual 
@@ -457,8 +483,10 @@ class YAPLVisitorImpl(YAPLVisitor):
             n += 1
 
         # parámetros que debería tener
-        params_def = self.symbolTable.get_parameters(method_name)
+        params_def = self.symbolTable.get_parameters(method_name, otra_clase)
+        print("params!!!!")
         print(params_def, method_name)
+        print("par ", len(params_def), len(params_acc))
 
         # verificar cantidad de parámetros
         if (len(params_def) != len(params_acc)):
@@ -488,7 +516,7 @@ class YAPLVisitorImpl(YAPLVisitor):
                 
         if (ctx.TYPE()):
             if ctx.TYPE().getText() != type__:
-                self.customErrors.append(f"El TYPE definido no es el mismo al type que retorna: {ctx.TYPE().getText()}, {type__}")
+                self.customErrors.append(f"{ctx.getText()}: El tipo de dato definido no es el mismo al tipo que retorna: {ctx.TYPE().getText()}, {type__}")
                 return 'Error'
 
         print("oooooooooaaaa", row, self.current_class, self.current_function)
@@ -502,12 +530,14 @@ class YAPLVisitorImpl(YAPLVisitor):
             print("salida", row[4])
             return row[4]
         print("salida2", type__)
+        print("Return dispatch exp : ", type__)
         return type__
 
     def visitDispatchImplicit(self, ctx: YAPLParser.DispatchImplicitContext):
         print("visitDispatchImplicit")
 
         method_name = ctx.ID().getText()
+        print(method_name)
 
         # verificar existencia en la tabla
         met = self.symbolTable.get_cell(method_name)
@@ -532,7 +562,7 @@ class YAPLVisitorImpl(YAPLVisitor):
             n += 1
 
         # parámetros que debería tener
-        params_def = self.symbolTable.get_parameters(method_name)
+        params_def = self.symbolTable.get_parameters(method_name, self.current_class)
 
         # verificar cantidad de parámetros
         if (len(params_def) != len(params_acc)):
@@ -1101,9 +1131,13 @@ class YAPLVisitorImpl(YAPLVisitor):
         return self.visit(ctx.expr())
     
     def visitId(self, ctx:YAPLParser.IdContext):
-        #print("visitId")
+        print("visitId")
         id = ctx.ID().getText()
         row = self.symbolTable.get_cell(id)
+
+        if row is None:
+            self.customErrors.append(f"{id} no existe")
+            return "Error"
 
         if id not in self.symbolTable.get_cell(self.current_class)[6]:
 

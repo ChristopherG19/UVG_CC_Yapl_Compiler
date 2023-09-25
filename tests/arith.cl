@@ -33,27 +33,25 @@ class A {
    };
 
    method4(num1 : Int, num2 : Int) : Bool {  -- diff
-            if num2 < num1 then
-               (let x : Int
- in
-		  {
-                     x <- num1 - num2;
-	             (new A).set_var(x);
-	          }
-               )
-            else
-               (let x : Int in
-		  {
-	             x <- num2 - num1;
-	             (new A).set_var(x);
-		  }
-               )
-            fi
+      if num2 < num1 then
+         (let x : Int in
+		   {
+            x <- num1 - num2;
+	         (new A).set_var(x);
+	      })
+         
+      else
+         (let x : Int in
+		   {
+	      x <- num2 - num1;
+	      (new A).set_var(x);
+		   })
+      fi
    };
 
    method5(num : Int) : A {  -- factorial
       (let x : Int <- 1 in
-	 {
+	   {
 	    (let y : Int <- 1 in
 	       while y <= num loop
 	          {
@@ -155,17 +153,17 @@ class Main inherits IO {
    main() : SELF_TYPE {
       {
          avar <- (new A);
-         avar.set_var(2);
+	      avar.set_var(2);
          out_int(avar.value());
          
          if is_even(avar.value()) then
 	          out_string(" es par!\n")
-	     else
+	      else
 	          out_string(" es impar!\n")
-	     fi;
+	      fi;
 	     
          a_var <- (new A).set_var(3);
-	     avar <- (new B).method2(avar.value(), a_var.value());
+	      avar <- (new B).method2(avar.value(), a_var.value());
          out_int(avar.value());
          out_string("\n");
          
@@ -185,7 +183,7 @@ class Main inherits IO {
          out_string("\n");
       	 
          avar.set_var(6);
-         avar <- (new C)@B.method5(avar.value());
+         avar <- (new C)@A.method5(avar.value());
          out_int(avar.value());
          out_string("\n");
 
