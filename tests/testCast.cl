@@ -12,6 +12,7 @@ class Main inherits IO{
     j: Bool <- False;
 
     main(): SELF_TYPE {
+        let x : Int in 0;
         self
     };
 };
