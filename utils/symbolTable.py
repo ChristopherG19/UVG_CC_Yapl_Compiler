@@ -121,6 +121,7 @@ class Table():
         return matches
         
     def add_info_to_cell(self, name, column_name, value, func=None, classF=None):
+        print("------->",name, column_name, value, func, classF)
         # Iterate through the symbol table to find the appropriate cell
         for row in self.columns:
             if row[0] == name:

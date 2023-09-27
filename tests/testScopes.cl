@@ -1,5 +1,6 @@
 class Main inherits IO {
   x: Int <- 5;
+  y: Int <- 5;
 
   process():Int {
     {

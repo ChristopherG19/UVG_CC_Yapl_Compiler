@@ -287,9 +287,11 @@ class YAPLVisitorImpl(YAPLVisitor):
         
         print("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB", id, type_id, self.current_class, self.current_function)
         if(self.current_function):
+            self.symbolTable.add_info_to_cell(id, "Displacement", self.count_bytes_func)
             print("BBBBBBBFunc",self.count_bytes_func, self.count_bytes_class)
         else:
             if(self.current_class):
+                self.symbolTable.add_info_to_cell(id, "Displacement", self.count_bytes_class)
                 print("BBBBBBBClass",self.count_bytes_func, self.count_bytes_class)
         parent_class = ctx.parentCtx.TYPE(0).getText() if ctx.parentCtx.TYPE(0) else None
         self.current_class = parent_class
@@ -751,10 +753,11 @@ class YAPLVisitorImpl(YAPLVisitor):
             
             self.symbolTable.add_info_to_cell(self.current_class, "Contains", self.class_methods[self.current_class])
             if(self.current_function):
-                self.symbolTable.add_info_to_cell(id, "Displacement", self.count_bytes_func)
+                self.symbolTable.add_info_to_cell(id, "Displacement", self.count_bytes_func, func=self.current_function, classF=self.current_class)
+                print(id, "DisplacementLEEEEEEEEEEFFFT", self.count_bytes_func)
             else:
-                print(id, "Displacement", self.count_bytes_class)
-                self.symbolTable.add_info_to_cell(id, "Displacement", self.count_bytes_class)
+                print(id, "DisplacementLEEEEEEEEEET", self.count_bytes_class)
+                self.symbolTable.add_info_to_cell(id, "Displacement", self.count_bytes_class, func=self.current_function, classF=self.current_class)
             
 
         for i in range(len(ctx.expr())):
@@ -1244,7 +1247,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         #     return "Self"
 
 def main():
-    file_name = "./tests/testCast.cl"
+    file_name = "./tests/testScopes.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
