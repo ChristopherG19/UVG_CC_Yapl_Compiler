@@ -20,10 +20,12 @@ from utils.utils import CustomErrorListener, beautify_lisp_string
 
 arch = "./tests/exampleUser.cl"
 grammar = "YAPL.g4" 
+current = "code" # possible values ["code", "CI", "tokens", "Mips"]
+code = ""
 
 def init_program():
 
-    comando = ["antlr4", "-Dlanguage=Python3", "-visitor",str(grammar)]
+    comando = ["antlr4", "-Dlanguage=Python3", "-visitor", str(grammar)]
 
     try:
         subprocess.run(comando, check=True)
@@ -37,7 +39,15 @@ def init_program():
     treeA = "Tree.py"
 
 def create_g4():
-    texto = T.get("1.0", tk.END)
+
+    global current
+    global code
+
+    if (current != "code"):
+        texto = code
+
+    else: 
+        texto = T.get("1.0", tk.END)
     
     try:
         with open(arch, "w") as archivo:
@@ -176,7 +186,7 @@ def on_copy():
 
 def on_paste():
     clipboard_text = root.clipboard_get()
-    T.insert(tk.INSERT, clipboard_text)
+    T.insert(tk.END, clipboard_text)
 
 def on_cut():
     selected_text = T.get("sel.first", "sel.last")
@@ -199,10 +209,72 @@ def on_select_grammar():
 
         # reinizializar el programa
         init_program()
+
+
+def on_change_to_codigo():
+    global current
+    global code
+    if (current != "code"):
         
+        T.delete(1.0, tk.END)    
+        T.insert(tk.END, code)
+
+    # change current
+    current = "code"
+
+def on_change_to_tokens():
+    global current
+    global code
+    if (current == "code"):
+        # save code
+        code = T.get("1.0", tk.END)
+
+    # change current
+    current = "tokens"
+
+    # Clear
+    T.delete(1.0, tk.END)
+
+    # get text from file
+    try:
+        with open("YAPL.tokens", 'r') as file:
+            text_ = str(file.read())
+
+            # change text to the one on 
+            T.insert(tk.END, text_)
+
+    except:
+        print("Error leyendo YAPL.token") 
+
+def on_change_to_CI():
+    global current
+    global code
+    if (current == "code"):
+        # save code
+        code = T.get("1.0", tk.END)
+
+    # change current
+    current = "CI"
+
+    # Clear
+    T.delete(1.0, tk.END)
+
+    # get text from file
+    try:
+        with open("CI.txt", 'r') as file:
+            text_ = str(file.read())
+
+            # change text to the one on 
+            T.insert(tk.END, text_)
+
+    except:
+        print("Error leyendo Código Intermedio") 
+    
+
+def on_change_to_MIPS():
+    0
 
 # UID ==========================================================
-
 
 root = tk.Tk()
 root.title("Not Visual Studio Code")
@@ -270,6 +342,22 @@ btn_Clean_terminal.pack(side=tk.RIGHT)
 btn_Clean_space = tk.Button(header_frame, text="Limpiar", command=clear, bg="#2d2d2d", fg="white", activebackground="#444",
                activeforeground="white")
 btn_Clean_space.pack(side=tk.RIGHT)
+
+btn_Code = tk.Button(header_frame, text="Código", command=on_change_to_codigo, bg="#2d2d2d", fg="white", activebackground="#444",
+               activeforeground="white")
+btn_Code.pack(side=tk.LEFT)
+
+btn_Tokens = tk.Button(header_frame, text="Tokens", command=on_change_to_tokens, bg="#2d2d2d", fg="white", activebackground="#444",
+               activeforeground="white")
+btn_Tokens.pack(side=tk.LEFT)
+
+btn_CI = tk.Button(header_frame, text="Código Intermedio", command=on_change_to_CI, bg="#2d2d2d", fg="white", activebackground="#444",
+               activeforeground="white")
+btn_CI.pack(side=tk.LEFT)
+
+btn_Mips = tk.Button(header_frame, text="Mips", command=on_change_to_MIPS, bg="#2d2d2d", fg="white", activebackground="#444",
+               activeforeground="white")
+btn_Mips.pack(side=tk.LEFT)
 
 
 # Área de escritura de texto 
