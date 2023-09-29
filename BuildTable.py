@@ -350,6 +350,9 @@ class YAPLVisitorImpl(YAPLVisitor):
                         else:
                             newSpace = get_space_vars(type_id)
                             
+                        if(not newSpace):
+                            newSpace = 0
+                            
                         tempSpaceId = newSpace
                             
                         if(self.current_function):
@@ -765,10 +768,13 @@ class YAPLVisitorImpl(YAPLVisitor):
             _type = ctx.TYPE(i).getText()
             space = get_space_vars(_type.lower())
             print("<..............->",id, _type, space)
+            if(not space):
+                space = 0
             if(self.current_function):
                 self.count_bytes_func += space
             else:
                 self.count_bytes_class += space
+                
             if self.current_class in self.class_methods:
                 self.class_methods[self.current_class].append(id)
                 self.symbolTable.add_column([id, _type, "Variable", None, self.current_class, self.current_function, None, None, "Local", space, None])
@@ -1272,7 +1278,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         #     return "Self"
 
 def main():
-    file_name = "./tests/testScopes.cl"
+    file_name = "./tests/testHerencia.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
