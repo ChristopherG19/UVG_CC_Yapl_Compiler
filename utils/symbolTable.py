@@ -141,26 +141,28 @@ class Table():
                             return False
                 # Check if only the function matches
                 elif func and row[5] == func:
-                    if column_name in self.headers:
-                        index = self.headers.index(column_name)
-                        if index < len(row):
-                            row[index] = value
-                            self.build_Table()
-                            return True
-                    else:
-                        print(f"Column '{column_name}' does not exist in the table.")
-                        return False
+                    if(row[4] == classF):
+                        if column_name in self.headers:
+                            index = self.headers.index(column_name)
+                            if index < len(row):
+                                row[index] = value
+                                self.build_Table()
+                                return True
+                        else:
+                            print(f"Column '{column_name}' does not exist in the table.")
+                            return False
                 # Check if only the class matches
                 elif classF and row[4] == classF:
-                    if column_name in self.headers:
-                        index = self.headers.index(column_name)
-                        if index < len(row):
-                            row[index] = value
-                            self.build_Table()
-                            return True
-                    else:
-                        print(f"Column '{column_name}' does not exist in the table.")
-                        return False
+                    if(row[5] == func):
+                        if column_name in self.headers:
+                            index = self.headers.index(column_name)
+                            if index < len(row):
+                                row[index] = value
+                                self.build_Table()
+                                return True
+                        else:
+                            print(f"Column '{column_name}' does not exist in the table.")
+                            return False
                 else:
                     if column_name in self.headers:
                         index = self.headers.index(column_name)

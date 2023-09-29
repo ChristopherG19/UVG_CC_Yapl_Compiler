@@ -23,7 +23,9 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.current_function = None
         self.customErrors = []
         self.count_bytes_class = 0
+        self.displacement_cbclass = 0
         self.count_bytes_func = 0
+        self.displacement_cbfunc = 0
         self.add_other_classes()
         
     def add_other_classes(self):
@@ -94,6 +96,8 @@ class YAPLVisitorImpl(YAPLVisitor):
     def visitDefClass(self, ctx: YAPLParser.DefClassContext):
         print("defClass")
         self.count_bytes_class = 0
+        self.displacement_cbclass = 0
+        
         id = ctx.TYPE(0).getText()
         type_id = ctx.CLASS_N().__str__()
         self.current_class = id
@@ -158,6 +162,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.current_class = parent_class
         self.current_function = id
         self.count_bytes_func = 0
+        self.displacement_cbfunc = 0
         
         print("init",id, type_id, parent_class)
         
@@ -175,14 +180,22 @@ class YAPLVisitorImpl(YAPLVisitor):
                     space = 0
                 if(self.current_function):
                     self.count_bytes_func += space
+                    self.displacement_cbfunc += space
                 else:
                     self.count_bytes_class += space
+                    self.displacement_cbclass += space
                 # print(self.current_class, self.current_function, self.current_count_bytes)
                 self.symbolTable.add_column([param_name, param_type, "Param", None, parent_class, self.current_function, None, None, "Local", space, None])
                 if parent_class in self.class_methods:
                     self.class_methods[parent_class].append(param_name)
                 else:
                     self.class_methods[parent_class] = [param_name]
+                    
+                if(self.current_function):
+                    self.symbolTable.add_info_to_cell(param_name, "Displacement", self.count_bytes_func-space, func=self.current_function, classF=self.current_class)
+                else:
+                    self.symbolTable.add_info_to_cell(param_name, "Displacement", self.count_bytes_class-space, func=self.current_function, classF=self.current_class)
+            
 
                 self.visit(formal_param)    
         
@@ -287,11 +300,11 @@ class YAPLVisitorImpl(YAPLVisitor):
         
         print("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB", id, type_id, self.current_class, self.current_function)
         if(self.current_function):
-            self.symbolTable.add_info_to_cell(id, "Displacement", self.count_bytes_func)
+            self.symbolTable.add_info_to_cell(id, "Displacement", self.count_bytes_func, self.current_function, self.current_class)
             print("BBBBBBBFunc",self.count_bytes_func, self.count_bytes_class)
         else:
             if(self.current_class):
-                self.symbolTable.add_info_to_cell(id, "Displacement", self.count_bytes_class)
+                self.symbolTable.add_info_to_cell(id, "Displacement", self.count_bytes_class, self.current_function, self.current_class)
                 print("BBBBBBBClass",self.count_bytes_func, self.count_bytes_class)
         parent_class = ctx.parentCtx.TYPE(0).getText() if ctx.parentCtx.TYPE(0) else None
         self.current_class = parent_class
@@ -323,7 +336,8 @@ class YAPLVisitorImpl(YAPLVisitor):
                 val = self.symbolTable.get_cell(type_id, "Declaration")[-1]
 
         if parent_class in self.class_methods:
-            if(self.symbolTable.containsKey(id, None, parent_class, self.current_function)):
+            if(self.symbolTable.containsKey(id, type_id, parent_class, self.current_function)):
+                print(id, type_id, parent_class, self.current_function)
                 self.customErrors.append(f"El identificador '{id}' ya fue definido en este ámbito")
                 return "Error"
             else:
@@ -340,8 +354,10 @@ class YAPLVisitorImpl(YAPLVisitor):
                             
                         if(self.current_function):
                             self.count_bytes_func += newSpace
+                            self.displacement_cbfunc += newSpace
                         else:
                             self.count_bytes_class += newSpace
+                            self.displacement_cbclass += newSpace
                         print("##################", self.symbolTable.containsKey(id, type_id, parent_class), id, type_id, parent_class)
                         if(not(self.symbolTable.containsKey(id, type_id, parent_class))):
                             self.symbolTable.add_column([id, type_id, "Instance", None, parent_class, self.current_function, None, None, "Global", newSpace, val])
@@ -363,18 +379,22 @@ class YAPLVisitorImpl(YAPLVisitor):
         if(self.current_function):
             if(tempSpaceId):
                 print("ttttttttttttttt", tempSpaceId, self.count_bytes_func)
-                tempValDis = self.count_bytes_func - tempSpaceId
+                tempValDis = self.displacement_cbfunc - tempSpaceId
             else:
-                tempValDis = self.count_bytes_func
-            self.symbolTable.add_info_to_cell(id, "Displacement", tempValDis)
+                tempValDis = self.displacement_cbfunc
+            
+            self.symbolTable.add_info_to_cell(id, "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
         else:
             print(id, "Displacement", self.count_bytes_class)
+            print(self.symbolTable.get_coincidences(id))
             if(tempSpaceId):
-                print("ttttttttttttttt", tempSpaceId, self.count_bytes_class)
-                tempValDis = self.count_bytes_class - tempSpaceId
+                print("ttttttttttttttt2", tempSpaceId, self.count_bytes_class)
+                tempValDis = self.displacement_cbclass - tempSpaceId
             else:
-                tempValDis = self.count_bytes_class
-            self.symbolTable.add_info_to_cell(id, "Displacement", tempValDis)
+                tempValDis = self.displacement_cbclass
+            
+            print(id, "Displacement", tempValDis, self.current_function, self.current_class)
+            self.symbolTable.add_info_to_cell(id, "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
         
         return type_id
     
@@ -744,6 +764,11 @@ class YAPLVisitorImpl(YAPLVisitor):
             id = ctx.ID(i).getText()
             _type = ctx.TYPE(i).getText()
             space = get_space_vars(_type.lower())
+            print("<..............->",id, _type, space)
+            if(self.current_function):
+                self.count_bytes_func += space
+            else:
+                self.count_bytes_class += space
             if self.current_class in self.class_methods:
                 self.class_methods[self.current_class].append(id)
                 self.symbolTable.add_column([id, _type, "Variable", None, self.current_class, self.current_function, None, None, "Local", space, None])
@@ -753,11 +778,11 @@ class YAPLVisitorImpl(YAPLVisitor):
             
             self.symbolTable.add_info_to_cell(self.current_class, "Contains", self.class_methods[self.current_class])
             if(self.current_function):
-                self.symbolTable.add_info_to_cell(id, "Displacement", self.count_bytes_func, func=self.current_function, classF=self.current_class)
-                print(id, "DisplacementLEEEEEEEEEEFFFT", self.count_bytes_func)
+                self.symbolTable.add_info_to_cell(id, "Displacement", self.count_bytes_func-space, func=self.current_function, classF=self.current_class)
+                print(id, "DisplacementLEEEEEEEEEEFFFT", self.count_bytes_func-space)
             else:
-                print(id, "DisplacementLEEEEEEEEEET", self.count_bytes_class)
-                self.symbolTable.add_info_to_cell(id, "Displacement", self.count_bytes_class, func=self.current_function, classF=self.current_class)
+                print(id, "DisplacementLEEEEEEEEEET", self.count_bytes_class-space)
+                self.symbolTable.add_info_to_cell(id, "Displacement", self.count_bytes_class-space, func=self.current_function, classF=self.current_class)
             
 
         for i in range(len(ctx.expr())):

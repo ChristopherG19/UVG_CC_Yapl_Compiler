@@ -26,7 +26,7 @@
 |   substr   |   String   |    Method   |   None   |   String  |    None    |     None     | Global |   0   |  None |
 |    iPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     | Local  |   0   |  None |
 |    lPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     | Local  |   0   |  None |
-|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     | Global |   32  |  None |
+|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     | Global |   45  |  None |
 | out_string | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
 |   xParS    |   String   |    Param    |   None   |    Main   | out_string |     None     | Local  |   0   |  None |
 |  out_int   | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
@@ -35,7 +35,10 @@
 |  int_int   |    Int     |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
 |     x      |    Int     |   Instance  |   None   |    Main   |    None    |      0       | Global |   4   |   0   |
 |     y      |    Int     |   Instance  |   None   |    Main   |    None    |      4       | Global |   4   |   0   |
-|  process   |    Int     |    Method   |   None   |    Main   |    None    |     None     | Global |   8   |  None |
-|     x      |    Int     |   Variable  |   None   |    Main   |  process   |      0       | Local  |   4   |  None |
+|     y      |    Int     |    Param    |   None   |    Main   |  process   |      0       | Local  |   4   |  None |
+|     z      |    Int     |    Param    |   None   |    Main   |  process   |      4       | Local  |   4   |  None |
+|  process   |    Int     |    Method   |   None   |    Main   |    None    |     None     | Global |   20  |  None |
+|     x      |    Int     |   Variable  |   None   |    Main   |  process   |      8       | Local  |   4   |   0   |
+|     z      |    Bool    |   Instance  |   None   |    Main   |    None    |      8       | Global |   1   | False |
 |    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   16  |  None |
 +------------+------------+-------------+----------+-----------+------------+--------------+--------+-------+-------+
