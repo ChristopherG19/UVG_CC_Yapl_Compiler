@@ -25,6 +25,8 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.count_bytes_class = 0
         self.count_bytes_func = 0
         self.add_other_classes()
+        self.CI_path = "CI.txt"
+        self.CI_text = "" # empty
         
     def add_other_classes(self):
         self.symbolTable.add_column(["Int", "Int", "Class", None, "Int", None, None, None, "Global", 4, 0])
@@ -88,13 +90,27 @@ class YAPLVisitorImpl(YAPLVisitor):
         else:
             self.customErrors.append("No contiene clase Main")
             return "Error"
+        
+        # write to CI
+        try:
+            with open(self.CI_path, 'w') as file:
+                file.write(self.CI_text)
+
+        except:
+            print(f"Error abriendo archivo {self.CI_path}")
+            
 
         return final_type
     
     def visitDefClass(self, ctx: YAPLParser.DefClassContext):
         print("defClass")
+
         self.count_bytes_class = 0
         id = ctx.TYPE(0).getText()
+
+        # write to CI
+        self.CI_text+= f"CLASS {id}\n"
+
         type_id = ctx.CLASS_N().__str__()
         self.current_class = id
         if ctx.INHERITS():
@@ -148,12 +164,23 @@ class YAPLVisitorImpl(YAPLVisitor):
                         self.symbolTable.add_info_to_cell(id, "Type_Value", type_class)
         
         self.symbolTable.add_info_to_cell(self.current_class, "Space", self.count_bytes_class)
+
+        # add end to CI
+        self.CI_text += "EOC\n\n"
+
         return type_class
     
     def visitDefFunc(self, ctx: YAPLParser.DefFuncContext):
         print("visitDefFunc")
         id = ctx.ID().getText()
+
+        
+
         type_id = ctx.TYPE().getText()
+
+        # write to file
+        self.CI_text += f"\tFUNCTION {self.current_class}.{id}\n"
+
         parent_class = ctx.parentCtx.TYPE(0).getText() if ctx.parentCtx.TYPE(0) else None
         self.current_class = parent_class
         self.current_function = id
@@ -276,6 +303,10 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.symbolTable.add_info_to_cell(self.current_function, "Space", self.count_bytes_func)
         self.count_bytes_class += self.count_bytes_func
         self.current_function = None
+
+        # add to file
+        self.CI_text += "\tFUNCTION END\n"
+
         return type_id_b
     
     def visitDefAssign(self, ctx: YAPLParser.DefAssignContext):
