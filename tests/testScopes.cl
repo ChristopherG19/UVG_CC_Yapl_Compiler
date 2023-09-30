@@ -2,9 +2,9 @@ class Main inherits IO {
   w: Int <- 5;
   x: Int <- 5;
 
-  process(a: Int, b: Int):Int {
+  process(a: Int, b: Int, c:String, d:Bool, e:String):Int {
     {
-      let c : Int in 0;
+      let f : Int in 0;
     }
   };
 
