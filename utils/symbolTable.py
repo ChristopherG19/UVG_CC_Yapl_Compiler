@@ -121,48 +121,22 @@ class Table():
         return matches
         
     def add_info_to_cell(self, name, column_name, value, func=None, classF=None):
-        print("------->",name, column_name, value, func, classF)
+        #print("------->",name, column_name, value, func, classF)
         # Iterate through the symbol table to find the appropriate cell
         for row in self.columns:
             if row[0] == name:
-                # Check if the provided function and class match the cell's attributes
-                if func and classF:
-                    if row[5] == func and row[4] == classF:
-                        # Check if the column name exists in the headers
-                        if column_name in self.headers:
-                            index = self.headers.index(column_name)
-                            if index < len(row):
-                                # Update the cell with the new value
-                                row[index] = value
-                                self.build_Table()
-                                return True
-                        else:
-                            print(f"Column '{column_name}' does not exist in the table.")
-                            return False
-                # Check if only the function matches
-                elif func and row[5] == func:
-                    if(row[4] == classF):
-                        if column_name in self.headers:
-                            index = self.headers.index(column_name)
-                            if index < len(row):
-                                row[index] = value
-                                self.build_Table()
-                                return True
-                        else:
-                            print(f"Column '{column_name}' does not exist in the table.")
-                            return False
-                # Check if only the class matches
-                elif classF and row[4] == classF:
-                    if(row[5] == func):
-                        if column_name in self.headers:
-                            index = self.headers.index(column_name)
-                            if index < len(row):
-                                row[index] = value
-                                self.build_Table()
-                                return True
-                        else:
-                            print(f"Column '{column_name}' does not exist in the table.")
-                            return False
+                if row[5] == func and row[4] == classF:
+                    # Check if the column name exists in the headers
+                    if column_name in self.headers:
+                        index = self.headers.index(column_name)
+                        if index < len(row):
+                            # Update the cell with the new value
+                            row[index] = value
+                            self.build_Table()
+                            return True
+                    else:
+                        print(f"Column '{column_name}' does not exist in the table.")
+                        return False
                 else:
                     if column_name in self.headers:
                         index = self.headers.index(column_name)

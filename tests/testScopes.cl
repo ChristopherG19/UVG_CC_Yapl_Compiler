@@ -1,14 +1,14 @@
 class Main inherits IO {
+  w: Int <- 5;
   x: Int <- 5;
-  y: Int <- 5;
 
-  process(y: Int, z: Int):Int {
+  process(a: Int, b: Int):Int {
     {
-      let x : Int in 0;
-      x <- y;
+      let c : Int in 0;
     }
   };
 
+  y: String <- "efe";
   z: Bool;
   
   main(): SELF_TYPE {
