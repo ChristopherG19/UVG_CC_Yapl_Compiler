@@ -14,10 +14,10 @@
 |   abort    |   Object   | Declaration |   None   |   Object  |    None    |     None     | Global |  None | Error |
 | type_name  |   String   | Declaration |   None   |   Object  |    None    |     None     | Global |  None |  None |
 |    copy    | SELF_TYPE  | Declaration |   None   |   Object  |    None    |     None     | Global |  None |  None |
-| out_string | SELF_TYPE  |    Method   |   None   |     IO    |    None    |     None     | Global |   0   |  None |
-|   xParS    |   String   |    Param    |   None   |     IO    | out_string |     None     | Local  |   0   |  None |
+| out_string | SELF_TYPE  |    Method   |   None   |     IO    |    None    |     None     | Global |   12  |  None |
+|   xParS    |   String   |    Param    |   None   |     IO    | out_string |      0       | Local  |   6   |  efe  |
 |  out_int   | SELF_TYPE  |    Method   |   None   |     IO    |    None    |     None     | Global |   10  |  None |
-|   xParI    |    Int     |    Param    |   None   |     IO    |  out_int   |     None     | Local  |   4   |  None |
+|   xParI    |    Int     |    Param    |   None   |     IO    |  out_int   |      6       | Local  |   4   |   0   |
 | in_string  |   String   |    Method   |   None   |     IO    |    None    |     None     | Global |   0   |  None |
 |  int_int   |    Int     |    Method   |   None   |     IO    |    None    |     None     | Global |   0   |  None |
 |   lenght   |   String   |    Method   |   None   |   String  |    None    |     None     | Global |   0   |  None |
@@ -26,7 +26,7 @@
 |   substr   |   String   |    Method   |   None   |   String  |    None    |     None     | Global |   0   |  None |
 |    iPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     | Local  |   0   |  None |
 |    lPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     | Local  |   0   |  None |
-|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     | Global |   52  |  None |
+|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     | Global |   64  |  None |
 | out_string | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
 |   xParS    |   String   |    Param    |   None   |    Main   | out_string |     None     | Local  |   0   |  None |
 |  out_int   | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
@@ -44,5 +44,5 @@
 |     f      |    Int     |   Variable  |   None   |    Main   |  process   |      13      | Local  |   4   |  None |
 |     y      |   String   |   Instance  |   None   |    Main   |    None    |      8       | Global |   6   |  efe  |
 |     z      |    Bool    |   Instance  |   None   |    Main   |    None    |      14      | Global |   1   | False |
-|    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   16  |  None |
+|    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   28  |  None |
 +------------+------------+-------------+----------+-----------+------------+--------------+--------+-------+-------+

@@ -12,6 +12,9 @@ class Main inherits IO {
   z: Bool;
   
   main(): SELF_TYPE {
-	  out_int(1)
+	  {
+      out_string(y)
+      out_int(w)
+    }
   };
 };

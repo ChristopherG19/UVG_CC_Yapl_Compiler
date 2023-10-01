@@ -646,6 +646,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         for par in range(len(params_def)):
             vis = self.visit(params_acc[par])
             param_space = 0
+            tempSpaceId = None
             
             if vis == "Error":
                 return "Error"
@@ -658,10 +659,15 @@ class YAPLVisitorImpl(YAPLVisitor):
                 newSpace = get_space_vars(params_def[par][1], vis[1])
                 if(not newSpace):
                     newSpace = 0
+                    
+                tempSpaceId = newSpace
+                
                 if(self.current_function):
                     self.count_bytes_func += newSpace
+                    self.displacement_cbfunc += newSpace
                 else:
                     self.count_bytes_class += newSpace
+                    self.displacement_cbclass += newSpace
                     
                 param_space += newSpace
                 self.symbolTable.add_info_to_cell(params_def[par][0], "Space", newSpace)
@@ -675,19 +681,40 @@ class YAPLVisitorImpl(YAPLVisitor):
                 newSpace = get_space_vars(params_def[par][1])
                 if(not newSpace):
                     newSpace = 0
+                    
+                tempSpaceId = newSpace
+                
                 if(self.current_function):
                     self.count_bytes_func += newSpace
+                    self.displacement_cbfunc += newSpace
                 else:
                     self.count_bytes_class += newSpace
+                    self.displacement_cbclass += newSpace
+                    
                 param_space += newSpace
                 self.symbolTable.add_info_to_cell(params_def[par][0], "Space", newSpace)
                 
+            tempValDis = None
+            if(self.current_function):
+                if(tempSpaceId):
+                    tempValDis = self.displacement_cbfunc - tempSpaceId
+                self.symbolTable.add_info_to_cell(params_def[par][0], "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
+            else:
+                if(self.current_class):
+                    if(tempSpaceId):
+                        tempValDis = self.displacement_cbclass - tempSpaceId
+                    
+                    self.symbolTable.add_info_to_cell(params_def[par][0], "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
+                
             self.symbolTable.add_info_to_cell(method_name, "Space", param_space)
             return_method_space = self.symbolTable.get_cell(met[1])[-2]
+            
             if(not return_method_space):
                 return_method_space = 0
+                
             temp_space_sum = return_method_space + param_space
             self.symbolTable.add_info_to_cell(method_name, "Space", temp_space_sum)
+            
             if(self.current_function):
                 self.count_bytes_func += return_method_space
 
