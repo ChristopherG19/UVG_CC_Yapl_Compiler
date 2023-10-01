@@ -5,13 +5,14 @@ class Main inherits IO{
     c: Bool <- (6 * 4 >= 25) + 1; 
     d: Bool <- (20 / 4) & false;        
     e: Int <- (3 * 3 + 2) + not true;     
-    f: Int;
+    f: String <- "Hola";
     g: String;
     h: Bool;
     i: Int <- 2 + 2;
     j: Bool <- False;
 
     main(): SELF_TYPE {
-        self
+        {let x : Int in 0;
+        self;}
     };
 };
