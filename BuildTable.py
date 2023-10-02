@@ -13,6 +13,7 @@ from YAPLVisitor import YAPLVisitor
 from utils.node import *
 from utils.symbolTable import *
 from utils.utils import clean_errors, get_space_vars, is_between_quotes
+from CI import *
 
 class YAPLVisitorImpl(YAPLVisitor):
     def __init__(self):
@@ -25,8 +26,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.count_bytes_class = 0
         self.count_bytes_func = 0
         self.add_other_classes()
-        self.CI_path = "CI.txt"
-        self.CI_text = "" # empty
+        self.CI = CodigoIntermedio("CI.txt")
         
     def add_other_classes(self):
         self.symbolTable.add_column(["Int", "Int", "Class", None, "Int", None, None, None, "Global", 4, 0])
@@ -92,12 +92,7 @@ class YAPLVisitorImpl(YAPLVisitor):
             return "Error"
         
         # write to CI
-        try:
-            with open(self.CI_path, 'w') as file:
-                file.write(self.CI_text)
-
-        except:
-            print(f"Error abriendo archivo {self.CI_path}")
+        self.CI.build()
             
 
         return final_type
@@ -109,7 +104,8 @@ class YAPLVisitorImpl(YAPLVisitor):
         id = ctx.TYPE(0).getText()
 
         # write to CI
-        self.CI_text+= f"CLASS {id}\n"
+        self.CI.temp_counter = 0 # reinicializar el coutner
+        self.CI.text+= f"CLASS {id}\n"
 
         type_id = ctx.CLASS_N().__str__()
         self.current_class = id
@@ -166,7 +162,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.symbolTable.add_info_to_cell(self.current_class, "Space", self.count_bytes_class)
 
         # add end to CI
-        self.CI_text += "EOC\n\n"
+        self.CI.text += "EOC\n\n"
 
         return type_class
     
@@ -178,8 +174,8 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         type_id = ctx.TYPE().getText()
 
-        # write to file
-        self.CI_text += f"\tFUNCTION {self.current_class}.{id}\n"
+        # write to CI
+        self.CI.text += f"\tFUNCTION {self.current_class}.{id}\n"
 
         parent_class = ctx.parentCtx.TYPE(0).getText() if ctx.parentCtx.TYPE(0) else None
         self.current_class = parent_class
@@ -304,8 +300,8 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.count_bytes_class += self.count_bytes_func
         self.current_function = None
 
-        # add to file
-        self.CI_text += "\tFUNCTION END\n"
+        # add to CI
+        self.CI.text += "\tFUNCTION END\n"
 
         return type_id_b
     
@@ -464,6 +460,9 @@ class YAPLVisitorImpl(YAPLVisitor):
                     return "Error"
         else:
             return "Error"
+        
+        print("add text")
+        self.CI.text += f"fp[] = {val}\n"
 
         return type_id
     
@@ -703,8 +702,10 @@ class YAPLVisitorImpl(YAPLVisitor):
             self.customErrors.append("La condición dentro del if debe de retornar bool")
             return "Error"
         
+        self.CI.add_If()
+        
         then_expr_type = self.visit(ctx.expr(1))
-        else_expr_type = self.visit(ctx.expr(2))
+        else_expr_type = self.visit(ctx.expr(2))        
         
         if then_expr_type == 'Error' or else_expr_type == 'Error':
             return 'Error: Error en el cuerpo del if o del else'
@@ -984,6 +985,9 @@ class YAPLVisitorImpl(YAPLVisitor):
         
         if(left_type == "Error" or right_type == "Error"):
             return "Error"
+        
+        self.CI.text += f"\t\tt{self.CI.temp_counter} = \n"
+        self.CI.temp_counter += 1
 
         if (left_type.lower() == "int" and right_type.lower() == "int"):
             return "Bool"
@@ -1240,7 +1244,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         #     return "Self"
 
 def main():
-    file_name = "./tests/arith.cl"
+    file_name = "./tests/exampleUser.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
