@@ -341,7 +341,7 @@ class YAPLVisitorImpl(YAPLVisitor):
                 self.customErrors.append(f"El identificador '{id}' ya fue definido en este ámbito")
                 return "Error"
             else:
-                print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", val)
+                print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", id, val)
                 if(val == None):
                     val = self.symbolTable.get_cell(type_id)[-1]
                     if (val != None):
@@ -364,8 +364,31 @@ class YAPLVisitorImpl(YAPLVisitor):
                             self.displacement_cbclass += newSpace
                             
                         print("##################", self.symbolTable.containsKey(id, type_id, parent_class), id, type_id, parent_class)
-                        if(not(self.symbolTable.containsKey(id, type_id, parent_class))):
-                            self.symbolTable.add_column([id, type_id, "Instance", None, parent_class, self.current_function, None, None, "Global", newSpace, val])
+                        # if(not(self.symbolTable.containsKey(id, type_id, parent_class))):
+                        self.symbolTable.add_column([id, type_id, "Instance", None, parent_class, self.current_function, None, None, "Global", newSpace, val])
+                    else:
+                        self.class_methods[parent_class].append(id)
+                        newSpace = get_space_vars(type_id)
+                            
+                        if(not newSpace):
+                            tempNewSpace = self.symbolTable.get_cell(type_id)[-2]
+                            if(tempNewSpace):
+                                newSpace = tempNewSpace
+                            else:
+                                newSpace = 0
+                            
+                        tempSpaceId = newSpace
+                            
+                        if(self.current_function):
+                            self.count_bytes_func += newSpace
+                            self.displacement_cbfunc += newSpace
+                        else:
+                            self.count_bytes_class += newSpace
+                            self.displacement_cbclass += newSpace
+                            
+                        print("##################", self.symbolTable.containsKey(id, type_id, parent_class), id, type_id, parent_class)
+                        # if(not(self.symbolTable.containsKey(id, type_id, parent_class))):
+                        self.symbolTable.add_column([id, type_id, "Instance", None, parent_class, self.current_function, None, None, "Global", newSpace, val])
                 
                 elif(val != None):
                     newSpace = get_space_vars(type_id, val)
@@ -378,9 +401,9 @@ class YAPLVisitorImpl(YAPLVisitor):
                         self.count_bytes_class += newSpace
                         self.displacement_cbclass += newSpace
 
-                print("##################222", self.symbolTable.get_cell(id, type_id, parent_class), self.symbolTable.containsKey(id, type_id, parent_class), id, type_id, parent_class)
-                if(not(self.symbolTable.containsKey(id, type_id, parent_class))):
-                    print("##################333", id, type_id, "Instance", None, parent_class, self.current_function, None, None, "Global", newSpace, val)
+                    print("##################222", self.symbolTable.get_cell(id, type_id, parent_class), self.symbolTable.containsKey(id, type_id, parent_class), id, type_id, parent_class)
+                    if(not(self.symbolTable.containsKey(id, type_id, parent_class))):
+                        print("##################333", id, type_id, "Instance", None, parent_class, self.current_function, None, None, "Global", newSpace, val)
                     self.symbolTable.add_column([id, type_id, "Instance", None, parent_class, self.current_function, None, None, "Global", newSpace, val])
         else:
             self.class_methods[parent_class] = [id]
@@ -1330,7 +1353,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         #     return "Self"
 
 def main():
-    file_name = "./tests/testScopes.cl"
+    file_name = "./tests/arith.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
