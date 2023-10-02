@@ -13,6 +13,7 @@ from YAPLVisitor import YAPLVisitor
 from utils.node import *
 from utils.symbolTable import *
 from utils.utils import clean_errors, get_space_vars, is_between_quotes
+from CI import *
 
 class YAPLVisitorImpl(YAPLVisitor):
     def __init__(self):
@@ -27,6 +28,8 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.count_bytes_func = 0
         self.displacement_cbfunc = 0
         self.add_other_classes()
+
+        self.CI = CodigoIntermedio("CI.txt")
         
     def add_other_classes(self):
         self.symbolTable.add_column(["Int", "Int", "Class", None, "Int", None, None, None, "Global", 4, 0])
@@ -91,6 +94,9 @@ class YAPLVisitorImpl(YAPLVisitor):
             self.customErrors.append("No contiene clase Main")
             return "Error"
 
+        # write to CI
+        self.CI.build()
+
         return final_type
     
     def visitDefClass(self, ctx: YAPLParser.DefClassContext):
@@ -101,6 +107,11 @@ class YAPLVisitorImpl(YAPLVisitor):
         id = ctx.TYPE(0).getText()
         type_id = ctx.CLASS_N().__str__()
         self.current_class = id
+
+        # write to CI
+        self.CI.temp_counter = 0 # reinicializar el coutner
+        self.CI.text+= f"CLASS {id}\n"
+
         if ctx.INHERITS():
             inherits = ctx.TYPE(1).getText()
             
@@ -152,6 +163,10 @@ class YAPLVisitorImpl(YAPLVisitor):
                         self.symbolTable.add_info_to_cell(id, "Type_Value", type_class)
         
         self.symbolTable.add_info_to_cell(self.current_class, "Space", self.count_bytes_class)
+
+        # add end to CI
+        self.CI.text += "EOC\n\n"
+
         return type_class
     
     def visitDefFunc(self, ctx: YAPLParser.DefFuncContext):
@@ -165,6 +180,9 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.displacement_cbfunc = 0
         
         print("init",id, type_id, parent_class)
+
+        # write to CI
+        self.CI.text += f"\tFUNCTION {self.current_class}.{id}\n"
         
         formal_parameters = ctx.formal()
         if formal_parameters:
@@ -297,6 +315,10 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.symbolTable.add_info_to_cell(self.current_function, "Space", self.count_bytes_func)
         self.count_bytes_class += self.count_bytes_func
         self.current_function = None
+
+        # add to CI
+        self.CI.text += "\tFUNCTION END\n"
+
         return type_id_b
     
     def visitDefAssign(self, ctx: YAPLParser.DefAssignContext):
@@ -499,6 +521,11 @@ class YAPLVisitorImpl(YAPLVisitor):
                 else:
                     self.count_bytes_class += space
                     self.displacement_cbclass += space
+
+        if type_id == "Int":
+            self.CI.text += f"\t\tlw\tfp[], {ctx.expr().getText()}\n"
+        if type_id == "String":
+            self.CI.text += f"\t\tlw\tfp[], {ctx.expr().getText()}\n"
 
         if type_id == 'Error':
             return 'Error'
@@ -794,8 +821,17 @@ class YAPLVisitorImpl(YAPLVisitor):
             self.customErrors.append("La condición dentro del if debe de retornar bool")
             return "Error"
         
+        self.CI.text += f"\t\tif condition goto L{self.CI.tag_counter + 1}\n"
+        self.CI.text += f"L{self.CI.tag_counter}:\n"
+        self.CI.tag_counter += 1
         then_expr_type = self.visit(ctx.expr(1))
+
+        self.CI.text += f"\t\telse goto L{self.CI.tag_counter}\n"
+        self.CI.text += f"L{self.CI.tag_counter}:\n"
+        self.CI.tag_counter += 1
         else_expr_type = self.visit(ctx.expr(2))
+
+        self.CI.text += "\t\tENDIF\n"  
         
         if then_expr_type == 'Error' or else_expr_type == 'Error':
             return 'Error: Error en el cuerpo del if o del else'
@@ -1097,6 +1133,9 @@ class YAPLVisitorImpl(YAPLVisitor):
         
         if(left_type == "Error" or right_type == "Error"):
             return "Error"
+        
+        self.CI.text += f"\t\tslt\t$t{self.CI.temp_counter}, {ctx.expr(0).getText()}, {ctx.expr(1).getText()}\n"
+        self.CI.temp_counter += 1
 
         if (left_type.lower() == "int" and right_type.lower() == "int"):
             return "Bool"
@@ -1126,6 +1165,9 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         if(left_type == "Error" or right_type == "Error"):
             return "Error"
+        
+        self.CI.text += f"\t\tsgt\t$t{self.CI.temp_counter}, {ctx.expr(0).getText()}, {ctx.expr(1).getText()}\n"
+        self.CI.temp_counter += 1
 
         if (left_type.lower() == "int" and right_type.lower() == "int"):
             return "Bool"

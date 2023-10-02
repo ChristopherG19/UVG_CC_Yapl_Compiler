@@ -1,1 +1,106 @@
-texto random
+CLASS A
+	FUNCTION A.value
+	FUNCTION END
+	FUNCTION A.set_var
+		lw	fp[], num
+	FUNCTION END
+	FUNCTION A.method1
+	FUNCTION END
+	FUNCTION A.method2
+		lw	fp[], num1+num2
+	FUNCTION END
+	FUNCTION A.method3
+		lw	fp[], ~num
+	FUNCTION END
+	FUNCTION A.method4
+		slt	$t0, num2, num1
+		if condition goto L1
+L0:
+		lw	fp[], num1-num2
+		else goto L1
+L1:
+		lw	fp[], num2-num1
+		ENDIF
+	FUNCTION END
+	FUNCTION A.method5
+		lw	fp[], x*y
+		lw	fp[], y+1
+	FUNCTION END
+EOC
+
+CLASS B
+	FUNCTION B.method5
+		lw	fp[], num*num
+	FUNCTION END
+EOC
+
+CLASS C
+	FUNCTION C.method6
+		lw	fp[], ~num
+	FUNCTION END
+	FUNCTION C.method5
+		lw	fp[], num*num*num
+	FUNCTION END
+EOC
+
+CLASS D
+	FUNCTION D.method7
+		slt	$t0, x, 0
+		if condition goto L3
+L2:
+		else goto L3
+L3:
+		if condition goto L5
+L4:
+		else goto L5
+L5:
+		if condition goto L7
+L6:
+		else goto L7
+L7:
+		if condition goto L9
+L8:
+		else goto L9
+L9:
+		ENDIF
+		ENDIF
+		ENDIF
+		ENDIF
+	FUNCTION END
+EOC
+
+CLASS E
+	FUNCTION E.method6
+		lw	fp[], num/8
+	FUNCTION END
+EOC
+
+CLASS Main
+	FUNCTION Main.is_even
+		slt	$t0, x, 0
+		if condition goto L11
+L10:
+		else goto L11
+L11:
+		if condition goto L13
+L12:
+		else goto L13
+L13:
+		if condition goto L15
+L14:
+		else goto L15
+L15:
+		ENDIF
+		ENDIF
+		ENDIF
+	FUNCTION END
+	FUNCTION Main.main
+		if condition goto L17
+L16:
+		else goto L17
+L17:
+		ENDIF
+	FUNCTION END
+EOC
+
+EOF
