@@ -387,6 +387,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         
     def visitAssignment(self, ctx: YAPLParser.AssignmentContext):
         print("visitAssignment")
+        print("va: ", ctx.getText())
         id = ctx.ID().getText()
         result = self.visit(ctx.expr())
         print(id, result)
@@ -401,7 +402,7 @@ class YAPLVisitorImpl(YAPLVisitor):
             return "Error"
             
         # print(id, type_id, val)
-            
+
         if(self.symbolTable.containsKey(id)):
             if(val != None):
                 coins = self.symbolTable.get_coincidences(id)
@@ -447,6 +448,12 @@ class YAPLVisitorImpl(YAPLVisitor):
         if type_id == 'Error':
             return 'Error'
         
+        print("add text")
+        if type_id == "Int":
+            self.CI.text += f"\t\tlw\tfp[], {ctx.expr().getText()}\n"
+        if type_id == "String":
+            self.CI.text += f"\t\tlw\tfp[], {ctx.expr().getText()}\n"
+        
         row = None
         if(self.current_function):
             row = self.symbolTable.get_cell(id, addParent=self.current_class, addFunctionP=self.current_function)
@@ -460,9 +467,6 @@ class YAPLVisitorImpl(YAPLVisitor):
                     return "Error"
         else:
             return "Error"
-        
-        print("add text")
-        self.CI.text += f"fp[] = {val}\n"
 
         return type_id
     
@@ -702,10 +706,17 @@ class YAPLVisitorImpl(YAPLVisitor):
             self.customErrors.append("La condición dentro del if debe de retornar bool")
             return "Error"
         
-        self.CI.add_If()
-        
+        self.CI.text += f"\t\tif condition goto L{self.CI.tag_counter + 1}\n"
+        self.CI.text += f"L{self.CI.tag_counter}:\n"
+        self.CI.tag_counter += 1
         then_expr_type = self.visit(ctx.expr(1))
-        else_expr_type = self.visit(ctx.expr(2))        
+
+        self.CI.text += f"\t\telse goto L{self.CI.tag_counter}\n"
+        self.CI.text += f"L{self.CI.tag_counter}:\n"
+        self.CI.tag_counter += 1
+        else_expr_type = self.visit(ctx.expr(2))
+
+        self.CI.text += "\t\tENDIF\n"        
         
         if then_expr_type == 'Error' or else_expr_type == 'Error':
             return 'Error: Error en el cuerpo del if o del else'
@@ -986,7 +997,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         if(left_type == "Error" or right_type == "Error"):
             return "Error"
         
-        self.CI.text += f"\t\tt{self.CI.temp_counter} = \n"
+        self.CI.text += f"\t\tslt\t$t{self.CI.temp_counter}, {ctx.expr(0).getText()}, {ctx.expr(1).getText()}\n"
         self.CI.temp_counter += 1
 
         if (left_type.lower() == "int" and right_type.lower() == "int"):
@@ -1017,6 +1028,9 @@ class YAPLVisitorImpl(YAPLVisitor):
 
         if(left_type == "Error" or right_type == "Error"):
             return "Error"
+        
+        self.CI.text += f"\t\tsgt\t$t{self.CI.temp_counter}, {ctx.expr(0).getText()}, {ctx.expr(1).getText()}\n"
+        self.CI.temp_counter += 1
 
         if (left_type.lower() == "int" and right_type.lower() == "int"):
             return "Bool"

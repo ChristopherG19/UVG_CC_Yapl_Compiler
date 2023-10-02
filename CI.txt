@@ -1,7 +1,15 @@
 CLASS Main
 	FUNCTION Main.main
-		t0 = 
+		lw	fp[], 5
+		sgt	$t0, x, 0
+		slt	$t1, x, 10
 		if condition goto L1
+L0:
+		lw	fp[], "mayor"
+		else goto L1
+L1:
+		lw	fp[], "menor"
+		ENDIF
 	FUNCTION END
 EOC
 

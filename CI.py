@@ -9,6 +9,8 @@ class CodigoIntermedio:
         self.tag_counter = 0
         self.temp_counter = 0
 
+        self.names_stack = []
+
 
 
     def add_If(self):
