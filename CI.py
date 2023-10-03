@@ -8,7 +8,8 @@ class CodigoIntermedio:
         # counters
         self.tag_counter = 0
         self.temp_counter = 0
-
+        
+        #stacks
         self.names_stack = []
 
 
@@ -17,7 +18,13 @@ class CodigoIntermedio:
         
         self.text += f"\t\tif condition goto L{self.tag_counter + 1}\n"
         
+    def addToTemp(self):
+        self.temp_counter += 1
+        if self.temp_counter > 6:
+            self.resetTemp()
 
+    def resetTemp(self):
+        self.temp_counter = 0
 
     def build(self):
 

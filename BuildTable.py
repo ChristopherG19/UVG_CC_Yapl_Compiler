@@ -616,6 +616,8 @@ class YAPLVisitorImpl(YAPLVisitor):
             self.customErrors.append(f"{method_name} (clase {self.current_class} y funcion {self.current_function}) requiere {len(params_def)} pero se le dieron {len(params_acc)}")
             return "Error"
 
+        for par in params_acc:
+            self.CI.text += f"\t\tPAR {par.getText()}\n"
         
         # verificar tipo de parámetros 
         for par in range(len(params_def)):
@@ -691,6 +693,9 @@ class YAPLVisitorImpl(YAPLVisitor):
             print("-------------------------------------Hola DI")
             self.customErrors.append(f"{method_name} requiere {len(params_def)} pero se le dieron {len(params_acc)}")
             return "Error"
+        
+        for par in params_acc:
+            self.CI.text += f"\t\tPAR {par.getText()}\n"
 
         # verificar tipo de parámetros 
         for par in range(len(params_def)):
@@ -768,6 +773,8 @@ class YAPLVisitorImpl(YAPLVisitor):
             if(self.current_function):
                 self.count_bytes_func += return_method_space
 
+        self.CI.text += f"\t\tCALL {str(ctx.ID())}\n"
+
         c = self.visitChildren(ctx)
 
         print(self.symbolTable.get_cell(method_name))
@@ -821,17 +828,21 @@ class YAPLVisitorImpl(YAPLVisitor):
             self.customErrors.append("La condición dentro del if debe de retornar bool")
             return "Error"
         
-        self.CI.text += f"\t\tif condition goto L{self.CI.tag_counter + 1}\n"
-        self.CI.text += f"L{self.CI.tag_counter}:\n"
-        self.CI.tag_counter += 1
+        if_tag = self.CI.tag_counter
+        else_tag = self.CI.tag_counter + 1 
+        self.CI.tag_counter += 2
+
+        self.CI.text += f"\t\tIF condition goto L{if_tag}\n"
+        self.CI.text += f"\t\tELSE goto L{else_tag}\n"
+        self.CI.text += "\t\tENDIF\n" 
+        self.CI.text += f"L{if_tag}:\n"
         then_expr_type = self.visit(ctx.expr(1))
 
-        self.CI.text += f"\t\telse goto L{self.CI.tag_counter}\n"
-        self.CI.text += f"L{self.CI.tag_counter}:\n"
+        self.CI.text += f"L{else_tag}:\n"
         self.CI.tag_counter += 1
         else_expr_type = self.visit(ctx.expr(2))
 
-        self.CI.text += "\t\tENDIF\n"  
+         
         
         if then_expr_type == 'Error' or else_expr_type == 'Error':
             return 'Error: Error en el cuerpo del if o del else'
@@ -1023,9 +1034,32 @@ class YAPLVisitorImpl(YAPLVisitor):
             return "Error"
     
     def visitPlus(self, ctx: YAPLParser.PlusContext):
-        #print("visitPlus")
+        print("visitPlus")
+   
+        if len(ctx.expr(0).children) > 1:
+            textL = "$t" + str(self.CI.temp_counter)
+            self.CI.names_stack.append(textL)
+            self.CI.addToTemp()
+        else:
+            textL = ctx.expr(0).children[0].getText()
+
         left_type = self.visit(ctx.expr(0))
+        print("lt ", left_type)
+
+        if len(ctx.expr(1).children) > 1:
+            textL = "$t" + str(self.CI.temp_counter)
+            self.CI.names_stack.append(textL)
+            self.CI.addToTemp()
+        else:
+            textR = ctx.expr(1).children[0].getText()
+
+        temp = "$t" + str(self.CI.temp_counter)
+        self.CI.addToTemp()
+
+        self.CI.text += f"\t\tADD {temp}, {textL}, {textR}\n"
+
         right_type = self.visit(ctx.expr(1))
+        print("rt ", right_type)
         
         left_val = None
         right_val = None
@@ -1058,7 +1092,25 @@ class YAPLVisitorImpl(YAPLVisitor):
     
     def visitMinus(self, ctx: YAPLParser.MinusContext):
         #print("visitMinus")
+        if len(ctx.expr(0).children) > 1:
+            textL = "$t" + str(self.CI.temp_counter)
+            self.CI.addToTemp()
+        else:
+            textL = ctx.expr(0).children[0].getText()
+
         left_type = self.visit(ctx.expr(0))
+
+        if len(ctx.expr(1).children) > 1:
+            textL = "$t" + str(self.CI.temp_counter)
+            self.CI.addToTemp()
+        else:
+            textR = ctx.expr(1).children[0].getText()
+
+        temp = "$t" + str(self.CI.temp_counter)
+        self.CI.addToTemp()
+
+        self.CI.text += f"\t\tSUB {temp}, {textL}, {textR}\n"
+
         right_type = self.visit(ctx.expr(1))
         
         left_val = None
@@ -1104,6 +1156,9 @@ class YAPLVisitorImpl(YAPLVisitor):
         
         if(left_type == "Error" or right_type == "Error"):
             return "Error"
+        
+        self.CI.text += f"\t\tsle\t$t{self.CI.temp_counter}, {ctx.expr(0).getText()}, {ctx.expr(1).getText()}\n"
+        self.CI.addToTemp()
 
         if (left_type.lower() == "int" and right_type.lower() == "int"):
             return "Bool"
@@ -1135,7 +1190,7 @@ class YAPLVisitorImpl(YAPLVisitor):
             return "Error"
         
         self.CI.text += f"\t\tslt\t$t{self.CI.temp_counter}, {ctx.expr(0).getText()}, {ctx.expr(1).getText()}\n"
-        self.CI.temp_counter += 1
+        self.CI.addToTemp()
 
         if (left_type.lower() == "int" and right_type.lower() == "int"):
             return "Bool"
@@ -1167,7 +1222,7 @@ class YAPLVisitorImpl(YAPLVisitor):
             return "Error"
         
         self.CI.text += f"\t\tsgt\t$t{self.CI.temp_counter}, {ctx.expr(0).getText()}, {ctx.expr(1).getText()}\n"
-        self.CI.temp_counter += 1
+        self.CI.addToTemp()
 
         if (left_type.lower() == "int" and right_type.lower() == "int"):
             return "Bool"
@@ -1197,6 +1252,9 @@ class YAPLVisitorImpl(YAPLVisitor):
         
         if(left_type == "Error" or right_type == "Error"):
             return "Error"
+        
+        self.CI.text += f"\t\tsge\t$t{self.CI.temp_counter}, {ctx.expr(0).getText()}, {ctx.expr(1).getText()}\n"
+        self.CI.addToTemp()
 
         if (left_type.lower() == "int" and right_type.lower() == "int"):
             return "Bool"
@@ -1343,7 +1401,7 @@ class YAPLVisitorImpl(YAPLVisitor):
                     # self.customErrors.append(f"El atributo '{id}' no ha sido declarado en la clase '{clase}'")
                     # return "Error"
         if row:
-            return row[1], row[-1]
+            return row[1], row[0]
         return "Error"
     
     def visitInt(self, ctx: YAPLParser.IntContext):
@@ -1395,7 +1453,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         #     return "Self"
 
 def main():
-    file_name = "./tests/arith.cl"
+    file_name = "./tests/exampleUser.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
