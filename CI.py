@@ -7,10 +7,11 @@ from utils.symbolTable import *
 
 class CodigoIntermedio(YAPLVisitor):
 
-    def __init__(self, fileName:str) -> None:
+    def __init__(self, fileName:str, symbolTable) -> None:
 
         self.filename = fileName
         self.text = ""
+        self.symbolTable = symbolTable
 
         # counters
         self.tag_counter = 0
@@ -93,7 +94,37 @@ class CodigoIntermedio(YAPLVisitor):
     
     def visitDefAssign(self, ctx:YAPLParser.DefAssignContext):
         print("#visitdefassign")
-        print(ctx.getText())
+
+        # se agrega solamente si se define la variable
+        if ctx.expr():
+            x = ""
+            if ctx.getChildCount() > 1 :
+                temp_ = "t" + str(self.temp_counter)
+                self.addToTemp()
+                self.temp_stack.append(temp_)
+                self.visit(ctx.expr())
+                x = temp_
+            else: 
+                text_ = ctx.expr().getText()
+                if text_ in self.registers[self.currentClass].keys:
+                    x = self.registers[self.currentClass][text_]
+                else:
+                    x = ctx.expr().getText
+                self.visit(ctx.expr())
+            
+            # agregar al registro 
+            id_ = ctx.ID().getText()
+            type_ = ctx.TYPE().getText()
+            print("row ", self.symbolTable.get_cell(id = id_, addType = type_, addParent = self.currentClass))
+            disp = self.symbolTable.get_displacement(id = id_, addType = type_, addParent = self.currentClass)
+
+            var = f"SP[{disp}]"
+            self.registers[self.currentClass][id_] = var
+
+            if self.inFunction:
+                self.funcText += f"\t\tLW {var}, {x}\n"
+            else:
+                self.text += f"\t\tLW {var}, {x}\n"
         
         return
     
@@ -108,7 +139,6 @@ class CodigoIntermedio(YAPLVisitor):
 
     def visitDispatchImplicit(self, ctx:YAPLParser.DispatchImplicitContext):
         print("#dispatchimplicit")
-        print(ctx.getText())
 
         id = ctx.ID().getText()
 
@@ -158,6 +188,7 @@ class CodigoIntermedio(YAPLVisitor):
     def visitBlock(self, ctx:YAPLParser.BlockContext):
         print("#block")
         for expr in ctx.expr():
+            print("exp block: ", expr.getText())
             self.visit(expr)
         return
     
@@ -186,7 +217,6 @@ class CodigoIntermedio(YAPLVisitor):
         return
     
     def visitTimes(self, ctx:YAPLParser.TimesContext):
-        print(ctx.getText())
 
         line = "\t\tMULT "
 
@@ -207,12 +237,12 @@ class CodigoIntermedio(YAPLVisitor):
             line += leftTemp + ", "
         else:
             self.visit(ctx.expr(0))
-            print("mult ", ctx.expr(0).getText())
+            # print("mult ", ctx.expr(0).getText())
             if ctx.expr(0).getText() in self.registers.keys():
                 line += f"{self.registers[self.currentClass][ctx.exp(0)]}, "
             else:
                 line += f"{ctx.expr(0).getText()}, "
-                print("Gt ", ctx.expr(0).getText())
+                # print("Gt ", ctx.expr(0).getText())
 
 
         # parte derecha
@@ -224,12 +254,12 @@ class CodigoIntermedio(YAPLVisitor):
             line += leftTemp
         else:
             self.visit(ctx.expr(1))
-            print("mult ", ctx.expr(1).getText())
+            # print("mult ", ctx.expr(1).getText())
             if ctx.expr(1).getText() in self.registers.keys():
                 line += f"{self.registers[self.currentClass][ctx.exp(0)]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
-                print("Gt ", ctx.expr(1).getText())
+                # print("Gt ", ctx.expr(1).getText())
 
         if self.inFunction:
             self.funcText += line + "\n" 
@@ -240,8 +270,6 @@ class CodigoIntermedio(YAPLVisitor):
     
     def visitDiv(self, ctx:YAPLParser.DivContext):
         print("#div")
-
-        print(ctx.getText())
 
         line = "\t\tDIV "
 
@@ -295,7 +323,6 @@ class CodigoIntermedio(YAPLVisitor):
     
     def visitPlus(self, ctx:YAPLParser.PlusContext):
         print("#plus")
-        print(ctx.getText())
 
         line = "\t\tADD "
 
@@ -316,12 +343,12 @@ class CodigoIntermedio(YAPLVisitor):
             line += leftTemp + ", "
         else:
             self.visit(ctx.expr(0))
-            print("suma ", ctx.expr(0).getText())
+            # print("suma ", ctx.expr(0).getText())
             if ctx.expr(0).getText() in self.registers.keys():
                 line += f"{self.registers[self.currentClass][ctx.exp(0)]}, "
             else:
                 line += f"{ctx.expr(0).getText()}, "
-                print("Gt ", ctx.expr(0).getText())
+                # print("Gt ", ctx.expr(0).getText())
 
 
         # parte derecha
@@ -333,12 +360,12 @@ class CodigoIntermedio(YAPLVisitor):
             line += leftTemp
         else:
             self.visit(ctx.expr(1))
-            print("suma ", ctx.expr(1).getText())
+            # print("suma ", ctx.expr(1).getText())
             if ctx.expr(1).getText() in self.registers.keys():
                 line += f"{self.registers[self.currentClass][ctx.exp(0)]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
-                print("Gt ", ctx.expr(1).getText())
+                # print("Gt ", ctx.expr(1).getText())
 
         if self.inFunction:
             self.funcText += line + "\n" 
@@ -349,8 +376,6 @@ class CodigoIntermedio(YAPLVisitor):
     
     def visitMinus(self, ctx:YAPLParser.MinusContext):
         print("#minus")
-
-        print(ctx.getText())
 
         line = "\t\tSUB "
 
@@ -371,12 +396,12 @@ class CodigoIntermedio(YAPLVisitor):
             line += leftTemp + ", "
         else:
             self.visit(ctx.expr(0))
-            print("rest ", ctx.expr(0).getText())
+            # print("rest ", ctx.expr(0).getText())
             if ctx.expr(0).getText() in self.registers.keys():
                 line += f"{self.registers[self.currentClass][ctx.exp(0)]}, "
             else:
                 line += f"{ctx.expr(0).getText()}, "
-                print("Gt ", ctx.expr(0).getText())
+                # print("Gt ", ctx.expr(0).getText())
 
 
         # parte derecha
@@ -472,10 +497,38 @@ class CodigoIntermedio(YAPLVisitor):
         
         return
     
-    def visitAssigment(self, ctx:YAPLParser.AssignmentContext):
-        print("#assigment")
+    def visitAssignment(self, ctx:YAPLParser.AssignmentContext):
+        print("#assignment")
 
-        self.visit(ctx.expr())
+        # se agrega solamente si se define la variable
+        if ctx.expr():
+            x = ""
+            if ctx.getChildCount() > 1 :
+                temp_ = "t" + str(self.temp_counter)
+                self.addToTemp()
+                self.temp_stack.append(temp_)
+                self.visit(ctx.expr())
+                x = temp_
+            else: 
+                text_ = ctx.expr().getText()
+                if text_ in self.registers[self.currentClass].keys:
+                    x = self.registers[self.currentClass][text_]
+                else:
+                    x = ctx.expr().getText
+                self.visit(ctx.expr())
+            
+            # agregar al registro 
+            id_ = ctx.ID().getText()
+            print("row ", self.symbolTable.get_cell(id = id_, addParent = self.currentClass))
+            disp = self.symbolTable.get_displacement(id = id_, addParent = self.currentClass)
+
+            var = f"SP[{disp}]"
+            self.registers[self.currentClass][id_] = var
+
+            if self.inFunction:
+                self.funcText += f"\t\tLW {var}, {x}\n"
+            else:
+                self.text += f"\t\tLW {var}, {x}\n"
         
         return
     

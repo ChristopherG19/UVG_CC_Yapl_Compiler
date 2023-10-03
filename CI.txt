@@ -1,14 +1,21 @@
 CLASS Main
+		ADD t0, 5, 4
+		LW SP[0], t0
 	Main.meth1
+		LW SP[10], t1
 	END FUNC meth1
 	Main.main
-		SUB t1, x, 5
-		MULT t2, 9, 5
-		ADD t0, t1, t2
+		LW SP[0], t2
+		LW SP[4], t3
+		LW SP[4], t4
+		SUB t6, x, 5
+		MULT t0, 9, 5
+		ADD t5, t6, t0
+		LW SP[6], t5
 		PARAM str
 		CALL out_string
-		ADD t3, 5, 6
-		PARAM t3
+		ADD t1, 5, 6
+		PARAM t1
 		CALL meth1
 	END FUNC main
 EOC

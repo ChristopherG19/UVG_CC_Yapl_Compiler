@@ -8,8 +8,8 @@ class Main inherits IO {
    n: Int <- (5 + 4);
 
    meth1(n:Int): Int {
-      m <- n;
-   }
+      m <- n
+   };
 
    main(): SELF_TYPE {
       {
@@ -30,3 +30,5 @@ class Main inherits IO {
       }
    };
 };
+
+

@@ -1378,7 +1378,7 @@ def main():
     treeF = YV.symbolTable.build_Table()
     #print(treeF)
 
-    CI = CodigoIntermedio("CI.txt")
+    CI = CodigoIntermedio("CI.txt", YV.symbolTable)
     resCI = CI.visit(tree)
 
     with open("SymbolTable.txt", "w", encoding="utf-8") as f:
