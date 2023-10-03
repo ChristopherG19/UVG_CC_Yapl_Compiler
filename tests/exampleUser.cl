@@ -4,8 +4,11 @@ class Main inherits IO {
    str: String;
    y: Int;
 
-   meth1(): Int {
-      3
+   m: Int;
+   n: Int <- (5 + 4);
+
+   meth1(n:Int): Int {
+      m <- n;
    }
 
    main(): SELF_TYPE {
@@ -18,9 +21,12 @@ class Main inherits IO {
             str <- "menor"
          fi;
 
-         y <- (x - 5) + 9;
+         y <- (x - 5) + 9 * 5;
 
          out_string(str);
+
+         meth1(5 + 6);
+
       }
    };
 };

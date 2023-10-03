@@ -14,8 +14,8 @@
 |   abort    |   Object   | Declaration |   None   |   Object  |    None    |     None     | Global |  None | Error |
 | type_name  |   String   | Declaration |   None   |   Object  |    None    |     None     | Global |  None |  None |
 |    copy    | SELF_TYPE  | Declaration |   None   |   Object  |    None    |     None     | Global |  None |  None |
-| out_string | SELF_TYPE  |    Method   |   None   |     IO    |    None    |     None     | Global |   12  |  None |
-|   xParS    |   String   |    Param    |   None   |     IO    | out_string |      8       | Local  |   6   |  str  |
+| out_string | SELF_TYPE  |    Method   |   None   |     IO    |    None    |     None     | Global |   0   |  None |
+|   xParS    |   String   |    Param    |   None   |     IO    | out_string |     None     | Local  |   0   |  None |
 |  out_int   | SELF_TYPE  |    Method   |   None   |     IO    |    None    |     None     | Global |   0   |  None |
 |   xParI    |    Int     |    Param    |   None   |     IO    |  out_int   |     None     | Local  |   0   |  None |
 | in_string  |   String   |    Method   |   None   |     IO    |    None    |     None     | Global |   0   |  None |
@@ -26,7 +26,7 @@
 |   substr   |   String   |    Method   |   None   |   String  |    None    |     None     | Global |   0   |  None |
 |    iPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     | Local  |   0   |  None |
 |    lPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     | Local  |   0   |  None |
-|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     | Global |   40  |  None |
+|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     | Global |  None |  None |
 | out_string | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
 |   xParS    |   String   |    Param    |   None   |    Main   | out_string |     None     | Local  |   0   |  None |
 |  out_int   | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
@@ -34,8 +34,10 @@
 | in_string  |   String   |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
 |  int_int   |    Int     |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
 |     x      |    Int     |   Instance  |   None   |    Main   |    None    |      0       | Global |   4   |   0   |
-|    str     |   String   |   Instance  |   None   |    Main   |    None    |      4       | Global |   2   | menor |
+|    str     |   String   |   Instance  |   None   |    Main   |    None    |      4       | Global |   2   |   ''  |
 |     y      |    Int     |   Instance  |   None   |    Main   |    None    |      6       | Global |   4   |   0   |
-|   meth1    |    Int     |    Method   |   None   |    Main   |    None    |     None     | Global |   4   |  None |
-|    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   26  |  None |
+|     m      |    Int     |   Instance  |   None   |    Main   |    None    |      10      | Global |   4   |   0   |
+|     n      |    Int     |   Instance  |   None   |    Main   |    None    |      0       | Global |   4   |   0   |
+|     n      |    Int     |    Param    |   None   |    Main   |   meth1    |     None     | Local  |   4   |  None |
+|   meth1    |    Int     |    Method   |   None   |    Main   |    None    |     None     | Global |  None |  None |
 +------------+------------+-------------+----------+-----------+------------+--------------+--------+-------+-------+

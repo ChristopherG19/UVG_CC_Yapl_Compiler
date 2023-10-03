@@ -1,23 +1,15 @@
 CLASS Main
-	FUNCTION Main.meth1
-	FUNCTION END
-	FUNCTION Main.main
-		lw	fp[], 5
-		sgt	$t0, x, 0
-		slt	$t1, x, 10
-		IF condition goto L0
-		ELSE goto L1
-		ENDIF
-L0:
-		lw	fp[], "mayor"
-L1:
-		lw	fp[], "menor"
-		SUB $t3, x, 5
-		ADD $t4, $t2, 9
-		lw	fp[], (x-5)+9
-		PAR str
+	Main.meth1
+	END FUNC meth1
+	Main.main
+		SUB t1, x, 5
+		MULT t2, 9, 5
+		ADD t0, t1, t2
+		PARAM str
 		CALL out_string
-	FUNCTION END
+		ADD t3, 5, 6
+		PARAM t3
+		CALL meth1
+	END FUNC main
 EOC
-
 EOF
