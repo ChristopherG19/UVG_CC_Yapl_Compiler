@@ -6,17 +6,36 @@ CLASS Main
 	END FUNC meth1
 	Main.main
 		LW SP[0], t2
-		LW SP[4], t3
-		LW SP[4], t4
+		SEQ t3, x, 5
+		IF t3 > 0 GOTO L_TRUE_0
+		GOTO L_FALSE_0
+L_TRUE_0:
+		LW SP[4], "igual"
+		GOTO L_END_0
+L_FALSE_0:
+		SGE t3, x, 0
+		SLG t4, x, 10
+		AND t3, t3, t4
+		IF t3 > 0 GOTO L_TRUE_1
+		GOTO L_FALSE_1
+L_TRUE_1:
+		LW SP[4], "mayor"
+		GOTO L_END_1
+L_FALSE_1:
+		LW SP[4], "menor"
+		GOTO L_END_1
+L_END_1:
+		GOTO L_END_0
+L_END_0:
 		SUB t6, x, 5
 		MULT t0, 9, 5
 		ADD t5, t6, t0
 		LW SP[6], t5
 		PARAM str
-		CALL out_string
+		CALL out_string, 1
 		ADD t1, 5, 6
 		PARAM t1
-		CALL meth1
+		CALL meth1, 1
 	END FUNC main
 EOC
 EOF

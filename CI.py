@@ -16,6 +16,9 @@ class CodigoIntermedio(YAPLVisitor):
         # counters
         self.tag_counter = 0
         self.temp_counter = 0
+        self.goto_true = 0
+        self.goto_false = 0
+        self.goto_end = 0
         
         #stacks
         self.temp_stack = []
@@ -160,7 +163,7 @@ class CodigoIntermedio(YAPLVisitor):
             self.funcText += f"\t\tPARAM {p}\n"
 
 
-        self.funcText += f"\t\tCALL {id}\n"
+        self.funcText += f"\t\tCALL {id}, {len(paramslist)}\n"
         
         return 
 
@@ -172,12 +175,38 @@ class CodigoIntermedio(YAPLVisitor):
     def visitIf(self, ctx:YAPLParser.IfContext):
         print("#if")
 
+        # evaluar expresión de la condición 
+        temp_ = "t" + str(self.temp_counter) # creamos una temporal
+        self.addToTemp
+        self.temp_stack.append(temp_)
         self.visit(ctx.expr(0))
+        print("if exp1 ", ctx.expr(0).getText())
 
+        self.funcText += f"\t\tIF {temp_} > 0 GOTO L_TRUE_{self.goto_true}\n"
+        self.funcText += f"\t\tGOTO L_FALSE_{self.goto_false}\n"
+
+        true_ = self.goto_true 
+        self.goto_true += 1
+
+        false_ = self.goto_false 
+        self.goto_false += 1
+
+        end_ = self.goto_end
+        self.goto_end += 1
+
+        # caso real
+        self.funcText += f"L_TRUE_{true_}:\n"        
         self.visit(ctx.expr(1))
+        self.funcText += f"\t\tGOTO L_END_{end_}\n"
 
+        # caso falso 
+        self.funcText += f"L_FALSE_{false_}:\n"   
         self.visit(ctx.expr(2))
-        
+        self.funcText += f"\t\tGOTO L_END_{end_}\n"
+
+        # continuar con el resto del codigo
+        self.funcText += f"L_END_{end_}:\n"
+
         return 
     
     def visitWhile(self, ctx:YAPLParser.WhileContext):
@@ -430,56 +459,370 @@ class CodigoIntermedio(YAPLVisitor):
     def visitLessThanOrEqual(self, ctx:YAPLParser.LessThanOrEqualContext):
         print("#lessThanorEqual")
 
-        self.visit(ctx.expr(0))
-        self.visit(ctx.expr(1))
+        line = "\t\tSLE "
+
+        print("stack ", self.temp_stack)
+
+        if len(self.temp_stack) > 0:
+            line += self.temp_stack.pop() + ", "
+        else: 
+            line += "t" + str(self.temp_counter) + ", "
+            self.addToTemp()
+
+        # parte izquierda
+        if ctx.expr(0).getChildCount() > 1:
+            leftTemp = "t" + str(self.temp_counter)
+            self.addToTemp()
+            self.temp_stack.append(leftTemp)
+            self.visit(ctx.expr(0))
+            line += leftTemp + ", "
+        else:
+            self.visit(ctx.expr(0))
+            # print("rest ", ctx.expr(0).getText())
+            if ctx.expr(0).getText() in self.registers.keys():
+                line += f"{self.registers[self.currentClass][ctx.exp(0)]}, "
+            else:
+                line += f"{ctx.expr(0).getText()}, "
+                # print("Gt ", ctx.expr(0).getText())
+
+
+        # parte derecha
+        if ctx.expr(1).getChildCount() > 1:
+            leftTemp = "t" + str(self.temp_counter)
+            self.addToTemp()
+            self.temp_stack.append(leftTemp)
+            self.visit(ctx.expr(1))
+            line += leftTemp
+        else:
+            self.visit(ctx.expr(1))
+            print("rest ", ctx.expr(1).getText())
+            if ctx.expr(1).getText() in self.registers.keys():
+                line += f"{self.registers[self.currentClass][ctx.exp(0)]}"
+            else:
+                line += f"{ctx.expr(1).getText()}"
+                print("Gt ", ctx.expr(1).getText())
+
+        if self.inFunction:
+            self.funcText += line + "\n" 
+        else:
+            self.text += line + "\n"
         
         return
     
     def visitLessThan(self, ctx:YAPLParser.LessThanContext):
         print("#lessThan")
 
-        self.visit(ctx.expr(0))
-        self.visit(ctx.expr(1))
+        line = "\t\tSLG "
+
+        print("stack ", self.temp_stack)
+
+        if len(self.temp_stack) > 0:
+            line += self.temp_stack.pop() + ", "
+        else: 
+            line += "t" + str(self.temp_counter) + ", "
+            self.addToTemp()
+
+        # parte izquierda
+        if ctx.expr(0).getChildCount() > 1:
+            leftTemp = "t" + str(self.temp_counter)
+            self.addToTemp()
+            self.temp_stack.append(leftTemp)
+            self.visit(ctx.expr(0))
+            line += leftTemp + ", "
+        else:
+            self.visit(ctx.expr(0))
+            # print("rest ", ctx.expr(0).getText())
+            if ctx.expr(0).getText() in self.registers.keys():
+                line += f"{self.registers[self.currentClass][ctx.exp(0)]}, "
+            else:
+                line += f"{ctx.expr(0).getText()}, "
+                # print("Gt ", ctx.expr(0).getText())
+
+
+        # parte derecha
+        if ctx.expr(1).getChildCount() > 1:
+            leftTemp = "t" + str(self.temp_counter)
+            self.addToTemp()
+            self.temp_stack.append(leftTemp)
+            self.visit(ctx.expr(1))
+            line += leftTemp
+        else:
+            self.visit(ctx.expr(1))
+            print("rest ", ctx.expr(1).getText())
+            if ctx.expr(1).getText() in self.registers.keys():
+                line += f"{self.registers[self.currentClass][ctx.exp(0)]}"
+            else:
+                line += f"{ctx.expr(1).getText()}"
+                print("Gt ", ctx.expr(1).getText())
+
+        if self.inFunction:
+            self.funcText += line + "\n" 
+        else:
+            self.text += line + "\n"
         
         return
     
     def visitGreaterThan(self, ctx:YAPLParser.GreaterThanContext):
         print("#greaterThan")
 
-        self.visit(ctx.expr(0))
-        self.visit(ctx.expr(1))
+        line = "\t\tSGT "
+
+        print("stack ", self.temp_stack)
+
+        if len(self.temp_stack) > 0:
+            line += self.temp_stack.pop() + ", "
+        else: 
+            line += "t" + str(self.temp_counter) + ", "
+            self.addToTemp()
+
+        # parte izquierda
+        if ctx.expr(0).getChildCount() > 1:
+            leftTemp = "t" + str(self.temp_counter)
+            self.addToTemp()
+            self.temp_stack.append(leftTemp)
+            self.visit(ctx.expr(0))
+            line += leftTemp + ", "
+        else:
+            self.visit(ctx.expr(0))
+            # print("rest ", ctx.expr(0).getText())
+            if ctx.expr(0).getText() in self.registers.keys():
+                line += f"{self.registers[self.currentClass][ctx.exp(0)]}, "
+            else:
+                line += f"{ctx.expr(0).getText()}, "
+                # print("Gt ", ctx.expr(0).getText())
+
+
+        # parte derecha
+        if ctx.expr(1).getChildCount() > 1:
+            leftTemp = "t" + str(self.temp_counter)
+            self.addToTemp()
+            self.temp_stack.append(leftTemp)
+            self.visit(ctx.expr(1))
+            line += leftTemp
+        else:
+            self.visit(ctx.expr(1))
+            print("rest ", ctx.expr(1).getText())
+            if ctx.expr(1).getText() in self.registers.keys():
+                line += f"{self.registers[self.currentClass][ctx.exp(0)]}"
+            else:
+                line += f"{ctx.expr(1).getText()}"
+                print("Gt ", ctx.expr(1).getText())
+
+        if self.inFunction:
+            self.funcText += line + "\n" 
+        else:
+            self.text += line + "\n"
         
         return
     
     def visitGreaterThanOrEqual(self, ctx:YAPLParser.GreaterThanOrEqualContext):
         print("#greaterThanOrEqual")
 
-        self.visit(ctx.expr(0))
-        self.visit(ctx.expr(1))
+        line = "\t\tSGE "
+
+        print("stack ", self.temp_stack)
+
+        if len(self.temp_stack) > 0:
+            line += self.temp_stack.pop() + ", "
+        else: 
+            line += "t" + str(self.temp_counter) + ", "
+            self.addToTemp()
+
+        # parte izquierda
+        if ctx.expr(0).getChildCount() > 1:
+            leftTemp = "t" + str(self.temp_counter)
+            self.addToTemp()
+            self.temp_stack.append(leftTemp)
+            self.visit(ctx.expr(0))
+            line += leftTemp + ", "
+        else:
+            self.visit(ctx.expr(0))
+            # print("rest ", ctx.expr(0).getText())
+            if ctx.expr(0).getText() in self.registers.keys():
+                line += f"{self.registers[self.currentClass][ctx.exp(0)]}, "
+            else:
+                line += f"{ctx.expr(0).getText()}, "
+                # print("Gt ", ctx.expr(0).getText())
+
+
+        # parte derecha
+        if ctx.expr(1).getChildCount() > 1:
+            leftTemp = "t" + str(self.temp_counter)
+            self.addToTemp()
+            self.temp_stack.append(leftTemp)
+            self.visit(ctx.expr(1))
+            line += leftTemp
+        else:
+            self.visit(ctx.expr(1))
+            print("rest ", ctx.expr(1).getText())
+            if ctx.expr(1).getText() in self.registers.keys():
+                line += f"{self.registers[self.currentClass][ctx.exp(0)]}"
+            else:
+                line += f"{ctx.expr(1).getText()}"
+                print("Gt ", ctx.expr(1).getText())
+
+        if self.inFunction:
+            self.funcText += line + "\n" 
+        else:
+            self.text += line + "\n"
         
         return
     
     def visitEqual(self, ctx:YAPLParser.EqualContext):
         print("#equal")
 
-        self.visit(ctx.expr(0))
-        self.visit(ctx.expr(1))
+        line = "\t\tSEQ "
+
+        print("stack ", self.temp_stack)
+
+        if len(self.temp_stack) > 0:
+            line += self.temp_stack.pop() + ", "
+        else: 
+            line += "t" + str(self.temp_counter) + ", "
+            self.addToTemp()
+
+        # parte izquierda
+        if ctx.expr(0).getChildCount() > 1:
+            leftTemp = "t" + str(self.temp_counter)
+            self.addToTemp()
+            self.temp_stack.append(leftTemp)
+            self.visit(ctx.expr(0))
+            line += leftTemp + ", "
+        else:
+            self.visit(ctx.expr(0))
+            # print("rest ", ctx.expr(0).getText())
+            if ctx.expr(0).getText() in self.registers.keys():
+                line += f"{self.registers[self.currentClass][ctx.exp(0)]}, "
+            else:
+                line += f"{ctx.expr(0).getText()}, "
+                # print("Gt ", ctx.expr(0).getText())
+
+
+        # parte derecha
+        if ctx.expr(1).getChildCount() > 1:
+            leftTemp = "t" + str(self.temp_counter)
+            self.addToTemp()
+            self.temp_stack.append(leftTemp)
+            self.visit(ctx.expr(1))
+            line += leftTemp
+        else:
+            self.visit(ctx.expr(1))
+            print("rest ", ctx.expr(1).getText())
+            if ctx.expr(1).getText() in self.registers.keys():
+                line += f"{self.registers[self.currentClass][ctx.exp(0)]}"
+            else:
+                line += f"{ctx.expr(1).getText()}"
+                print("Gt ", ctx.expr(1).getText())
+
+        if self.inFunction:
+            self.funcText += line + "\n" 
+        else:
+            self.text += line + "\n"
         
         return
     
     def visitAnd(self, ctx:YAPLParser.AndContext):
         print("#and")
 
-        self.visit(ctx.expr(0))
-        self.visit(ctx.expr(1))
+        line = "\t\tAND "
+
+        print("stack ", self.temp_stack)
+
+        if len(self.temp_stack) > 0:
+            line += self.temp_stack.pop() + ", "
+        else: 
+            line += "t" + str(self.temp_counter) + ", "
+            self.addToTemp()
+
+        # parte izquierda
+        if ctx.expr(0).getChildCount() > 1:
+            leftTemp = "t" + str(self.temp_counter)
+            self.addToTemp()
+            self.temp_stack.append(leftTemp)
+            self.visit(ctx.expr(0))
+            line += leftTemp + ", "
+        else:
+            self.visit(ctx.expr(0))
+            # print("rest ", ctx.expr(0).getText())
+            if ctx.expr(0).getText() in self.registers.keys():
+                line += f"{self.registers[self.currentClass][ctx.exp(0)]}, "
+            else:
+                line += f"{ctx.expr(0).getText()}, "
+                # print("Gt ", ctx.expr(0).getText())
+
+
+        # parte derecha
+        if ctx.expr(1).getChildCount() > 1:
+            leftTemp = "t" + str(self.temp_counter)
+            self.addToTemp()
+            self.temp_stack.append(leftTemp)
+            self.visit(ctx.expr(1))
+            line += leftTemp
+        else:
+            self.visit(ctx.expr(1))
+            print("rest ", ctx.expr(1).getText())
+            if ctx.expr(1).getText() in self.registers.keys():
+                line += f"{self.registers[self.currentClass][ctx.exp(0)]}"
+            else:
+                line += f"{ctx.expr(1).getText()}"
+                print("Gt ", ctx.expr(1).getText())
+
+        if self.inFunction:
+            self.funcText += line + "\n" 
+        else:
+            self.text += line + "\n"
         
         return
     
     def visitOr(self, ctx:YAPLParser.OrContext):
-        print("#or")
 
-        self.visit(ctx.expr(0))
-        self.visit(ctx.expr(1))
+        line = "\t\tOR "
+
+        print("stack ", self.temp_stack)
+
+        if len(self.temp_stack) > 0:
+            line += self.temp_stack.pop() + ", "
+        else: 
+            line += "t" + str(self.temp_counter) + ", "
+            self.addToTemp()
+
+        # parte izquierda
+        if ctx.expr(0).getChildCount() > 1:
+            leftTemp = "t" + str(self.temp_counter)
+            self.addToTemp()
+            self.temp_stack.append(leftTemp)
+            self.visit(ctx.expr(0))
+            line += leftTemp + ", "
+        else:
+            self.visit(ctx.expr(0))
+            # print("rest ", ctx.expr(0).getText())
+            if ctx.expr(0).getText() in self.registers.keys():
+                line += f"{self.registers[self.currentClass][ctx.exp(0)]}, "
+            else:
+                line += f"{ctx.expr(0).getText()}, "
+                # print("Gt ", ctx.expr(0).getText())
+
+
+        # parte derecha
+        if ctx.expr(1).getChildCount() > 1:
+            leftTemp = "t" + str(self.temp_counter)
+            self.addToTemp()
+            self.temp_stack.append(leftTemp)
+            self.visit(ctx.expr(1))
+            line += leftTemp
+        else:
+            self.visit(ctx.expr(1))
+            print("rest ", ctx.expr(1).getText())
+            if ctx.expr(1).getText() in self.registers.keys():
+                line += f"{self.registers[self.currentClass][ctx.exp(0)]}"
+            else:
+                line += f"{ctx.expr(1).getText()}"
+                print("Gt ", ctx.expr(1).getText())
+
+        if self.inFunction:
+            self.funcText += line + "\n" 
+        else:
+            self.text += line + "\n"
         
         return
     
@@ -503,12 +846,18 @@ class CodigoIntermedio(YAPLVisitor):
         # se agrega solamente si se define la variable
         if ctx.expr():
             x = ""
-            if ctx.getChildCount() > 1 :
-                temp_ = "t" + str(self.temp_counter)
-                self.addToTemp()
-                self.temp_stack.append(temp_)
-                self.visit(ctx.expr())
-                x = temp_
+            firstchar = ctx.expr().getText()[:1]
+            if ctx.getChildCount() > 1:
+                if firstchar == '"':
+                    # es un string
+                    x = ctx.expr().getText()
+                else: 
+                    temp_ = "t" + str(self.temp_counter)
+                    self.addToTemp()
+                    self.temp_stack.append(temp_)
+                    self.visit(ctx.expr())
+                    print("assi ", ctx.expr().getText())
+                    x = temp_
             else: 
                 text_ = ctx.expr().getText()
                 if text_ in self.registers[self.currentClass].keys:

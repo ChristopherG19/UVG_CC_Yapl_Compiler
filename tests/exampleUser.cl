@@ -15,11 +15,14 @@ class Main inherits IO {
       {
          x <- 5;
 
-         if ((x > 0) & (x < 10)) then 
-            str <- "mayor"
+         if (x = 5) then 
+            str <- "igual"
          else
-            str <- "menor"
-         fi;
+            if ((x >= 0) & (x < 10)) then 
+               str <- "mayor"
+            else
+               str <- "menor"
+         fi fi;
 
          y <- (x - 5) + 9 * 5;
 
