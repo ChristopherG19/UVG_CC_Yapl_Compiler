@@ -19,6 +19,8 @@ class CodigoIntermedio(YAPLVisitor):
         self.goto_true = 0
         self.goto_false = 0
         self.goto_end = 0
+        self.goto_while = 0
+        
         
         #stacks
         self.temp_stack = []
@@ -197,21 +199,48 @@ class CodigoIntermedio(YAPLVisitor):
         # caso real
         self.funcText += f"L_TRUE_{true_}:\n"        
         self.visit(ctx.expr(1))
-        self.funcText += f"\t\tGOTO L_END_{end_}\n"
+        self.funcText += f"\t\tGOTO L_IF_END_{end_}\n"
 
         # caso falso 
         self.funcText += f"L_FALSE_{false_}:\n"   
         self.visit(ctx.expr(2))
-        self.funcText += f"\t\tGOTO L_END_{end_}\n"
+        self.funcText += f"\t\tGOTO L_IF_END_{end_}\n"
 
         # continuar con el resto del codigo
-        self.funcText += f"L_END_{end_}:\n"
+        self.funcText += f"L_IF_END_{end_}:\n"
 
         return 
     
     def visitWhile(self, ctx:YAPLParser.WhileContext):
         print("#while")
+
+        # etiquetas
+        inicio_ = f"L_LOOP_{self.goto_while}"
+        loop_ = f"L_LOOP_{self.goto_while}"
+        end_ = f"L_LOOP_END_{self.goto_while}"
+
+        self.goto_while += 1
+
+        self.funcText += f"\t\tGOTO {inicio_}\n"
+        self.funcText += inicio_ + ":\n"
+
+        # evaluar expresión de la condición 
+        temp_ = "t" + str(self.temp_counter) # creamos una temporal
+        self.addToTemp
+        self.temp_stack.append(temp_)
+        self.visit(ctx.expr(0))
+        print("if exp1 ", ctx.expr(0).getText())
+
+        self.funcText += f"\t\tIF {temp_} = 0 GOTO {end_}\n"
+        # self.funcText += f"\t\tGOTO {end_}"
+
         
+
+        self.visit(ctx.expr(1))
+
+        self.funcText += f"\t\tGOTO {loop_}\n"
+        self.funcText += end_ + ":\n"
+  
         return 
     
     def visitBlock(self, ctx:YAPLParser.BlockContext):

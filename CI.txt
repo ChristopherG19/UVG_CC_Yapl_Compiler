@@ -11,7 +11,7 @@ CLASS Main
 		GOTO L_FALSE_0
 L_TRUE_0:
 		LW SP[4], "igual"
-		GOTO L_END_0
+		GOTO L_IF_END_0
 L_FALSE_0:
 		SGE t3, x, 0
 		SLG t4, x, 10
@@ -20,21 +20,29 @@ L_FALSE_0:
 		GOTO L_FALSE_1
 L_TRUE_1:
 		LW SP[4], "mayor"
-		GOTO L_END_1
+		GOTO L_IF_END_1
 L_FALSE_1:
 		LW SP[4], "menor"
-		GOTO L_END_1
-L_END_1:
-		GOTO L_END_0
-L_END_0:
-		SUB t6, x, 5
-		MULT t0, 9, 5
-		ADD t5, t6, t0
-		LW SP[6], t5
+		GOTO L_IF_END_1
+L_IF_END_1:
+		GOTO L_IF_END_0
+L_IF_END_0:
+		GOTO L_LOOP_0
+L_LOOP_0:
+		LW SP[0], t5
+		IF t5 = 0 GOTO L_LOOP_END_0
+		SUB t6, x, 1
+		LW SP[0], t6
+		GOTO L_LOOP_0
+L_LOOP_END_0:
+		SUB t1, x, 5
+		MULT t2, 9, 5
+		ADD t0, t1, t2
+		LW SP[6], t0
 		PARAM str
 		CALL out_string, 1
-		ADD t1, 5, 6
-		PARAM t1
+		ADD t3, 5, 6
+		PARAM t3
 		CALL meth1, 1
 	END FUNC main
 EOC

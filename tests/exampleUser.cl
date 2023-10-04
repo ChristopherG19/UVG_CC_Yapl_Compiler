@@ -11,7 +11,7 @@ class Main inherits IO {
       m <- n
    };
 
-   main(): SELF_TYPE {
+   main() : SELF_TYPE {
       {
          x <- 5;
 
@@ -24,6 +24,11 @@ class Main inherits IO {
                str <- "menor"
          fi fi;
 
+         while NOT (x <- 0)
+         LOOP 
+            x <- x - 1
+         POOL;
+
          y <- (x - 5) + 9 * 5;
 
          out_string(str);
@@ -33,5 +38,6 @@ class Main inherits IO {
       }
    };
 };
+
 
 
