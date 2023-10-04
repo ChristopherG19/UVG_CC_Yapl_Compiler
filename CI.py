@@ -20,6 +20,7 @@ class CodigoIntermedio(YAPLVisitor):
         self.goto_false = 0
         self.goto_end = 0
         self.goto_while = 0
+        self.lastStatement = ""
         
         
         #stacks
@@ -86,10 +87,28 @@ class CodigoIntermedio(YAPLVisitor):
         for formal in ctx.formal():
             self.visit(formal)
 
-        self.visit(ctx.expr())
+        v = self.visit(ctx.expr())
+
+        print("visit ", ctx.expr())
 
         self.text += self.funcText
         self.functions[self.currentClass][id] = self.funcText
+
+        lastElement = ctx.expr().getChild(ctx.expr().getChildCount() - 1).getText()
+        if lastElement == "}":
+            lastElement = ctx.expr().getChild(ctx.expr().getChildCount() - 2).getText()
+        print("AAA ", lastElement )
+        print("CH ", ctx.expr().getChildCount())
+        coutn = (int(ctx.expr().getChildCount()) - 1 )
+        print(coutn)
+        print("Last", ctx.expr().getChild(coutn).getText())
+
+        print("last statement ", self.lastStatement)
+        print("type ", ctx.TYPE().getText())
+        if (ctx.TYPE().getText() == "SELF_TYPE" or ctx.TYPE().getText() == "VOID"):
+            self.text += f"\t\tRETURN\n"
+        else:
+            self.text += f"\t\tRETURN {self.lastStatement}\n"
 
         self.text += f"\tEND FUNC {id}\n"
 
@@ -120,7 +139,7 @@ class CodigoIntermedio(YAPLVisitor):
             # agregar al registro 
             id_ = ctx.ID().getText()
             type_ = ctx.TYPE().getText()
-            print("row ", self.symbolTable.get_cell(id = id_, addType = type_, addParent = self.currentClass))
+            # print("row ", self.symbolTable.get_cell(id = id_, addType = type_, addParent = self.currentClass))
             disp = self.symbolTable.get_displacement(id = id_, addType = type_, addParent = self.currentClass)
 
             var = f"SP[{disp}]"
@@ -246,7 +265,7 @@ class CodigoIntermedio(YAPLVisitor):
     def visitBlock(self, ctx:YAPLParser.BlockContext):
         print("#block")
         for expr in ctx.expr():
-            print("exp block: ", expr.getText())
+            # print("exp block: ", expr.getText())
             self.visit(expr)
         return
     
@@ -278,12 +297,15 @@ class CodigoIntermedio(YAPLVisitor):
 
         line = "\t\tMULT "
 
-        print("stack ", self.temp_stack)
+        # print("stack ", self.temp_stack)
+        temp_ = ""
 
         if len(self.temp_stack) > 0:
-            line += self.temp_stack.pop() + ", "
+            temp_ = self.temp_stack.pop()
+            line += temp_ + ", "
         else: 
-            line += "t" + str(self.temp_counter) + ", "
+            temp_ = "t" + str(self.temp_counter)
+            line += temp_ + ", "
             self.addToTemp()
 
         # parte izquierda
@@ -295,7 +317,7 @@ class CodigoIntermedio(YAPLVisitor):
             line += leftTemp + ", "
         else:
             self.visit(ctx.expr(0))
-            # print("mult ", ctx.expr(0).getText())
+            # print("rest ", ctx.expr(0).getText())
             if ctx.expr(0).getText() in self.registers.keys():
                 line += f"{self.registers[self.currentClass][ctx.exp(0)]}, "
             else:
@@ -312,17 +334,19 @@ class CodigoIntermedio(YAPLVisitor):
             line += leftTemp
         else:
             self.visit(ctx.expr(1))
-            # print("mult ", ctx.expr(1).getText())
+            print("rest ", ctx.expr(1).getText())
             if ctx.expr(1).getText() in self.registers.keys():
                 line += f"{self.registers[self.currentClass][ctx.exp(0)]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
-                # print("Gt ", ctx.expr(1).getText())
+                print("Gt ", ctx.expr(1).getText())
 
         if self.inFunction:
             self.funcText += line + "\n" 
         else:
             self.text += line + "\n"
+
+        self.lastStatement = temp_
         
         return
     
@@ -331,12 +355,15 @@ class CodigoIntermedio(YAPLVisitor):
 
         line = "\t\tDIV "
 
-        print("stack ", self.temp_stack)
+        # print("stack ", self.temp_stack)
+        temp_ = ""
 
         if len(self.temp_stack) > 0:
-            line += self.temp_stack.pop() + ", "
+            temp_ = self.temp_stack.pop()
+            line += temp_ + ", "
         else: 
-            line += "t" + str(self.temp_counter) + ", "
+            temp_ = "t" + str(self.temp_counter)
+            line += temp_ + ", "
             self.addToTemp()
 
         # parte izquierda
@@ -348,12 +375,12 @@ class CodigoIntermedio(YAPLVisitor):
             line += leftTemp + ", "
         else:
             self.visit(ctx.expr(0))
-            print("div ", ctx.expr(0).getText())
+            # print("rest ", ctx.expr(0).getText())
             if ctx.expr(0).getText() in self.registers.keys():
                 line += f"{self.registers[self.currentClass][ctx.exp(0)]}, "
             else:
                 line += f"{ctx.expr(0).getText()}, "
-                print("Gt ", ctx.expr(0).getText())
+                # print("Gt ", ctx.expr(0).getText())
 
 
         # parte derecha
@@ -365,7 +392,7 @@ class CodigoIntermedio(YAPLVisitor):
             line += leftTemp
         else:
             self.visit(ctx.expr(1))
-            print("div ", ctx.expr(1).getText())
+            print("rest ", ctx.expr(1).getText())
             if ctx.expr(1).getText() in self.registers.keys():
                 line += f"{self.registers[self.currentClass][ctx.exp(0)]}"
             else:
@@ -376,6 +403,8 @@ class CodigoIntermedio(YAPLVisitor):
             self.funcText += line + "\n" 
         else:
             self.text += line + "\n"
+
+        self.lastStatement = temp_
         
         return
     
@@ -384,12 +413,15 @@ class CodigoIntermedio(YAPLVisitor):
 
         line = "\t\tADD "
 
-        print("stack ", self.temp_stack)
+        # print("stack ", self.temp_stack)
+        temp_ = ""
 
         if len(self.temp_stack) > 0:
-            line += self.temp_stack.pop() + ", "
+            temp_ = self.temp_stack.pop()
+            line += temp_ + ", "
         else: 
-            line += "t" + str(self.temp_counter) + ", "
+            temp_ = "t" + str(self.temp_counter)
+            line += temp_ + ", "
             self.addToTemp()
 
         # parte izquierda
@@ -401,7 +433,7 @@ class CodigoIntermedio(YAPLVisitor):
             line += leftTemp + ", "
         else:
             self.visit(ctx.expr(0))
-            # print("suma ", ctx.expr(0).getText())
+            # print("rest ", ctx.expr(0).getText())
             if ctx.expr(0).getText() in self.registers.keys():
                 line += f"{self.registers[self.currentClass][ctx.exp(0)]}, "
             else:
@@ -418,17 +450,19 @@ class CodigoIntermedio(YAPLVisitor):
             line += leftTemp
         else:
             self.visit(ctx.expr(1))
-            # print("suma ", ctx.expr(1).getText())
+            print("rest ", ctx.expr(1).getText())
             if ctx.expr(1).getText() in self.registers.keys():
                 line += f"{self.registers[self.currentClass][ctx.exp(0)]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
-                # print("Gt ", ctx.expr(1).getText())
+                print("Gt ", ctx.expr(1).getText())
 
         if self.inFunction:
             self.funcText += line + "\n" 
         else:
             self.text += line + "\n"
+
+        self.lastStatement = temp_
         
         return
     
@@ -437,12 +471,15 @@ class CodigoIntermedio(YAPLVisitor):
 
         line = "\t\tSUB "
 
-        print("stack ", self.temp_stack)
+        # print("stack ", self.temp_stack)
+        temp_ = ""
 
         if len(self.temp_stack) > 0:
-            line += self.temp_stack.pop() + ", "
+            temp_ = self.temp_stack.pop()
+            line += temp_ + ", "
         else: 
-            line += "t" + str(self.temp_counter) + ", "
+            temp_ = "t" + str(self.temp_counter)
+            line += temp_ + ", "
             self.addToTemp()
 
         # parte izquierda
@@ -482,6 +519,8 @@ class CodigoIntermedio(YAPLVisitor):
             self.funcText += line + "\n" 
         else:
             self.text += line + "\n"
+
+        self.lastStatement = temp_
         
         return
     
@@ -490,12 +529,15 @@ class CodigoIntermedio(YAPLVisitor):
 
         line = "\t\tSLE "
 
-        print("stack ", self.temp_stack)
+        # print("stack ", self.temp_stack)
+        temp_ = ""
 
         if len(self.temp_stack) > 0:
-            line += self.temp_stack.pop() + ", "
+            temp_ = self.temp_stack.pop()
+            line += temp_ + ", "
         else: 
-            line += "t" + str(self.temp_counter) + ", "
+            temp_ = "t" + str(self.temp_counter)
+            line += temp_ + ", "
             self.addToTemp()
 
         # parte izquierda
@@ -535,6 +577,8 @@ class CodigoIntermedio(YAPLVisitor):
             self.funcText += line + "\n" 
         else:
             self.text += line + "\n"
+
+        self.lastStatement = temp_
         
         return
     
@@ -543,12 +587,15 @@ class CodigoIntermedio(YAPLVisitor):
 
         line = "\t\tSLG "
 
-        print("stack ", self.temp_stack)
+        # print("stack ", self.temp_stack)
+        temp_ = ""
 
         if len(self.temp_stack) > 0:
-            line += self.temp_stack.pop() + ", "
+            temp_ = self.temp_stack.pop()
+            line += temp_ + ", "
         else: 
-            line += "t" + str(self.temp_counter) + ", "
+            temp_ = "t" + str(self.temp_counter)
+            line += temp_ + ", "
             self.addToTemp()
 
         # parte izquierda
@@ -588,6 +635,8 @@ class CodigoIntermedio(YAPLVisitor):
             self.funcText += line + "\n" 
         else:
             self.text += line + "\n"
+
+        self.lastStatement = temp_
         
         return
     
@@ -596,12 +645,15 @@ class CodigoIntermedio(YAPLVisitor):
 
         line = "\t\tSGT "
 
-        print("stack ", self.temp_stack)
+        # print("stack ", self.temp_stack)
+        temp_ = ""
 
         if len(self.temp_stack) > 0:
-            line += self.temp_stack.pop() + ", "
+            temp_ = self.temp_stack.pop()
+            line += temp_ + ", "
         else: 
-            line += "t" + str(self.temp_counter) + ", "
+            temp_ = "t" + str(self.temp_counter)
+            line += temp_ + ", "
             self.addToTemp()
 
         # parte izquierda
@@ -641,6 +693,8 @@ class CodigoIntermedio(YAPLVisitor):
             self.funcText += line + "\n" 
         else:
             self.text += line + "\n"
+
+        self.lastStatement = temp_
         
         return
     
@@ -649,12 +703,15 @@ class CodigoIntermedio(YAPLVisitor):
 
         line = "\t\tSGE "
 
-        print("stack ", self.temp_stack)
+        # print("stack ", self.temp_stack)
+        temp_ = ""
 
         if len(self.temp_stack) > 0:
-            line += self.temp_stack.pop() + ", "
+            temp_ = self.temp_stack.pop()
+            line += temp_ + ", "
         else: 
-            line += "t" + str(self.temp_counter) + ", "
+            temp_ = "t" + str(self.temp_counter)
+            line += temp_ + ", "
             self.addToTemp()
 
         # parte izquierda
@@ -694,6 +751,8 @@ class CodigoIntermedio(YAPLVisitor):
             self.funcText += line + "\n" 
         else:
             self.text += line + "\n"
+
+        self.lastStatement = temp_
         
         return
     
@@ -702,12 +761,15 @@ class CodigoIntermedio(YAPLVisitor):
 
         line = "\t\tSEQ "
 
-        print("stack ", self.temp_stack)
+        # print("stack ", self.temp_stack)
+        temp_ = ""
 
         if len(self.temp_stack) > 0:
-            line += self.temp_stack.pop() + ", "
+            temp_ = self.temp_stack.pop()
+            line += temp_ + ", "
         else: 
-            line += "t" + str(self.temp_counter) + ", "
+            temp_ = "t" + str(self.temp_counter)
+            line += temp_ + ", "
             self.addToTemp()
 
         # parte izquierda
@@ -747,6 +809,8 @@ class CodigoIntermedio(YAPLVisitor):
             self.funcText += line + "\n" 
         else:
             self.text += line + "\n"
+
+        self.lastStatement = temp_
         
         return
     
@@ -755,12 +819,15 @@ class CodigoIntermedio(YAPLVisitor):
 
         line = "\t\tAND "
 
-        print("stack ", self.temp_stack)
+        # print("stack ", self.temp_stack)
+        temp_ = ""
 
         if len(self.temp_stack) > 0:
-            line += self.temp_stack.pop() + ", "
+            temp_ = self.temp_stack.pop()
+            line += temp_ + ", "
         else: 
-            line += "t" + str(self.temp_counter) + ", "
+            temp_ = "t" + str(self.temp_counter)
+            line += temp_ + ", "
             self.addToTemp()
 
         # parte izquierda
@@ -800,6 +867,8 @@ class CodigoIntermedio(YAPLVisitor):
             self.funcText += line + "\n" 
         else:
             self.text += line + "\n"
+
+        self.lastStatement = temp_
         
         return
     
@@ -807,12 +876,15 @@ class CodigoIntermedio(YAPLVisitor):
 
         line = "\t\tOR "
 
-        print("stack ", self.temp_stack)
+        # print("stack ", self.temp_stack)
+        temp_ = ""
 
         if len(self.temp_stack) > 0:
-            line += self.temp_stack.pop() + ", "
+            temp_ = self.temp_stack.pop()
+            line += temp_ + ", "
         else: 
-            line += "t" + str(self.temp_counter) + ", "
+            temp_ = "t" + str(self.temp_counter)
+            line += temp_ + ", "
             self.addToTemp()
 
         # parte izquierda
@@ -852,6 +924,8 @@ class CodigoIntermedio(YAPLVisitor):
             self.funcText += line + "\n" 
         else:
             self.text += line + "\n"
+
+        self.lastStatement = temp_
         
         return
     
@@ -887,6 +961,7 @@ class CodigoIntermedio(YAPLVisitor):
                     self.visit(ctx.expr())
                     print("assi ", ctx.expr().getText())
                     x = temp_
+                    
             else: 
                 text_ = ctx.expr().getText()
                 if text_ in self.registers[self.currentClass].keys:
@@ -895,9 +970,10 @@ class CodigoIntermedio(YAPLVisitor):
                     x = ctx.expr().getText
                 self.visit(ctx.expr())
             
+            
             # agregar al registro 
             id_ = ctx.ID().getText()
-            print("row ", self.symbolTable.get_cell(id = id_, addParent = self.currentClass))
+            # print("row ", self.symbolTable.get_cell(id = id_, addParent = self.currentClass))
             disp = self.symbolTable.get_displacement(id = id_, addParent = self.currentClass)
 
             var = f"SP[{disp}]"
@@ -907,31 +983,43 @@ class CodigoIntermedio(YAPLVisitor):
                 self.funcText += f"\t\tLW {var}, {x}\n"
             else:
                 self.text += f"\t\tLW {var}, {x}\n"
+
+            self.lastStatement = var
         
         return
     
     def visitID(self, ctx:YAPLParser.IdContext):
         print("#id")
+
+        self.lastStatement = ctx.getText()
         
         return
     
     def visitInt(self, ctx:YAPLParser.IntContext):
         print("#int")
+
+        self.lastStatement = ctx.getText()
         
         return
     
     def visitString(self, ctx:YAPLParser.StringContext):
         print("#string")
+
+        self.lastStatement = ctx.getText()
         
         return
     
     def visitBoolean(self, ctx:YAPLParser.BooleanContext):
         print("#boolean")
+
+        self.lastStatement = ctx.getText()
         
         return
     
     def visitSelf(self, ctx:YAPLParser.SelfContext):
         print("#self")
+
+        self.lastStatement = ctx.getText()
         
         return
 

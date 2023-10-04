@@ -1,3 +1,11 @@
+class A {
+   var: Int <- 5;
+
+   returnVar(): Int {
+      var
+   }
+}
+
 class Main inherits IO {
 	
    x: Int;
@@ -10,6 +18,12 @@ class Main inherits IO {
    meth1(n:Int): Int {
       m <- n
    };
+
+   meth2(): String {
+      {
+         "hola";
+      }
+   }
 
    main() : SELF_TYPE {
       {

@@ -14,6 +14,9 @@
 |   abort    |   Object   | Declaration |   None   |   Object  |    None    |     None     | Global |  None | Error |
 | type_name  |   String   | Declaration |   None   |   Object  |    None    |     None     | Global |  None |  None |
 |    copy    | SELF_TYPE  | Declaration |   None   |   Object  |    None    |     None     | Global |  None |  None |
+|     A      |    Int     |    Class    |  Object  |     A     |    None    |     None     | Global |   8   |  None |
+|    var     |    Int     |   Instance  |   None   |     A     |    None    |      0       | Global |   4   |   0   |
+| returnVar  |    Int     |    Method   |   None   |     A     |    None    |     None     | Global |   4   |  None |
 | out_string | SELF_TYPE  |    Method   |   None   |     IO    |    None    |     None     | Global |   0   |  None |
 |   xParS    |   String   |    Param    |   None   |     IO    | out_string |     None     | Local  |   0   |  None |
 |  out_int   | SELF_TYPE  |    Method   |   None   |     IO    |    None    |     None     | Global |   0   |  None |
