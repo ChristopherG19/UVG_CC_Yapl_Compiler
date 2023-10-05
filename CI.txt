@@ -15,10 +15,10 @@ CLASS Main
 		LW t0, A
 		LW SP[14], t0
 		ADD t1, 5, 4
-		LW SP[48], t1
+		LW SP[58], t1
 	Main.meth1
 		LW t2, P
-		LW SP[None], t2
+		LW SP[None], SP[58]
 		RETURN SP[None]
 	END FUNC meth1
 	Main.meth2
@@ -26,16 +26,16 @@ CLASS Main
 	END FUNC meth2
 	Main.main
 		NEG t3, 5 
-		LW SP[30], t3
-		SEQ t4, SP[30], 5
+		LW SP[None], t3
+		SEQ t4, SP[None], 5
 		IF t4 > 0 GOTO L_TRUE_0
 		GOTO L_FALSE_0
 L_TRUE_0:
 		LW SP[None], "igual"
 		GOTO L_IF_END_0
 L_FALSE_0:
-		SGE t6, SP[30], 0
-		SLG t7, SP[30], 10
+		SGE t6, SP[None], 0
+		SLG t7, SP[None], 10
 		AND t5, t6, t7
 		IF t5 > 0 GOTO L_TRUE_1
 		GOTO L_FALSE_1
@@ -48,43 +48,48 @@ L_FALSE_1:
 L_IF_END_1:
 		GOTO L_IF_END_0
 L_IF_END_0:
-		SEQ t8, SP[30], 0
+		SEQ t8, SP[None], 0
 		IF t8 > 0 GOTO L_TRUE_2
 		GOTO L_FALSE_2
 L_TRUE_2:
 		PARAM "igual"
-		CALL     out_string, 1
+		CALL Main.out_string, 1
 		LW t9, R
 		GOTO L_IF_END_2
 L_FALSE_2:
 		PARAM "desigual"
-		CALL     out_string, 1
+		CALL Main.out_string, 1
 		LW t10, R
 		GOTO L_IF_END_2
 L_IF_END_2:
 		GOTO L_LOOP_0
 L_LOOP_0:
-		SEQ t11, SP[30], 0
+		SEQ t11, SP[None], 0
 		NOT t11, t11
 		IF t11 = 0 GOTO L_LOOP_END_0
-		SUB t12, SP[30], 1
-		LW SP[30], t12
+		LW SP[None], SP[None]
+		SUB t12, t0, 1
 		GOTO L_LOOP_0
 L_LOOP_END_0:
-		SUB t1, SP[30], 5
-		MULT t2, SP[30], 5
-		ADD t0, t1, t2
-		LW SP[34], t0
+		LW SP[37], 5
+		LW SP[41], False
+		PARAM SP[30]
+		CALL Main.out_string, 1
+		LW t0, R
+		SUB t3, SP[None], 5
+		LW SP[44], t3
+		MULT t4, SP[None], 5
+		ADD t1, t2, t4
 		PARAM SP[None]
-		CALL     out_string, 1
-		LW t3, R
-		ADD t4, 5, 6
-		PARAM t4
-		CALL     meth1, 1
-		LW t5, R
-		CALL returnVar, 0
+		CALL Main.out_string, 1
+		LW t2, R
+		ADD t5, 5, 6
+		PARAM t5
+		CALL Main.meth1, 1
 		LW t6, R
-		LW SP[52], t6
+		CALL .returnVar, 0
+		LW t7, R
+		LW SP[62], t7
 		RETURN
 	END FUNC main
 EOC

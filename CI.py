@@ -8,11 +8,11 @@ import re
 
 class CodigoIntermedio(YAPLVisitor):
 
-    def __init__(self, fileName:str, symbolTable) -> None:
+    def __init__(self, fileName:str, symbolTable:Table()) -> None:
 
         self.filename = fileName
         self.text = ""
-        self.symbolTable = symbolTable
+        self.symbolTable = symbolTable  
 
         # counters
         self.tag_counter = 0
@@ -22,7 +22,6 @@ class CodigoIntermedio(YAPLVisitor):
         self.goto_end = 0
         self.goto_while = 0
         self.lastStatement = ""
-        
         
         #stacks
         self.temp_stack = []
@@ -35,6 +34,9 @@ class CodigoIntermedio(YAPLVisitor):
         self.classes = {}
 
         self.inFunction = False
+
+        self.genSP(self.symbolTable)
+        print(self.registers)
 
 
     def visitStart(self, ctx:YAPLParser.StartContext):
@@ -54,6 +56,7 @@ class CodigoIntermedio(YAPLVisitor):
         print("\n___________")
         # print(self.functions, "\n")
         print(self.registers, "\n")
+        print(self.temp_stack)
         # print(self.classes)
 
 
@@ -68,7 +71,7 @@ class CodigoIntermedio(YAPLVisitor):
 
         #inicializar diccionario de diccionario
         self.functions[self.currentClass] = {}
-        self.registers[self.currentClass] = {}
+        # self.registers[self.currentClass] = {}
 
         # copiamos todo si hereda de otra clase
         if ctx.INHERITS():
@@ -136,18 +139,31 @@ class CodigoIntermedio(YAPLVisitor):
         # se agrega solamente si se define la variable
         if ctx.expr():
             x = ""
-            if ctx.getChildCount() > 1 :
-                temp_ = "t" + str(self.temp_counter)
-                self.addToTemp()
-                self.temp_stack.append(temp_)
-                self.visit(ctx.expr())
-                x = temp_
+            exprText = ctx.expr().getText()
+            print("exprText ", exprText, ctx.expr().getChildCount())
+            firstchar = exprText[:1]
+            if ctx.expr().getChildCount() > 1:
+                # revisar si es un string
+                if firstchar == '"':
+                    x = ctx.expr().getText()
+                else: 
+                    # revisar si el parámetro existe
+                    if ctx.expr().getText() in self.parNames.keys():
+                        x = self.parNames[ctx.expr().getText()]
+                    else:
+                        temp_ = "t" + str(self.temp_counter)
+                        self.addToTemp()
+                        self.temp_stack.append(temp_)
+                        self.visit(ctx.expr())
+                        # print("assi ", ctx.expr().getText())
+                        x = temp_
+                    
             else: 
                 text_ = ctx.expr().getText()
                 if text_ in self.registers[self.currentClass].keys():
                     x = self.registers[self.currentClass][text_]
                 else:
-                    x = ctx.expr().getText
+                    x = text_
                 self.visit(ctx.expr())
             
             # agregar al registro 
@@ -157,7 +173,7 @@ class CodigoIntermedio(YAPLVisitor):
             disp = self.symbolTable.get_displacement(id = id_, addType = type_, addParent = self.currentClass)
 
             var = f"SP[{disp}]"
-            self.registers[self.currentClass][id_] = var
+            # self.registers[self.currentClass][id_] = var
 
             if self.inFunction:
                 self.funcText += f"\t\tLW {var}, {x}\n"
@@ -222,7 +238,14 @@ class CodigoIntermedio(YAPLVisitor):
             # print("p ", p)
             self.funcText += f"\t\tPARAM {p}\n"
 
-        self.funcText += f"\t\tCALL {id}, {len(paramslist)}\n"
+        bClass = ""
+        row = self.symbolTable.get_cell(id= ctx.ID().getText())
+        if row:
+            print("row ", row)
+        else:
+            print("no se encontró la row!")
+
+        self.funcText += f"\t\tCALL {bClass}.{id}, {len(paramslist)}\n"
         if len(self.temp_stack) > 0:
             self.funcText += f"\t\tLW {self.temp_stack.pop()}, R\n"
         else:
@@ -258,7 +281,7 @@ class CodigoIntermedio(YAPLVisitor):
             self.funcText += f"\t\tPARAM {p}\n"
 
 
-        self.funcText += f"\t\tCALL     {id}, {len(paramslist)}\n"
+        self.funcText += f"\t\tCALL {self.currentClass}.{id}, {len(paramslist)}\n"
         if len(self.temp_stack) > 0:
             self.funcText += f"\t\tLW {self.temp_stack.pop()}, R\n"
         else:
@@ -345,7 +368,14 @@ class CodigoIntermedio(YAPLVisitor):
     
     def visitLetId(self, ctx:YAPLParser.LetIdContext):
         print("#letId")
-        
+
+        ids = []
+        assg = []
+
+
+        self.visit(ctx.expr(len(ctx.expr()) - 1))
+
+
     
     def visitNew(self, ctx:YAPLParser.NewContext):
         print("#new")
@@ -1098,10 +1128,12 @@ class CodigoIntermedio(YAPLVisitor):
         # se agrega solamente si se define la variable
         if ctx.expr():
             x = ""
-            firstchar = ctx.expr().getText()[:1]
-            if ctx.getChildCount() > 1:
+            exprText = ctx.expr().getText()
+            print("exprText ", exprText, ctx.expr().getChildCount())
+            firstchar = exprText[:1]
+            if ctx.expr().getChildCount() > 1:
+                # revisar si es un string
                 if firstchar == '"':
-                    # es un string
                     x = ctx.expr().getText()
                 else: 
                     # revisar si el parámetro existe
@@ -1120,9 +1152,8 @@ class CodigoIntermedio(YAPLVisitor):
                 if text_ in self.registers[self.currentClass].keys():
                     x = self.registers[self.currentClass][text_]
                 else:
-                    x = ctx.expr().getText
+                    x = text_
                 self.visit(ctx.expr())
-            
             
             # agregar al registro 
             id_ = ctx.ID().getText()
@@ -1192,4 +1223,23 @@ class CodigoIntermedio(YAPLVisitor):
 
         except:
             print(f"Error abriendo archivo {self.filename}")
+
+    def genSP(self, st:Table):
+        # conseguir todas las clases 
+        noClases = ["Object", "SELF_TYPE", "IO", "VOID", "String", "Int", "Bool"]
+        classes = []
+        for x in st.columns:
+            if x[4] not in noClases and x[4] not in classes:
+                classes.append(x[4])
+        
+        # crear diccionarios individuales
+        for c in classes:
+            self.registers[c] = {}
+
+        # agregar
+        for x in st.columns:
+            if (x[2] == "Instance" or x[2] == "Variable") and x[4] not in noClases:
+                print(x[0], ", ",x[4] , ", ", x[7])
+                self.registers[x[4]][x[0]] = f"SP[{x[7]}]"
+
 

@@ -853,6 +853,10 @@ class YAPLVisitorImpl(YAPLVisitor):
         for i in range(len(ctx.ID())):
             tempSpaceId = None
             id = ctx.ID(i).getText()
+            print("TTTTTYPE ", ctx.TYPE(i))
+            if ctx.TYPE(i) is None:
+                self.customErrors.append(f"Durante el Let a {id} no se le indicó el tipo")
+                return 'Error'
             _type = ctx.TYPE(i).getText()
             space = get_space_vars(_type.lower())
             if(not space):

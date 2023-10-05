@@ -3,12 +3,12 @@ class A {
 
    returnVar(): Int {
       var
-   }
-}
+   };
+};
 
 class B inherits A {
    var1: Int <- 5;
-}
+};
 
 class Main inherits IO {
 	
@@ -32,7 +32,7 @@ class Main inherits IO {
             "hola";
          };
       }
-   }
+   };
 
    main() : SELF_TYPE {
       {
@@ -58,6 +58,17 @@ class Main inherits IO {
             x <- x - 1
          POOL;
 
+         let 
+            str2: String <- "hehe", 
+            mmm: Int, 
+            nnn: Bool 
+         in 
+         {
+            mmm <- 5;
+            nnn <- False;
+            out_string(str2);
+         };
+
          y <- (x - 5) + x * 5;
 
          out_string(str);
@@ -69,6 +80,7 @@ class Main inherits IO {
       }
    };
 };
+
 
 
 

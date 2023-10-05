@@ -22,6 +22,7 @@ expr:
         expr ('@' TYPE)? '.' ID '(' ( expr (',' expr)* )? ')' #dispatchExplicit
     |   ID '(' ( expr (',' expr)* ) ? ')' #dispatchImplicit
     |   expr '.' ID #dispatchAttribute
+    |   ID ASSIGNMENT expr #assignment
     |   IF expr THEN expr ELSE expr FI #if
     |   WHILE expr LOOP expr POOL #while
     |   '{' (expr ';')+ '}' #block
@@ -42,7 +43,6 @@ expr:
     |   expr '|' expr #or
     |   NOT expr #neg
     |   '(' expr ')' #parens
-    |   ID ASSIGNMENT expr #assignment
     |   ID #id
     |   INT #int
     |   STRING #string
