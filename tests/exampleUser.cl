@@ -6,11 +6,18 @@ class A {
    }
 }
 
+class B inherits A {
+   var1: Int <- 5;
+}
+
 class Main inherits IO {
 	
    x: Int;
    str: String;
    y: Int;
+   z: Int;
+
+   a: A <- (new A);
 
    m: Int;
    n: Int <- (5 + 4);
@@ -21,13 +28,13 @@ class Main inherits IO {
 
    meth2(): String {
       {
-         "hola";
+         {"hola";}
       }
    }
 
    main() : SELF_TYPE {
       {
-         x <- 5;
+         x <- ~ 5;
 
          if (x = 5) then 
             str <- "igual"
@@ -38,16 +45,18 @@ class Main inherits IO {
                str <- "menor"
          fi fi;
 
-         while NOT (x <- 0)
+         while NOT (x = 0)
          LOOP 
             x <- x - 1
          POOL;
 
-         y <- (x - 5) + 9 * 5;
+         y <- (x - 5) + x * 5;
 
          out_string(str);
 
          meth1(5 + 6);
+
+         z <- a.returnVar();
 
       }
    };

@@ -4,56 +4,70 @@ CLASS A
 		RETURN 5
 	END FUNC returnVar
 EOC
-CLASS Main
-		ADD t0, 5, 4
+CLASS B
 		LW SP[0], t0
+	A.returnVar
+		RETURN 5
+	END FUNC returnVar
+		LW SP[0], t0
+EOC
+CLASS Main
+		LW SP[14], t0
+		ADD t1, 5, 4
+		LW SP[22], t1
 	Main.meth1
-		LW SP[10], t1
-		RETURN SP[10]
+		LW SP[None], t2
+		RETURN SP[None]
 	END FUNC meth1
 	Main.meth2
 		RETURN "hola"
 	END FUNC meth2
 	Main.main
-		LW SP[0], t2
-		SEQ t3, x, 5
-		IF t3 > 0 GOTO L_TRUE_0
+		NEG t3, 5 
+		LW SP[4], t3
+		SEQ t4, x, 5
+		IF t4 > 0 GOTO L_TRUE_0
 		GOTO L_FALSE_0
 L_TRUE_0:
-		LW SP[4], "igual"
+		LW SP[None], "igual"
 		GOTO L_IF_END_0
 L_FALSE_0:
-		SGE t3, x, 0
-		SLG t4, x, 10
-		AND t3, t3, t4
-		IF t3 > 0 GOTO L_TRUE_1
+		SGE t4, x, 0
+		SLG t5, x, 10
+		AND t4, t4, t5
+		IF t4 > 0 GOTO L_TRUE_1
 		GOTO L_FALSE_1
 L_TRUE_1:
-		LW SP[4], "mayor"
+		LW SP[None], "mayor"
 		GOTO L_IF_END_1
 L_FALSE_1:
-		LW SP[4], "menor"
+		LW SP[None], "menor"
 		GOTO L_IF_END_1
 L_IF_END_1:
 		GOTO L_IF_END_0
 L_IF_END_0:
 		GOTO L_LOOP_0
 L_LOOP_0:
-		LW SP[0], t5
-		IF t5 = 0 GOTO L_LOOP_END_0
+		SEQ t6, x, 0
+		IF t6 = 0 GOTO L_LOOP_END_0
 		SUB t6, x, 1
-		LW SP[0], t6
+		LW SP[4], t6
 		GOTO L_LOOP_0
 L_LOOP_END_0:
-		SUB t1, x, 5
-		MULT t2, 9, 5
-		ADD t0, t1, t2
-		LW SP[6], t0
+		SUB t8, x, 5
+		MULT t9, x, 5
+		ADD t7, t8, t9
+		LW SP[8], t7
 		PARAM str
 		CALL out_string, 1
-		ADD t3, 5, 6
-		PARAM t3
+		LW t2, R
+		ADD t10, 5, 6
+		PARAM t10
 		CALL meth1, 1
+		LW t0, R
+		CALL returnVar, 0
+		LW t11, R
+		LW SP[26], t11
 		RETURN
 	END FUNC main
 EOC

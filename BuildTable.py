@@ -236,9 +236,20 @@ class YAPLVisitorImpl(YAPLVisitor):
             
         if(val):
             rowNewSpace = self.symbolTable.get_cell(val, type_id_b)
-            if(rowNewSpace[2] == "Instance"):
-                self.count_bytes_func += rowNewSpace[-2]
-                self.symbolTable.add_info_to_cell(self.current_function, "Space", self.count_bytes_func)
+            if rowNewSpace is not None:
+                if(rowNewSpace[2] == "Instance"):
+                    self.count_bytes_func += rowNewSpace[-2]
+                    self.symbolTable.add_info_to_cell(self.current_function, "Space", self.count_bytes_func)
+                else:
+                    space_val = get_space_vars(type_id_b, val)
+                    if(not space_val):
+                        space_val = 0
+                    if(self.current_function):
+                        self.count_bytes_func += space_val
+                    else:
+                        self.count_bytes_class += space_val
+                    self.symbolTable.add_info_to_cell(self.current_function, "Space", self.count_bytes_func)
+
             else:
                 space_val = get_space_vars(type_id_b, val)
                 if(not space_val):
@@ -507,6 +518,8 @@ class YAPLVisitorImpl(YAPLVisitor):
         row = None
         if(self.current_function):
             row = self.symbolTable.get_cell(id, addParent=self.current_class, addFunctionP=self.current_function)
+            if not row:
+                row = self.symbolTable.get_cell(id, addParent=self.current_class)                
         else:
             row = self.symbolTable.get_cell(id, addParent=self.current_class)
 
