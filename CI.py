@@ -117,7 +117,6 @@ class CodigoIntermedio(YAPLVisitor):
         self.functions[self.currentClass][id] = self.funcText
 
         print("last statement ", self.lastStatement)
-        print("type ", ctx.TYPE().getText())
         if (ctx.TYPE().getText() == "SELF_TYPE" or ctx.TYPE().getText() == "VOID"):
             self.text += f"\t\tRETURN\n"
         else:
@@ -142,7 +141,7 @@ class CodigoIntermedio(YAPLVisitor):
                 x = temp_
             else: 
                 text_ = ctx.expr().getText()
-                if text_ in self.registers[self.currentClass].keys:
+                if text_ in self.registers[self.currentClass].keys():
                     x = self.registers[self.currentClass][text_]
                 else:
                     x = ctx.expr().getText
@@ -197,11 +196,15 @@ class CodigoIntermedio(YAPLVisitor):
                     paramslist.append(temp)
                     
                 else: 
-                    paramslist.append(expr.getText())
+                    # revisar si está en la lista de registors
+                    if expr.getText() in self.registers[self.currentClass].keys():
+                        paramslist.append(self.registers[self.currentClass][expr.getText()])
+                    else:
+                        paramslist.append(expr.getText())
                 self.visit(expr)
 
         for p in paramslist:
-            print("p ", p)
+            # print("p ", p)
             self.funcText += f"\t\tPARAM {p}\n"
 
         self.funcText += f"\t\tCALL {id}, {len(paramslist)}\n"
@@ -228,7 +231,11 @@ class CodigoIntermedio(YAPLVisitor):
                 paramslist.append(temp)
                 
             else: 
-                paramslist.append(expr.getText())
+                # revisar si está en la lista de registors
+                if expr.getText() in self.registers[self.currentClass].keys():
+                    paramslist.append(self.registers[self.currentClass][expr.getText()])
+                else:
+                    paramslist.append(expr.getText())
             self.visit(expr)
 
         for p in paramslist:
@@ -257,7 +264,7 @@ class CodigoIntermedio(YAPLVisitor):
         self.addToTemp
         self.temp_stack.append(temp_)
         self.visit(ctx.expr(0))
-        print("if exp1 ", ctx.expr(0).getText())
+        # print("if exp1 ", ctx.expr(0).getText())
 
         self.funcText += f"\t\tIF {temp_} > 0 GOTO L_TRUE_{self.goto_true}\n"
         self.funcText += f"\t\tGOTO L_FALSE_{self.goto_false}\n"
@@ -303,7 +310,7 @@ class CodigoIntermedio(YAPLVisitor):
         self.addToTemp
         self.temp_stack.append(temp_)
         self.visit(ctx.expr(0))
-        print("if exp1 ", ctx.expr(0).getText())
+        # print("if exp1 ", ctx.expr(0).getText())
 
         self.funcText += f"\t\tIF {temp_} = 0 GOTO {end_}\n"
         # self.funcText += f"\t\tGOTO {end_}"
@@ -375,8 +382,8 @@ class CodigoIntermedio(YAPLVisitor):
         else:
             self.visit(ctx.expr())
             # print("rest ", ctx.expr().getText())
-            if ctx.expr().getText() in self.registers.keys():
-                line += f"{self.registers[self.currentClass][ctx.exp(0)]} "
+            if ctx.expr().getText() in self.registers[self.currentClass].keys():
+                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]} "
             else:
                 line += f"{ctx.expr().getText()} "
                 # print("Gt ", ctx.expr().getText())
@@ -420,8 +427,8 @@ class CodigoIntermedio(YAPLVisitor):
         else:
             self.visit(ctx.expr(0))
             # print("rest ", ctx.expr(0).getText())
-            if ctx.expr(0).getText() in self.registers.keys():
-                line += f"{self.registers[self.currentClass][ctx.exp(0)]}, "
+            if ctx.expr(0).getText() in self.registers[self.currentClass].keys():
+                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}, "
             else:
                 line += f"{ctx.expr(0).getText()}, "
                 # print("Gt ", ctx.expr(0).getText())
@@ -436,12 +443,12 @@ class CodigoIntermedio(YAPLVisitor):
             line += leftTemp
         else:
             self.visit(ctx.expr(1))
-            print("rest ", ctx.expr(1).getText())
-            if ctx.expr(1).getText() in self.registers.keys():
-                line += f"{self.registers[self.currentClass][ctx.exp(0)]}"
+            # print("rest ", ctx.expr(1).getText())
+            if ctx.expr(1).getText() in self.registers[self.currentClass].keys():
+                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
-                print("Gt ", ctx.expr(1).getText())
+                # print("Gt ", ctx.expr(1).getText())
 
         if self.inFunction:
             self.funcText += line + "\n" 
@@ -477,8 +484,8 @@ class CodigoIntermedio(YAPLVisitor):
         else:
             self.visit(ctx.expr(0))
             # print("rest ", ctx.expr(0).getText())
-            if ctx.expr(0).getText() in self.registers.keys():
-                line += f"{self.registers[self.currentClass][ctx.exp(0)]}, "
+            if ctx.expr(0).getText() in self.registers[self.currentClass].keys():
+                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}, "
             else:
                 line += f"{ctx.expr(0).getText()}, "
                 # print("Gt ", ctx.expr(0).getText())
@@ -493,12 +500,12 @@ class CodigoIntermedio(YAPLVisitor):
             line += leftTemp
         else:
             self.visit(ctx.expr(1))
-            print("rest ", ctx.expr(1).getText())
-            if ctx.expr(1).getText() in self.registers.keys():
-                line += f"{self.registers[self.currentClass][ctx.exp(0)]}"
+            # print("rest ", ctx.expr(1).getText())
+            if ctx.expr(1).getText() in self.registers[self.currentClass].keys():
+                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
-                print("Gt ", ctx.expr(1).getText())
+                # print("Gt ", ctx.expr(1).getText())
 
         if self.inFunction:
             self.funcText += line + "\n" 
@@ -534,8 +541,8 @@ class CodigoIntermedio(YAPLVisitor):
         else:
             self.visit(ctx.expr(0))
             # print("rest ", ctx.expr(0).getText())
-            if ctx.expr(0).getText() in self.registers.keys():
-                line += f"{self.registers[self.currentClass][ctx.exp(0)]}, "
+            if ctx.expr(0).getText() in self.registers[self.currentClass].keys():
+                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}, "
             else:
                 line += f"{ctx.expr(0).getText()}, "
                 # print("Gt ", ctx.expr(0).getText())
@@ -550,12 +557,12 @@ class CodigoIntermedio(YAPLVisitor):
             line += leftTemp
         else:
             self.visit(ctx.expr(1))
-            print("rest ", ctx.expr(1).getText())
-            if ctx.expr(1).getText() in self.registers.keys():
-                line += f"{self.registers[self.currentClass][ctx.exp(0)]}"
+            # print("rest ", ctx.expr(1).getText())
+            if ctx.expr(1).getText() in self.registers[self.currentClass].keys():
+                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
-                print("Gt ", ctx.expr(1).getText())
+                # print("Gt ", ctx.expr(1).getText())
 
         if self.inFunction:
             self.funcText += line + "\n" 
@@ -591,8 +598,8 @@ class CodigoIntermedio(YAPLVisitor):
         else:
             self.visit(ctx.expr(0))
             # print("rest ", ctx.expr(0).getText())
-            if ctx.expr(0).getText() in self.registers.keys():
-                line += f"{self.registers[self.currentClass][ctx.exp(0)]}, "
+            if ctx.expr(0).getText() in self.registers[self.currentClass].keys():
+                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}, "
             else:
                 line += f"{ctx.expr(0).getText()}, "
                 # print("Gt ", ctx.expr(0).getText())
@@ -607,12 +614,12 @@ class CodigoIntermedio(YAPLVisitor):
             line += leftTemp
         else:
             self.visit(ctx.expr(1))
-            print("rest ", ctx.expr(1).getText())
-            if ctx.expr(1).getText() in self.registers.keys():
-                line += f"{self.registers[self.currentClass][ctx.exp(0)]}"
+            # print("rest ", ctx.expr(1).getText())
+            if ctx.expr(1).getText() in self.registers[self.currentClass].keys():
+                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
-                print("Gt ", ctx.expr(1).getText())
+                # print("Gt ", ctx.expr(1).getText())
 
         if self.inFunction:
             self.funcText += line + "\n" 
@@ -649,11 +656,9 @@ class CodigoIntermedio(YAPLVisitor):
         else:
             self.visit(ctx.expr(0))
             # print("rest ", ctx.expr(0).getText())
-            if ctx.expr(0).getText() in self.registers.keys():
-                print("in registers")
-                line += f"{self.registers[self.currentClass][ctx.exp(0)]}, "
+            if ctx.expr(0).getText() in self.registers[self.currentClass].keys():
+                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}, "
             else:
-                print("not in registers")
                 line += f"{ctx.expr(0).getText()}, "
                 # print("Gt ", ctx.expr(0).getText())
 
@@ -667,12 +672,12 @@ class CodigoIntermedio(YAPLVisitor):
             line += leftTemp
         else:
             self.visit(ctx.expr(1))
-            print("rest ", ctx.expr(1).getText())
-            if ctx.expr(1).getText() in self.registers.keys():
-                line += f"{self.registers[self.currentClass][ctx.exp(0)]}"
+            # print("rest ", ctx.expr(1).getText())
+            if ctx.expr(1).getText() in self.registers[self.currentClass].keys():
+                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
-                print("Gt ", ctx.expr(1).getText())
+                # print("Gt ", ctx.expr(1).getText())
 
         if self.inFunction:
             self.funcText += line + "\n" 
@@ -709,11 +714,9 @@ class CodigoIntermedio(YAPLVisitor):
         else:
             self.visit(ctx.expr(0))
             # print("rest ", ctx.expr(0).getText())
-            if ctx.expr(0).getText() in self.registers.keys():
-                print("in registers")
-                line += f"{self.registers[self.currentClass][ctx.exp(0).getText()]}, "
+            if ctx.expr(0).getText() in self.registers[self.currentClass].keys():
+                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}, "
             else:
-                print("not in registers")
                 line += f"{ctx.expr(0).getText()}, "
                 # print("Gt ", ctx.expr(0).getText())
 
@@ -727,12 +730,12 @@ class CodigoIntermedio(YAPLVisitor):
             line += leftTemp
         else:
             self.visit(ctx.expr(1))
-            print("rest ", ctx.expr(1).getText())
-            if ctx.expr(1).getText() in self.registers.keys():
-                line += f"{self.registers[self.currentClass][ctx.exp(0)]}"
+            # print("rest ", ctx.expr(1).getText())
+            if ctx.expr(1).getText() in self.registers[self.currentClass].keys():
+                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
-                print("Gt ", ctx.expr(1).getText())
+                # print("Gt ", ctx.expr(1).getText())
 
         if self.inFunction:
             self.funcText += line + "\n" 
@@ -768,8 +771,8 @@ class CodigoIntermedio(YAPLVisitor):
         else:
             self.visit(ctx.expr(0))
             # print("rest ", ctx.expr(0).getText())
-            if ctx.expr(0).getText() in self.registers.keys():
-                line += f"{self.registers[self.currentClass][ctx.exp(0)]}, "
+            if ctx.expr(0).getText() in self.registers[self.currentClass].keys():
+                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}, "
             else:
                 line += f"{ctx.expr(0).getText()}, "
                 # print("Gt ", ctx.expr(0).getText())
@@ -784,12 +787,12 @@ class CodigoIntermedio(YAPLVisitor):
             line += leftTemp
         else:
             self.visit(ctx.expr(1))
-            print("rest ", ctx.expr(1).getText())
-            if ctx.expr(1).getText() in self.registers.keys():
-                line += f"{self.registers[self.currentClass][ctx.exp(0)]}"
+            # print("rest ", ctx.expr(1).getText())
+            if ctx.expr(1).getText() in self.registers[self.currentClass].keys():
+                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
-                print("Gt ", ctx.expr(1).getText())
+                # print("Gt ", ctx.expr(1).getText())
 
         if self.inFunction:
             self.funcText += line + "\n" 
@@ -825,8 +828,8 @@ class CodigoIntermedio(YAPLVisitor):
         else:
             self.visit(ctx.expr(0))
             # print("rest ", ctx.expr(0).getText())
-            if ctx.expr(0).getText() in self.registers.keys():
-                line += f"{self.registers[self.currentClass][ctx.exp(0)]}, "
+            if ctx.expr(0).getText() in self.registers[self.currentClass].keys():
+                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}, "
             else:
                 line += f"{ctx.expr(0).getText()}, "
                 # print("Gt ", ctx.expr(0).getText())
@@ -841,12 +844,12 @@ class CodigoIntermedio(YAPLVisitor):
             line += leftTemp
         else:
             self.visit(ctx.expr(1))
-            print("rest ", ctx.expr(1).getText())
-            if ctx.expr(1).getText() in self.registers.keys():
-                line += f"{self.registers[self.currentClass][ctx.exp(0)]}"
+            # print("rest ", ctx.expr(1).getText())
+            if ctx.expr(1).getText() in self.registers[self.currentClass].keys():
+                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
-                print("Gt ", ctx.expr(1).getText())
+                # print("Gt ", ctx.expr(1).getText())
 
         if self.inFunction:
             self.funcText += line + "\n" 
@@ -882,8 +885,8 @@ class CodigoIntermedio(YAPLVisitor):
         else:
             self.visit(ctx.expr(0))
             # print("rest ", ctx.expr(0).getText())
-            if ctx.expr(0).getText() in self.registers.keys():
-                line += f"{self.registers[self.currentClass][ctx.exp(0)]}, "
+            if ctx.expr(0).getText() in self.registers[self.currentClass].keys():
+                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}, "
             else:
                 line += f"{ctx.expr(0).getText()}, "
                 # print("Gt ", ctx.expr(0).getText())
@@ -898,12 +901,12 @@ class CodigoIntermedio(YAPLVisitor):
             line += leftTemp
         else:
             self.visit(ctx.expr(1))
-            print("rest ", ctx.expr(1).getText())
-            if ctx.expr(1).getText() in self.registers.keys():
-                line += f"{self.registers[self.currentClass][ctx.exp(0)]}"
+            # print("rest ", ctx.expr(1).getText())
+            if ctx.expr(1).getText() in self.registers[self.currentClass].keys():
+                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
-                print("Gt ", ctx.expr(1).getText())
+                # print("Gt ", ctx.expr(1).getText())
 
         if self.inFunction:
             self.funcText += line + "\n" 
@@ -939,8 +942,8 @@ class CodigoIntermedio(YAPLVisitor):
         else:
             self.visit(ctx.expr(0))
             # print("rest ", ctx.expr(0).getText())
-            if ctx.expr(0).getText() in self.registers.keys():
-                line += f"{self.registers[self.currentClass][ctx.exp(0)]}, "
+            if ctx.expr(0).getText() in self.registers[self.currentClass].keys():
+                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}, "
             else:
                 line += f"{ctx.expr(0).getText()}, "
                 # print("Gt ", ctx.expr(0).getText())
@@ -955,12 +958,12 @@ class CodigoIntermedio(YAPLVisitor):
             line += leftTemp
         else:
             self.visit(ctx.expr(1))
-            print("rest ", ctx.expr(1).getText())
-            if ctx.expr(1).getText() in self.registers.keys():
-                line += f"{self.registers[self.currentClass][ctx.exp(0)]}"
+            # print("rest ", ctx.expr(1).getText())
+            if ctx.expr(1).getText() in self.registers[self.currentClass].keys():
+                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
-                print("Gt ", ctx.expr(1).getText())
+                # print("Gt ", ctx.expr(1).getText())
 
         if self.inFunction:
             self.funcText += line + "\n" 
@@ -995,8 +998,8 @@ class CodigoIntermedio(YAPLVisitor):
         else:
             self.visit(ctx.expr(0))
             # print("rest ", ctx.expr(0).getText())
-            if ctx.expr(0).getText() in self.registers.keys():
-                line += f"{self.registers[self.currentClass][ctx.exp(0)]}, "
+            if ctx.expr(0).getText() in self.registers[self.currentClass].keys():
+                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}, "
             else:
                 line += f"{ctx.expr(0).getText()}, "
                 # print("Gt ", ctx.expr(0).getText())
@@ -1011,12 +1014,12 @@ class CodigoIntermedio(YAPLVisitor):
             line += leftTemp
         else:
             self.visit(ctx.expr(1))
-            print("rest ", ctx.expr(1).getText())
-            if ctx.expr(1).getText() in self.registers.keys():
-                line += f"{self.registers[self.currentClass][ctx.exp(0)]}"
+            # print("rest ", ctx.expr(1).getText())
+            if ctx.expr(1).getText() in self.registers[self.currentClass].keys():
+                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
-                print("Gt ", ctx.expr(1).getText())
+                # print("Gt ", ctx.expr(1).getText())
 
         if self.inFunction:
             self.funcText += line + "\n" 
@@ -1055,8 +1058,8 @@ class CodigoIntermedio(YAPLVisitor):
         else:
             self.visit(ctx.expr())
             # print("rest ", ctx.expr().getText())
-            if ctx.expr().getText() in self.registers.keys():
-                line += f"{self.registers[self.currentClass][ctx.exp(0)]} "
+            if ctx.expr().getText() in self.registers[self.currentClass].keys():
+                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]} "
             else:
                 line += f"{ctx.expr().getText()} "
                 # print("Gt ", ctx.expr().getText())
@@ -1091,12 +1094,12 @@ class CodigoIntermedio(YAPLVisitor):
                     self.addToTemp()
                     self.temp_stack.append(temp_)
                     self.visit(ctx.expr())
-                    print("assi ", ctx.expr().getText())
+                    # print("assi ", ctx.expr().getText())
                     x = temp_
                     
             else: 
                 text_ = ctx.expr().getText()
-                if text_ in self.registers[self.currentClass].keys:
+                if text_ in self.registers[self.currentClass].keys():
                     x = self.registers[self.currentClass][text_]
                 else:
                     x = ctx.expr().getText

@@ -26,15 +26,15 @@ CLASS Main
 	Main.main
 		NEG t3, 5 
 		LW SP[4], t3
-		SEQ t4, x, 5
+		SEQ t4, SP[4], 5
 		IF t4 > 0 GOTO L_TRUE_0
 		GOTO L_FALSE_0
 L_TRUE_0:
 		LW SP[None], "igual"
 		GOTO L_IF_END_0
 L_FALSE_0:
-		SGE t4, x, 0
-		SLG t5, x, 10
+		SGE t4, SP[4], 0
+		SLG t5, SP[4], 10
 		AND t4, t4, t5
 		IF t4 > 0 GOTO L_TRUE_1
 		GOTO L_FALSE_1
@@ -49,18 +49,18 @@ L_IF_END_1:
 L_IF_END_0:
 		GOTO L_LOOP_0
 L_LOOP_0:
-		SEQ t6, x, 0
+		SEQ t6, SP[4], 0
 		NOT t6, t6
 		IF t6 = 0 GOTO L_LOOP_END_0
-		SUB t7, x, 1
+		SUB t7, SP[4], 1
 		LW SP[4], t7
 		GOTO L_LOOP_0
 L_LOOP_END_0:
-		SUB t9, x, 5
-		MULT t10, x, 5
+		SUB t9, SP[4], 5
+		MULT t10, SP[4], 5
 		ADD t8, t9, t10
 		LW SP[8], t8
-		PARAM str
+		PARAM SP[None]
 		CALL out_string, 1
 		LW t2, R
 		ADD t11, 5, 6
