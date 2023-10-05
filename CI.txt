@@ -12,6 +12,7 @@ CLASS B
 		LW SP[0], t0
 EOC
 CLASS Main
+		LW t0, A
 		LW SP[14], t0
 		ADD t1, 5, 4
 		LW SP[22], t1
@@ -49,25 +50,26 @@ L_IF_END_0:
 		GOTO L_LOOP_0
 L_LOOP_0:
 		SEQ t6, x, 0
+		NOT t6, t6
 		IF t6 = 0 GOTO L_LOOP_END_0
-		SUB t6, x, 1
-		LW SP[4], t6
+		SUB t7, x, 1
+		LW SP[4], t7
 		GOTO L_LOOP_0
 L_LOOP_END_0:
-		SUB t8, x, 5
-		MULT t9, x, 5
-		ADD t7, t8, t9
-		LW SP[8], t7
+		SUB t9, x, 5
+		MULT t10, x, 5
+		ADD t8, t9, t10
+		LW SP[8], t8
 		PARAM str
 		CALL out_string, 1
 		LW t2, R
-		ADD t10, 5, 6
-		PARAM t10
+		ADD t11, 5, 6
+		PARAM t11
 		CALL meth1, 1
 		LW t0, R
 		CALL returnVar, 0
-		LW t11, R
-		LW SP[26], t11
+		LW t12, R
+		LW SP[26], t12
 		RETURN
 	END FUNC main
 EOC
