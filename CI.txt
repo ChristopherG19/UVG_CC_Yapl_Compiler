@@ -102,7 +102,8 @@ L_IF_END_3:
 		LW t8, R
 		CALL .returnVar, 0
 		LW t9, R
-		LW SP[71], t9
+		LW SP[75], t9
+		LW SP[75], t10
 		RETURN
 	END FUNC main
 EOC

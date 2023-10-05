@@ -69,7 +69,7 @@ class Main inherits IO {
             mmm <- jjj;
             if mmm = 5 then
                nnn <- False
-            else:
+            else
                nnn <- True
             fi;
             out_string(str2);
@@ -82,10 +82,13 @@ class Main inherits IO {
          meth1(5 + 6);
 
          z <- a.returnVar();
+         z <- a.var;
 
       }
    };
 };
+
+
 
 
 

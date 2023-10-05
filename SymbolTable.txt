@@ -33,7 +33,7 @@
 |   substr   |   String   |    Method   |   None   |   String  |    None    |     None     | Global |   0   |  None |
 |    iPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     | Local  |   0   |  None |
 |    lPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     | Local  |   0   |  None |
-|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     | Global |  155  |  None |
+|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     | Global |  159  |  None |
 | out_string | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
 |   xParS    |   String   |    Param    |   None   |    Main   | out_string |     None     | Local  |   0   |  None |
 |  out_int   | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
@@ -43,14 +43,14 @@
 |     x      |    Int     |   Instance  |   None   |    Main   |    None    |     None     | Global |   4   |   0   |
 |    str     |   String   |   Instance  |   None   |    Main   |    None    |     None     | Global |   2   | menor |
 |     y      |    Int     |   Instance  |   None   |    Main   |    None    |      53      | Global |   4   |   0   |
-|     z      |    Int     |   Instance  |   None   |    Main   |    None    |      71      | Global |   4   |   0   |
+|     z      |    Int     |   Instance  |   None   |    Main   |    None    |      75      | Global |   4   |   0   |
 |     a      |     A      |   Instance  |   None   |    Main   |    None    |      14      | Global |   8   |  None |
 |     m      |    Int     |   Instance  |   None   |    Main   |    None    |     None     | Global |   4   |   0   |
 |     n      |    Int     |   Instance  |   None   |    Main   |    None    |      67      | Global |   4   |   0   |
 |     n      |    Int     |    Param    |   None   |    Main   |   meth1    |     None     | Local  |   4   |  None |
 |   meth1    |    Int     |    Method   |   None   |    Main   |    None    |     None     | Global |   8   |  None |
 |   meth2    |   String   |    Method   |   None   |    Main   |    None    |     None     | Global |   10  |  None |
-|    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |  107  |  None |
+|    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |  111  |  None |
 |    str2    |   String   |   Variable  |   None   |    Main   |    main    |      30      | Local  |   2   |  None |
 |    jjj     |    Int     |   Variable  |   None   |    Main   |    main    |      32      | Local  |   4   |  None |
 |    lll     |    Int     |   Variable  |   None   |    Main   |    main    |      36      | Local  |   4   |  None |
