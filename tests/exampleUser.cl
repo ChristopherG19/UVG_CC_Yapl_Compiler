@@ -28,7 +28,9 @@ class Main inherits IO {
 
    meth2(): String {
       {
-         {"hola";}
+         {
+            "hola";
+         };
       }
    }
 
@@ -44,6 +46,12 @@ class Main inherits IO {
             else
                str <- "menor"
          fi fi;
+
+         if x = 0 then 
+            out_string("igual")
+         else
+            out_string("desigual")
+         fi;
 
          while NOT (x = 0)
          LOOP 

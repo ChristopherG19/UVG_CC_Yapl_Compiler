@@ -61,6 +61,7 @@ class CodigoIntermedio(YAPLVisitor):
         print("#defclass")
 
         self.temp_counter = 0
+        self.temp_stack = []
 
         self.currentClass = ctx.TYPE(0).getText()
         self.text += f"CLASS {self.currentClass}\n"
@@ -107,6 +108,8 @@ class CodigoIntermedio(YAPLVisitor):
         self.text += f"\t{self.currentClass}.{id}\n"
 
         self.funcText = ""
+
+        self.parNames = {}
 
         for formal in ctx.formal():
             self.visit(formal)
@@ -175,6 +178,18 @@ class CodigoIntermedio(YAPLVisitor):
     def visitFormalAssign(self, ctx:YAPLParser.FormalAssignContext):
         print("#formalassign")
 
+        # print("stack ", self.temp_stack)
+        temp_ = ""
+        if len(self.temp_stack) > 0:
+            temp_ = self.temp_stack.pop()
+        else:
+            temp_ = f"t{self.temp_counter}"
+            self.addToTemp()
+
+        # guardar
+        self.parNames[ctx.ID().getText()] = temp_
+
+        self.funcText += f"\t\tLW {temp_}, P\n"
          
     
     def visitDispatchExplicit(self, ctx:YAPLParser.DispatchExplicitContext):
@@ -243,7 +258,7 @@ class CodigoIntermedio(YAPLVisitor):
             self.funcText += f"\t\tPARAM {p}\n"
 
 
-        self.funcText += f"\t\tCALL {id}, {len(paramslist)}\n"
+        self.funcText += f"\t\tCALL     {id}, {len(paramslist)}\n"
         if len(self.temp_stack) > 0:
             self.funcText += f"\t\tLW {self.temp_stack.pop()}, R\n"
         else:
@@ -261,7 +276,7 @@ class CodigoIntermedio(YAPLVisitor):
 
         # evaluar expresión de la condición 
         temp_ = "t" + str(self.temp_counter) # creamos una temporal
-        self.addToTemp
+        self.addToTemp()
         self.temp_stack.append(temp_)
         self.visit(ctx.expr(0))
         # print("if exp1 ", ctx.expr(0).getText())
@@ -296,14 +311,13 @@ class CodigoIntermedio(YAPLVisitor):
         print("#while")
 
         # etiquetas
-        inicio_ = f"L_LOOP_{self.goto_while}"
         loop_ = f"L_LOOP_{self.goto_while}"
         end_ = f"L_LOOP_END_{self.goto_while}"
 
         self.goto_while += 1
 
-        self.funcText += f"\t\tGOTO {inicio_}\n"
-        self.funcText += inicio_ + ":\n"
+        self.funcText += f"\t\tGOTO {loop_}\n"
+        self.funcText += loop_ + ":\n"
 
         # evaluar expresión de la condición 
         temp_ = "t" + str(self.temp_counter) # creamos una temporal
@@ -1090,12 +1104,16 @@ class CodigoIntermedio(YAPLVisitor):
                     # es un string
                     x = ctx.expr().getText()
                 else: 
-                    temp_ = "t" + str(self.temp_counter)
-                    self.addToTemp()
-                    self.temp_stack.append(temp_)
-                    self.visit(ctx.expr())
-                    # print("assi ", ctx.expr().getText())
-                    x = temp_
+                    # revisar si el parámetro existe
+                    if ctx.expr().getText() in self.parNames.keys():
+                        x = self.parNames[ctx.expr().getText()]
+                    else:
+                        temp_ = "t" + str(self.temp_counter)
+                        self.addToTemp()
+                        self.temp_stack.append(temp_)
+                        self.visit(ctx.expr())
+                        # print("assi ", ctx.expr().getText())
+                        x = temp_
                     
             else: 
                 text_ = ctx.expr().getText()
