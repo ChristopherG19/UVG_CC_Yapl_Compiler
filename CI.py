@@ -122,7 +122,7 @@ class CodigoIntermedio(YAPLVisitor):
         self.text += self.funcText
         self.functions[self.currentClass][id] = self.funcText
 
-        print("last statement ", self.lastStatement)
+        # print("last statement ", self.lastStatement)
         if (ctx.TYPE().getText() == "SELF_TYPE" or ctx.TYPE().getText() == "VOID"):
             self.text += f"\t\tRETURN\n"
         else:
@@ -140,7 +140,7 @@ class CodigoIntermedio(YAPLVisitor):
         if ctx.expr():
             x = ""
             exprText = ctx.expr().getText()
-            print("exprText ", exprText, ctx.expr().getChildCount())
+            # print("exprText ", exprText, ctx.expr().getChildCount())
             firstchar = exprText[:1]
             if ctx.expr().getChildCount() > 1:
                 # revisar si es un string
@@ -277,7 +277,7 @@ class CodigoIntermedio(YAPLVisitor):
             self.visit(expr)
 
         for p in paramslist:
-            print("p ", p)
+            # print("p ", p)
             self.funcText += f"\t\tPARAM {p}\n"
 
 
@@ -369,10 +369,69 @@ class CodigoIntermedio(YAPLVisitor):
     def visitLetId(self, ctx:YAPLParser.LetIdContext):
         print("#letId")
 
-        ids = []
-        assg = []
+        trips = []
+
+        children = ctx.getChildren()
+        cant = ctx.getChildCount()
+        trip = []
+        for i,  ch in enumerate(children):
+            if 0 < i < cant - 1:
+                # print(ch.getText())
+                if ch.getText() == ',' or ch.getText().lower() == 'in':
+                    trips.append(trip)
+                    trip = []
+                else:
+                    trip.append(ch)
+
+        # print(trips)
+
+        for t in trips:
+            if len(t) == 5:
+                # se le ha asignado algo
+                expr = t[4]
+                x = ""
+                exprText = expr.getText()
+                # print("exprText ", exprText, expr.getChildCount())
+                firstchar = exprText[:1]
+                if expr.getChildCount() > 1:
+                    # revisar si es un string
+                    if firstchar == '"':
+                        x = expr.getText()
+                    else: 
+                        # revisar si el parámetro existe
+                        if expr.getText() in self.parNames.keys():
+                            x = self.parNames[expr.getText()]
+                        else:
+                            temp_ = "t" + str(self.temp_counter)
+                            self.addToTemp()
+                            self.temp_stack.append(temp_)
+                            self.visit(expr)
+                            # print("assi ", expr.getText())
+                            x = temp_
+                        
+                else: 
+                    text_ = expr.getText()
+                    if text_ in self.registers[self.currentClass].keys():
+                        x = self.registers[self.currentClass][text_]
+                    else:
+                        x = text_
+                    self.visit(expr)
+                
+                # agregar al registro 
+                id_ = t[0].getText()
+                # print("row ", self.symbolTable.get_cell(id = id_, addParent = self.currentClass))
+                disp = self.symbolTable.get_displacement(id = id_, addParent = self.currentClass)
+
+                var = f"SP[{disp}]"
+                self.registers[self.currentClass][id_] = var
+
+                if self.inFunction:
+                    self.funcText += f"\t\tLW {var}, {x}\n"
+                else:
+                    self.text += f"\t\tLW {var}, {x}\n"
 
 
+        # visitar el último expr dentro del in
         self.visit(ctx.expr(len(ctx.expr()) - 1))
 
 
@@ -1129,7 +1188,7 @@ class CodigoIntermedio(YAPLVisitor):
         if ctx.expr():
             x = ""
             exprText = ctx.expr().getText()
-            print("exprText ", exprText, ctx.expr().getChildCount())
+            # print("exprText ", exprText, ctx.expr().getChildCount())
             firstchar = exprText[:1]
             if ctx.expr().getChildCount() > 1:
                 # revisar si es un string

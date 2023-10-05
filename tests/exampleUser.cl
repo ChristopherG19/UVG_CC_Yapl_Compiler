@@ -59,13 +59,19 @@ class Main inherits IO {
          POOL;
 
          let 
-            str2: String <- "hehe", 
+            str2: String <- "hehe,", 
+            jjj: Int <- (5*8),
+            lll: Int <- 5,
             mmm: Int, 
             nnn: Bool 
          in 
          {
-            mmm <- 5;
-            nnn <- False;
+            mmm <- jjj;
+            if mmm = 5 then
+               nnn <- False
+            else:
+               nnn <- True
+            fi;
             out_string(str2);
          };
 
