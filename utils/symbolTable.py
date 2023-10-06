@@ -175,3 +175,15 @@ class Table():
         self.prettyT.align = "c"
         self.prettyT.title = "Symbols Table"
         return self.prettyT
+    
+    def get_displacement(self, id, addType=None, addParent=None, addFunctionP=None):
+        for row in self.columns:
+            if row[0] == id and (not addType or row[1] == addType) and (not addParent or row[4] == addParent) and (not addFunctionP or row[5] == addFunctionP):
+                return row[7]
+        return None
+    
+    def get_cell_Value(self, addType=None, addParent=None, addFunctionP=None, Value=None):
+        for row in self.columns:
+            if (not addType or row[1] == addType) and (not addParent or row[4] == addParent) and (not addFunctionP or row[5] == addFunctionP) and (not Value or row[-1] == Value):
+                return row
+        return None

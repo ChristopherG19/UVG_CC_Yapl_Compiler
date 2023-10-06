@@ -15,7 +15,7 @@
 | type_name  |   String   | Declaration |   None   |   Object  |    None    |     None     | Global |  None |  None |
 |    copy    | SELF_TYPE  | Declaration |   None   |   Object  |    None    |     None     | Global |  None |  None |
 |     A      |     A      |    Class    |  Object  |     A     |    None    |     None     | Global |  105  |  None |
-|    var     |    Int     |   Instance  |   None   |     A     |    None    |      0       | Global |   4   |   0   |
+|    var     |    Int     |   Instance  |   None   |     A     |    None    |      4       | Global |   4   |   0   |
 |   value    |    Int     |    Method   |   None   |     A     |    None    |     None     | Global |   4   |  None |
 |    num     |    Int     |    Param    |   None   |     A     |  set_var   |     109      | Local  |   4   |  None |
 |  set_var   | SELF_TYPE  |    Method   |   None   |     A     |    None    |     None     | Global |   14  |  None |
@@ -37,7 +37,7 @@
 |     x      |    Int     |   Variable  |   None   |     A     |  method5   |     None     | Local  |   4   |  None |
 |     y      |    Int     |   Variable  |   None   |     A     |  method5   |      16      | Local  |   4   |  None |
 |     B      |     A      |    Class    |    A     |     B     |    None    |     None     | Global |  117  |  None |
-|    var     |    Int     |   Instance  |   None   |     B     |    None    |      0       | Global |   4   |   0   |
+|    var     |    Int     |   Instance  |   None   |     B     |    None    |      4       | Global |   4   |   0   |
 |   value    |    Int     |    Method   |   None   |     B     |    None    |     None     | Global |   4   |  None |
 |    num     |    Int     |    Param    |   None   |     B     |  set_var   |      0       | Local  |   4   |  None |
 |  set_var   | SELF_TYPE  |    Method   |   None   |     B     |    None    |     None     | Global |   14  |  None |
@@ -60,7 +60,7 @@
 |     y      |    Int     |   Variable  |   None   |     B     |  method5   |      16      | Local  |   4   |  None |
 |  method5   |     A      |    Method   |   None   |     B     |    None    |     None     | Global |  None |  None |
 |     C      |     A      |    Class    |    B     |     C     |    None    |     None     | Global |  234  |  None |
-|    var     |    Int     |   Instance  |   None   |     C     |    None    |      0       | Global |   4   |   0   |
+|    var     |    Int     |   Instance  |   None   |     C     |    None    |      4       | Global |   4   |   0   |
 |   value    |    Int     |    Method   |   None   |     C     |    None    |     None     | Global |   4   |  None |
 |    num     |    Int     |    Param    |   None   |     C     |  set_var   |      0       | Local  |   4   |  None |
 |  set_var   | SELF_TYPE  |    Method   |   None   |     C     |    None    |     None     | Global |   14  |  None |
@@ -86,7 +86,7 @@
 |  method6   |     A      |    Method   |   None   |     C     |    None    |     None     | Global |  117  |  None |
 |     x      |    Int     |   Variable  |   None   |     C     |  method6   |     None     | Local  |   4   |  None |
 |     D      |    Bool    |    Class    |    B     |     D     |    None    |     None     | Global |   19  |  None |
-|    var     |    Int     |   Instance  |   None   |     D     |    None    |      0       | Global |   4   |   0   |
+|    var     |    Int     |   Instance  |   None   |     D     |    None    |      4       | Global |   4   |   0   |
 |   value    |    Int     |    Method   |   None   |     D     |    None    |     None     | Global |   4   |  None |
 |    num     |    Int     |    Param    |   None   |     D     |  set_var   |      0       | Local  |   4   |  None |
 |  set_var   | SELF_TYPE  |    Method   |   None   |     D     |    None    |     None     | Global |   14  |  None |
@@ -112,7 +112,7 @@
 |  method7   |    Bool    |    Method   |   None   |     D     |    None    |     None     | Global |   19  |  None |
 |     x      |    Int     |   Variable  |   None   |     D     |  method7   |     None     | Local  |   4   |  None |
 |     E      |     A      |    Class    |    D     |     E     |    None    |     None     | Global |  117  |  None |
-|    var     |    Int     |   Instance  |   None   |     E     |    None    |      0       | Global |   4   |   0   |
+|    var     |    Int     |   Instance  |   None   |     E     |    None    |      4       | Global |   4   |   0   |
 |   value    |    Int     |    Method   |   None   |     E     |    None    |     None     | Global |   4   |  None |
 |    num     |    Int     |    Param    |   None   |     E     |  set_var   |      0       | Local  |   4   |  None |
 |  set_var   | SELF_TYPE  |    Method   |   None   |     E     |    None    |     None     | Global |   14  |  None |
@@ -160,7 +160,7 @@
 | in_string  |   String   |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
 |  int_int   |    Int     |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
 |    char    |   String   |   Instance  |   None   |    Main   |    None    |      0       | Global |   2   |   ''  |
-|    avar    |     A      |   Instance  |   None   |    Main   |    None    |      2       | Global |  105  |  None |
+|    avar    |     A      |   Instance  |   None   |    Main   |    None    |     517      | Global |  105  |  None |
 |   a_var    |     A      |   Instance  |   None   |    Main   |    None    |     107      | Global |  105  |  None |
 |    flag    |    Bool    |   Instance  |   None   |    Main   |    None    |     212      | Global |   1   | False |
 |    num     |    Int     |    Param    |   None   |    Main   |  is_even   |     None     | Local  |   4   |  None |

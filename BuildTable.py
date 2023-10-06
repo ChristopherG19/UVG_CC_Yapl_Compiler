@@ -13,6 +13,7 @@ from YAPLVisitor import YAPLVisitor
 from utils.node import *
 from utils.symbolTable import *
 from utils.utils import clean_errors, get_space_vars, is_between_quotes
+from CI import *
 
 class YAPLVisitorImpl(YAPLVisitor):
     def __init__(self):
@@ -128,6 +129,8 @@ class YAPLVisitorImpl(YAPLVisitor):
                         else:
                             temp.append(e)
                     print("temp: ", temp)
+                    if(temp[2] == "Instance" or temp[2] == "Param"):
+                        self.displacement_cbclass += temp[-2]
                     self.symbolTable.columns.append(temp)    
                 self.symbolTable.build_Table()
     
@@ -235,9 +238,20 @@ class YAPLVisitorImpl(YAPLVisitor):
             
         if(val):
             rowNewSpace = self.symbolTable.get_cell(val, type_id_b)
-            if(rowNewSpace[2] == "Instance"):
-                self.count_bytes_func += rowNewSpace[-2]
-                self.symbolTable.add_info_to_cell(self.current_function, "Space", self.count_bytes_func)
+            if rowNewSpace is not None:
+                if(rowNewSpace[2] == "Instance"):
+                    self.count_bytes_func += rowNewSpace[-2]
+                    self.symbolTable.add_info_to_cell(self.current_function, "Space", self.count_bytes_func)
+                else:
+                    space_val = get_space_vars(type_id_b, val)
+                    if(not space_val):
+                        space_val = 0
+                    if(self.current_function):
+                        self.count_bytes_func += space_val
+                    else:
+                        self.count_bytes_class += space_val
+                    self.symbolTable.add_info_to_cell(self.current_function, "Space", self.count_bytes_func)
+
             else:
                 space_val = get_space_vars(type_id_b, val)
                 if(not space_val):
@@ -506,6 +520,8 @@ class YAPLVisitorImpl(YAPLVisitor):
         row = None
         if(self.current_function):
             row = self.symbolTable.get_cell(id, addParent=self.current_class, addFunctionP=self.current_function)
+            if not row:
+                row = self.symbolTable.get_cell(id, addParent=self.current_class)                
         else:
             row = self.symbolTable.get_cell(id, addParent=self.current_class)
 
@@ -673,11 +689,15 @@ class YAPLVisitorImpl(YAPLVisitor):
             
             if vis == "Error":
                 return "Error"
+            
+            vis_val = None
 
             if (type(vis) == tuple):
                 if (vis[0] != params_def[par][1]):
                     self.customErrors.append(f"En {method_name} el parámetro {params_def[par][0]} require ser {params_def[par][1]} pero se encontró {vis[0]}")
                     return "Error"
+                
+                vis_val = vis[1]
                 
                 newSpace = get_space_vars(params_def[par][1], vis[1])
                 if(not newSpace):
@@ -716,7 +736,12 @@ class YAPLVisitorImpl(YAPLVisitor):
                     
                 param_space += newSpace
                 self.symbolTable.add_info_to_cell(params_def[par][0], "Space", newSpace)
-                
+            
+            row_change = self.symbolTable.get_cell_Value(addParent=self.current_class, Value=vis_val)
+            if(row_change):
+                if(row_change[2] == "Instance"):
+                    self.symbolTable.add_info_to_cell(params_def[par][0], "Name", row_change[0])
+
             tempValDis = None
             if(self.current_function):
                 if(tempSpaceId):
@@ -839,6 +864,10 @@ class YAPLVisitorImpl(YAPLVisitor):
         for i in range(len(ctx.ID())):
             tempSpaceId = None
             id = ctx.ID(i).getText()
+            print("TTTTTYPE ", ctx.TYPE(i))
+            if ctx.TYPE(i) is None:
+                self.customErrors.append(f"Durante el Let a {id} no se le indicó el tipo")
+                return 'Error'
             _type = ctx.TYPE(i).getText()
             space = get_space_vars(_type.lower())
             if(not space):
@@ -1376,6 +1405,10 @@ def main():
         print(e);
     treeF = YV.symbolTable.build_Table()
     #print(treeF)
+
+    CI = CodigoIntermedio("CI.txt", YV.symbolTable)
+    resCI = CI.visit(tree)
+
     with open("SymbolTable.txt", "w", encoding="utf-8") as f:
         f.write(treeF.get_string())
     
