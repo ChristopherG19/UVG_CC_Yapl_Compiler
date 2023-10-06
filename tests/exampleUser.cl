@@ -84,6 +84,8 @@ class Main inherits IO {
          z <- a.returnVar();
          z <- a.var;
 
+         str.abort();
+
       }
    };
 };

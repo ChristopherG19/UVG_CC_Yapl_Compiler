@@ -71,7 +71,7 @@ class CodigoIntermedio(YAPLVisitor):
 
         #inicializar diccionario de diccionario
         self.functions[self.currentClass] = {}
-        # self.registers[self.currentClass] = {}
+        self.registers[self.currentClass] = {}
 
         # copiamos todo si hereda de otra clase
         if ctx.INHERITS():
@@ -148,7 +148,14 @@ class CodigoIntermedio(YAPLVisitor):
                     x = ctx.expr().getText()
                 else: 
                     # revisar si el parámetro existe
-                    if ctx.expr().getText() in self.parNames.keys():
+                    print(ctx.expr().getText())
+                    bool_ = False
+                    try:
+                        bool_ =  ctx.expr().getText() in self.parNames.keys()
+                    except:
+                        0
+
+                    if bool_:
                         x = self.parNames[ctx.expr().getText()]
                     else:
                         temp_ = "t" + str(self.temp_counter)
@@ -173,7 +180,7 @@ class CodigoIntermedio(YAPLVisitor):
             disp = self.symbolTable.get_displacement(id = id_, addType = type_, addParent = self.currentClass)
 
             var = f"SP[{disp}]"
-            # self.registers[self.currentClass][id_] = var
+            self.registers[self.currentClass][id_] = var
 
             if self.inFunction:
                 self.funcText += f"\t\tLW {var}, {x}\n"
@@ -278,20 +285,41 @@ class CodigoIntermedio(YAPLVisitor):
 
         for p in paramslist:
             # print("p ", p)
-            self.funcText += f"\t\tPARAM {p}\n"
+            if self.inFunction:
+                self.funcText += f"\t\tPARAM {p}\n"
+            else: 
+                self.text += f"\t\tPARAM {p}\n"
 
-
-        self.funcText += f"\t\tCALL {self.currentClass}.{id}, {len(paramslist)}\n"
+        if self.inFunction:
+            self.funcText += f"\t\tCALL {self.currentClass}.{id}, {len(paramslist)}\n"
+        else:
+            self.funcText += f"\t\tCALL {self.currentClass}.{id}, {len(paramslist)}\n"
         if len(self.temp_stack) > 0:
-            self.funcText += f"\t\tLW {self.temp_stack.pop()}, R\n"
+            if self.inFunction:
+                self.funcText += f"\t\tLW {self.temp_stack.pop()}, R\n"
+            else: 
+                self.text += f"\t\tLW {self.temp_stack.pop()}, R\n"
         else:
             temp_ = f"t{self.temp_counter}"
-            self.funcText += f"\t\tLW t{self.temp_counter}, R\n"
+            if self.inFunction:
+                self.funcText += f"\t\tLW t{self.temp_counter}, R\n"
+            else:
+                self.funcText += f"\t\tLW t{self.temp_counter}, R\n"
             self.addToTemp()
          
 
     def visitDispatchAttribute(self, ctx:YAPLParser.DispatchAttributeContext):
         print("#dispatchattribute")
+        print(ctx.getText())
+        print("att ", ctx.expr().getText())
+        print(self.temp_stack)
+
+        # if (self.inFunction):
+        #     self.funcText += f"\t\t\n"
+        # else:
+        #     self.text += f"\t\t\n"
+
+        self.visit(ctx.expr())
          
     
     def visitIf(self, ctx:YAPLParser.IfContext):
@@ -1162,7 +1190,7 @@ class CodigoIntermedio(YAPLVisitor):
             self.visit(ctx.expr())
             # print("rest ", ctx.expr().getText())
             if ctx.expr().getText() in self.registers[self.currentClass].keys():
-                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]} "
+                line += f"{self.registers[self.currentClass][ctx.expr().getText()]} "
             else:
                 line += f"{ctx.expr().getText()} "
                 # print("Gt ", ctx.expr().getText())

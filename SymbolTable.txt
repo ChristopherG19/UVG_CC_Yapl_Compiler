@@ -20,9 +20,9 @@
 |     B      |    Int     |    Class    |    A     |     B     |    None    |     None     | Global |   4   |  None |
 |    var     |    Int     |   Instance  |   None   |     B     |    None    |      0       | Global |   4   |   0   |
 | returnVar  |    Int     |    Method   |   None   |     B     |    None    |     None     | Global |   4   |  None |
-|    var1    |    Int     |   Instance  |   None   |     B     |    None    |      0       | Global |   4   |   0   |
+|    var1    |    Int     |   Instance  |   None   |     B     |    None    |      4       | Global |   4   |   0   |
 | out_string | SELF_TYPE  |    Method   |   None   |     IO    |    None    |     None     | Global |   16  |  None |
-|   xParS    |   String   |    Param    |   None   |     IO    | out_string |      57      | Local  |   10  | menor |
+|    str     |   String   |    Param    |   None   |     IO    | out_string |      51      | Local  |   10  | menor |
 |  out_int   | SELF_TYPE  |    Method   |   None   |     IO    |    None    |     None     | Global |   0   |  None |
 |   xParI    |    Int     |    Param    |   None   |     IO    |  out_int   |     None     | Local  |   0   |  None |
 | in_string  |   String   |    Method   |   None   |     IO    |    None    |     None     | Global |   0   |  None |
@@ -33,9 +33,9 @@
 |   substr   |   String   |    Method   |   None   |   String  |    None    |     None     | Global |   0   |  None |
 |    iPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     | Local  |   0   |  None |
 |    lPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     | Local  |   0   |  None |
-|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     | Global |  159  |  None |
+|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     | Global |  155  |  None |
 | out_string | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
-|   xParS    |   String   |    Param    |   None   |    Main   | out_string |     None     | Local  |   0   |  None |
+|   xParS    |   String   |    Param    |   None   |    Main   | out_string |      57      | Local  |   0   |  None |
 |  out_int   | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
 |   xParI    |    Int     |    Param    |   None   |    Main   |  out_int   |     None     | Local  |   0   |  None |
 | in_string  |   String   |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
@@ -50,7 +50,7 @@
 |     n      |    Int     |    Param    |   None   |    Main   |   meth1    |     None     | Local  |   4   |  None |
 |   meth1    |    Int     |    Method   |   None   |    Main   |    None    |     None     | Global |   8   |  None |
 |   meth2    |   String   |    Method   |   None   |    Main   |    None    |     None     | Global |   10  |  None |
-|    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |  111  |  None |
+|    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |  107  |  None |
 |    str2    |   String   |   Variable  |   None   |    Main   |    main    |      30      | Local  |   2   |  None |
 |    jjj     |    Int     |   Variable  |   None   |    Main   |    main    |      32      | Local  |   4   |  None |
 |    lll     |    Int     |   Variable  |   None   |    Main   |    main    |      36      | Local  |   4   |  None |

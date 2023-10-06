@@ -129,6 +129,8 @@ class YAPLVisitorImpl(YAPLVisitor):
                         else:
                             temp.append(e)
                     print("temp: ", temp)
+                    if(temp[2] == "Instance" or temp[2] == "Param"):
+                        self.displacement_cbclass += temp[-2]
                     self.symbolTable.columns.append(temp)    
                 self.symbolTable.build_Table()
     
@@ -687,11 +689,15 @@ class YAPLVisitorImpl(YAPLVisitor):
             
             if vis == "Error":
                 return "Error"
+            
+            vis_val = None
 
             if (type(vis) == tuple):
                 if (vis[0] != params_def[par][1]):
                     self.customErrors.append(f"En {method_name} el parámetro {params_def[par][0]} require ser {params_def[par][1]} pero se encontró {vis[0]}")
                     return "Error"
+                
+                vis_val = vis[1]
                 
                 newSpace = get_space_vars(params_def[par][1], vis[1])
                 if(not newSpace):
@@ -730,7 +736,12 @@ class YAPLVisitorImpl(YAPLVisitor):
                     
                 param_space += newSpace
                 self.symbolTable.add_info_to_cell(params_def[par][0], "Space", newSpace)
-                
+            
+            row_change = self.symbolTable.get_cell_Value(addParent=self.current_class, Value=vis_val)
+            if(row_change):
+                if(row_change[2] == "Instance"):
+                    self.symbolTable.add_info_to_cell(params_def[par][0], "Name", row_change[0])
+
             tempValDis = None
             if(self.current_function):
                 if(tempSpaceId):
