@@ -36,11 +36,11 @@ class CodigoIntermedio(YAPLVisitor):
         self.inFunction = False
 
         self.genSP(self.symbolTable)
-        print(self.registers)
+        # print(self.registers)
 
 
     def visitStart(self, ctx:YAPLParser.StartContext):
-        print("#start")
+        # print("#start")
         stages = ctx.class_def()
         for stage in stages:
             self.visit(stage)
@@ -61,7 +61,7 @@ class CodigoIntermedio(YAPLVisitor):
 
 
     def visitDefClass(self, ctx:YAPLParser.DefClassContext):
-        print("#defclass")
+        # print("#defclass")
 
         self.temp_counter = 0
         self.temp_stack = []
@@ -76,7 +76,7 @@ class CodigoIntermedio(YAPLVisitor):
         # copiamos todo si hereda de otra clase
         if ctx.INHERITS():
             inherits_ = ctx.TYPE(1).getText()
-            print("inherits_")
+            # print("inherits_")
 
             if inherits_ != "IO":
                 # copiar
@@ -103,7 +103,7 @@ class CodigoIntermedio(YAPLVisitor):
  
 
     def visitDefFunc(self, ctx:YAPLParser.DefFuncContext):
-        print("#deffun")
+        # print("#deffun")
 
         self.inFunction = True
 
@@ -134,7 +134,7 @@ class CodigoIntermedio(YAPLVisitor):
 
     
     def visitDefAssign(self, ctx:YAPLParser.DefAssignContext):
-        print("#visitdefassign")
+        # print("#visitdefassign")
 
         # se agrega solamente si se define la variable
         if ctx.expr():
@@ -148,7 +148,7 @@ class CodigoIntermedio(YAPLVisitor):
                     x = ctx.expr().getText()
                 else: 
                     # revisar si el parámetro existe
-                    print(ctx.expr().getText())
+                    # print(ctx.expr().getText())
                     bool_ = False
                     try:
                         bool_ =  ctx.expr().getText() in self.parNames.keys()
@@ -187,6 +187,8 @@ class CodigoIntermedio(YAPLVisitor):
             else:
                 self.text += f"\t\tLW {var}, {x}\n"
 
+            self.lastStatement = var
+
         else:
             # agregar al registro 
             id_ = ctx.ID().getText()
@@ -199,7 +201,7 @@ class CodigoIntermedio(YAPLVisitor):
         
     
     def visitFormalAssign(self, ctx:YAPLParser.FormalAssignContext):
-        print("#formalassign")
+        # print("#formalassign")
 
         # print("stack ", self.temp_stack)
         temp_ = ""
@@ -213,10 +215,12 @@ class CodigoIntermedio(YAPLVisitor):
         self.parNames[ctx.ID().getText()] = temp_
 
         self.funcText += f"\t\tLW {temp_}, P\n"
+
+        self.lastStatement = temp_
          
     
     def visitDispatchExplicit(self, ctx:YAPLParser.DispatchExplicitContext):
-        print("#dispatchexplicit")
+        # print("#dispatchexplicit")
 
         id = ctx.ID().getText()
 
@@ -247,22 +251,27 @@ class CodigoIntermedio(YAPLVisitor):
 
         bClass = ""
         row = self.symbolTable.get_cell(id= ctx.ID().getText())
-        if row:
-            print("row ", row)
-        else:
-            print("no se encontró la row!")
+        # if row:
+        #     print("row ", row)
+        # else:
+        #     print("no se encontró la row!")
 
         self.funcText += f"\t\tCALL {bClass}.{id}, {len(paramslist)}\n"
+
+        temp_ = ""
         if len(self.temp_stack) > 0:
-            self.funcText += f"\t\tLW {self.temp_stack.pop()}, R\n"
+            temp_ = self.temp_stack.pop()
+            self.funcText += f"\t\tLW {temp_}, R\n"
         else:
             temp_ = f"t{self.temp_counter}"
             self.funcText += f"\t\tLW t{self.temp_counter}, R\n"
             self.addToTemp()
+
+        self.lastStatement = temp_        
          
 
     def visitDispatchImplicit(self, ctx:YAPLParser.DispatchImplicitContext):
-        print("#dispatchimplicit")
+        # print("#dispatchimplicit")
 
         id = ctx.ID().getText()
 
@@ -294,11 +303,15 @@ class CodigoIntermedio(YAPLVisitor):
             self.funcText += f"\t\tCALL {self.currentClass}.{id}, {len(paramslist)}\n"
         else:
             self.text += f"\t\tCALL {self.currentClass}.{id}, {len(paramslist)}\n"
+
+        temp_ = ""
         if len(self.temp_stack) > 0:
             if self.inFunction:
-                self.funcText += f"\t\tLW {self.temp_stack.pop()}, R\n"
+                temp_ = self.temp_stack.pop()
+                self.funcText += f"\t\tLW {temp_}, R\n"
             else: 
-                self.text += f"\t\tLW {self.temp_stack.pop()}, R\n"
+                temp_ = self.temp_stack.pop()
+                self.text += f"\t\tLW {temp_}, R\n"
         else:
             temp_ = f"t{self.temp_counter}"
             if self.inFunction:
@@ -306,13 +319,15 @@ class CodigoIntermedio(YAPLVisitor):
             else:
                 self.text += f"\t\tLW t{self.temp_counter}, R\n"
             self.addToTemp()
+
+        self.lastStatement = temp_
          
 
     def visitDispatchAttribute(self, ctx:YAPLParser.DispatchAttributeContext):
-        print("#dispatchattribute")
-        print(ctx.getText())
-        print("att ", ctx.expr().getText())
-        print(self.temp_stack)
+        # print("#dispatchattribute")
+        # print(ctx.getText())
+        # print("att ", ctx.expr().getText())
+        # print(self.temp_stack)
 
         # if (self.inFunction):
         #     self.funcText += f"\t\t\n"
@@ -323,7 +338,7 @@ class CodigoIntermedio(YAPLVisitor):
          
     
     def visitIf(self, ctx:YAPLParser.IfContext):
-        print("#if")
+        # print("#if")
 
         # evaluar expresión de la condición 
         temp_ = "t" + str(self.temp_counter) # creamos una temporal
@@ -359,7 +374,7 @@ class CodigoIntermedio(YAPLVisitor):
  
     
     def visitWhile(self, ctx:YAPLParser.WhileContext):
-        print("#while")
+        # print("#while")
 
         # etiquetas
         loop_ = f"L_LOOP_{self.goto_while}"
@@ -389,13 +404,13 @@ class CodigoIntermedio(YAPLVisitor):
    
     
     def visitBlock(self, ctx:YAPLParser.BlockContext):
-        print("#block")
+        # print("#block")
         for expr in ctx.expr():
             # print("exp block: ", expr.getText())
             self.visit(expr)
     
     def visitLetId(self, ctx:YAPLParser.LetIdContext):
-        print("#letId")
+        # print("#letId")
 
         trips = []
 
@@ -458,6 +473,8 @@ class CodigoIntermedio(YAPLVisitor):
                 else:
                     self.text += f"\t\tLW {var}, {x}\n"
 
+                self.lastStatement = var
+
 
         # visitar el último expr dentro del in
         self.visit(ctx.expr(len(ctx.expr()) - 1))
@@ -465,15 +482,20 @@ class CodigoIntermedio(YAPLVisitor):
 
     
     def visitNew(self, ctx:YAPLParser.NewContext):
-        print("#new")
+        # print("#new")
 
+        temp_ = ""
         line_ = ""
         # definir línea
         if len(self.temp_stack) > 0:
-            line_ = f"\t\tLW {self.temp_stack.pop()}"
+            temp_ = self.temp_stack.pop()
+            line_ = f"\t\tLW {temp_}"
         else:
-            line_ = f"\t\tLW t{self.temp_counter}"
+            temp_ = f"t{self.temp_counter}"
+            line_ = f"\t\tLW {temp_}"
             self.addToTemp()
+
+        self.lastStatement = temp_
 
         line_ += f", {ctx.TYPE().getText()}\n"
 
@@ -485,9 +507,9 @@ class CodigoIntermedio(YAPLVisitor):
      
     
     def visitNegative(self, ctx:YAPLParser.NegativeContext):
-        print("#negative")
+        # print("#negative")
 
-        print(ctx.getText())
+        # print(ctx.getText())
 
         line = "\t\tNEG "
 
@@ -528,7 +550,7 @@ class CodigoIntermedio(YAPLVisitor):
         
     
     def visitIsVoid(self, ctx:YAPLParser.IsvoidContext):
-        print("#isvoid")
+        # print("#isvoid")
 
         self.visit(ctx.expr())
         
@@ -574,7 +596,7 @@ class CodigoIntermedio(YAPLVisitor):
             line += leftTemp
         else:
             self.visit(ctx.expr(1))
-            print("rest ", ctx.expr(1).getText())
+            # print("rest ", ctx.expr(1).getText())
             if ctx.expr(1).getText() in self.registers[self.currentClass].keys():
                 line += f"{self.registers[self.currentClass][ctx.expr(1).getText()]}"
             else:
@@ -590,7 +612,7 @@ class CodigoIntermedio(YAPLVisitor):
         
     
     def visitDiv(self, ctx:YAPLParser.DivContext):
-        print("#div")
+        # print("#div")
 
         line = "\t\tDIV "
 
@@ -647,7 +669,7 @@ class CodigoIntermedio(YAPLVisitor):
         
     
     def visitPlus(self, ctx:YAPLParser.PlusContext):
-        print("#plus")
+        # print("#plus")
 
         line = "\t\tADD "
 
@@ -704,7 +726,7 @@ class CodigoIntermedio(YAPLVisitor):
         
     
     def visitMinus(self, ctx:YAPLParser.MinusContext):
-        print("#minus")
+        # print("#minus")
 
         line = "\t\tSUB "
 
@@ -761,7 +783,7 @@ class CodigoIntermedio(YAPLVisitor):
         
     
     def visitLessThanOrEqual(self, ctx:YAPLParser.LessThanOrEqualContext):
-        print("#lessThanorEqual")
+        # print("#lessThanorEqual")
 
         line = "\t\tSLE "
 
@@ -777,7 +799,7 @@ class CodigoIntermedio(YAPLVisitor):
             self.addToTemp()
 
         # parte izquierda
-        print("iz ", ctx.expr(0).getText())
+        # print("iz ", ctx.expr(0).getText())
         if ctx.expr(0).getChildCount() > 1:
             leftTemp = "t" + str(self.temp_counter)
             self.addToTemp()
@@ -819,7 +841,7 @@ class CodigoIntermedio(YAPLVisitor):
         
     
     def visitLessThan(self, ctx:YAPLParser.LessThanContext):
-        print("#lessThan")
+        # print("#lessThan")
 
         line = "\t\tSLG "
 
@@ -877,7 +899,7 @@ class CodigoIntermedio(YAPLVisitor):
         
     
     def visitGreaterThan(self, ctx:YAPLParser.GreaterThanContext):
-        print("#greaterThan")
+        # print("#greaterThan")
 
         line = "\t\tSGT "
 
@@ -934,7 +956,7 @@ class CodigoIntermedio(YAPLVisitor):
         
     
     def visitGreaterThanOrEqual(self, ctx:YAPLParser.GreaterThanOrEqualContext):
-        print("#greaterThanOrEqual")
+        # print("#greaterThanOrEqual")
 
         line = "\t\tSGE "
 
@@ -991,7 +1013,7 @@ class CodigoIntermedio(YAPLVisitor):
         
     
     def visitEqual(self, ctx:YAPLParser.EqualContext):
-        print("#equal")
+        # print("#equal")
 
         line = "\t\tSEQ "
 
@@ -1048,7 +1070,7 @@ class CodigoIntermedio(YAPLVisitor):
         
     
     def visitAnd(self, ctx:YAPLParser.AndContext):
-        print("#and")
+        # print("#and")
 
         line = "\t\tAND "
 
@@ -1161,9 +1183,9 @@ class CodigoIntermedio(YAPLVisitor):
         
     
     def visitNeg(self, ctx:YAPLParser.NegContext):
-        print("#neg")
+        # print("#neg")
         
-        print(ctx.getText())
+        # print(ctx.getText())
 
         line = "\t\tNOT "
 
@@ -1204,13 +1226,13 @@ class CodigoIntermedio(YAPLVisitor):
         
     
     def visitParens(self, ctx:YAPLParser.ParensContext):
-        print("#parens")
+        # print("#parens")
         # no es necesario hacer nada
         self.visit(ctx.expr())
         
     
     def visitAssignment(self, ctx:YAPLParser.AssignmentContext):
-        print("#assignment")
+        # print("#assignment")
 
         # se agrega solamente si se define la variable
         if ctx.expr():
@@ -1259,31 +1281,31 @@ class CodigoIntermedio(YAPLVisitor):
         
     
     def visitID(self, ctx:YAPLParser.IdContext):
-        print("#id")
+        # print("#id")
 
         self.lastStatement = ctx.getText()
         
     
     def visitInt(self, ctx:YAPLParser.IntContext):
-        print("#int")
+        # print("#int")
 
         self.lastStatement = ctx.getText()
         
     
     def visitString(self, ctx:YAPLParser.StringContext):
-        print("#string")
+        # print("#string")
 
         self.lastStatement = ctx.getText()
         
     
     def visitBoolean(self, ctx:YAPLParser.BooleanContext):
-        print("#boolean")
+        # print("#boolean")
 
         self.lastStatement = ctx.getText()
         
     
     def visitSelf(self, ctx:YAPLParser.SelfContext):
-        print("#self")
+        # print("#self")
 
         self.lastStatement = ctx.getText()
         
@@ -1326,7 +1348,7 @@ class CodigoIntermedio(YAPLVisitor):
         # agregar
         for x in st.columns:
             if (x[2] == "Instance" or x[2] == "Variable") and x[4] not in noClases:
-                print(x[0], ", ",x[4] , ", ", x[7])
+                # print(x[0], ", ",x[4] , ", ", x[7])
                 self.registers[x[4]][x[0]] = f"SP[{x[7]}]"
 
 
