@@ -514,7 +514,7 @@ class CodigoIntermedio(YAPLVisitor):
             self.visit(ctx.expr())
             # print("rest ", ctx.expr().getText())
             if ctx.expr().getText() in self.registers[self.currentClass].keys():
-                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]} "
+                line += f"{self.registers[self.currentClass][ctx.expr().getText()]} "
             else:
                 line += f"{ctx.expr().getText()} "
                 # print("Gt ", ctx.expr().getText())
@@ -574,9 +574,9 @@ class CodigoIntermedio(YAPLVisitor):
             line += leftTemp
         else:
             self.visit(ctx.expr(1))
-            # print("rest ", ctx.expr(1).getText())
+            print("rest ", ctx.expr(1).getText())
             if ctx.expr(1).getText() in self.registers[self.currentClass].keys():
-                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}"
+                line += f"{self.registers[self.currentClass][ctx.expr(1).getText()]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
                 # print("Gt ", ctx.expr(1).getText())
@@ -633,7 +633,7 @@ class CodigoIntermedio(YAPLVisitor):
             self.visit(ctx.expr(1))
             # print("rest ", ctx.expr(1).getText())
             if ctx.expr(1).getText() in self.registers[self.currentClass].keys():
-                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}"
+                line += f"{self.registers[self.currentClass][ctx.expr(1).getText()]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
                 # print("Gt ", ctx.expr(1).getText())
@@ -690,7 +690,7 @@ class CodigoIntermedio(YAPLVisitor):
             self.visit(ctx.expr(1))
             # print("rest ", ctx.expr(1).getText())
             if ctx.expr(1).getText() in self.registers[self.currentClass].keys():
-                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}"
+                line += f"{self.registers[self.currentClass][ctx.expr(1).getText()]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
                 # print("Gt ", ctx.expr(1).getText())
@@ -747,7 +747,7 @@ class CodigoIntermedio(YAPLVisitor):
             self.visit(ctx.expr(1))
             # print("rest ", ctx.expr(1).getText())
             if ctx.expr(1).getText() in self.registers[self.currentClass].keys():
-                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}"
+                line += f"{self.registers[self.currentClass][ctx.expr(1).getText()]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
                 # print("Gt ", ctx.expr(1).getText())
@@ -805,7 +805,7 @@ class CodigoIntermedio(YAPLVisitor):
             self.visit(ctx.expr(1))
             # print("rest ", ctx.expr(1).getText())
             if ctx.expr(1).getText() in self.registers[self.currentClass].keys():
-                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}"
+                line += f"{self.registers[self.currentClass][ctx.expr(1).getText()]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
                 # print("Gt ", ctx.expr(1).getText())
@@ -863,7 +863,7 @@ class CodigoIntermedio(YAPLVisitor):
             self.visit(ctx.expr(1))
             # print("rest ", ctx.expr(1).getText())
             if ctx.expr(1).getText() in self.registers[self.currentClass].keys():
-                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}"
+                line += f"{self.registers[self.currentClass][ctx.expr(1).getText()]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
                 # print("Gt ", ctx.expr(1).getText())
@@ -920,7 +920,7 @@ class CodigoIntermedio(YAPLVisitor):
             self.visit(ctx.expr(1))
             # print("rest ", ctx.expr(1).getText())
             if ctx.expr(1).getText() in self.registers[self.currentClass].keys():
-                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}"
+                line += f"{self.registers[self.currentClass][ctx.expr(1).getText()]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
                 # print("Gt ", ctx.expr(1).getText())
@@ -977,7 +977,7 @@ class CodigoIntermedio(YAPLVisitor):
             self.visit(ctx.expr(1))
             # print("rest ", ctx.expr(1).getText())
             if ctx.expr(1).getText() in self.registers[self.currentClass].keys():
-                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}"
+                line += f"{self.registers[self.currentClass][ctx.expr(1).getText()]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
                 # print("Gt ", ctx.expr(1).getText())
@@ -1034,7 +1034,7 @@ class CodigoIntermedio(YAPLVisitor):
             self.visit(ctx.expr(1))
             # print("rest ", ctx.expr(1).getText())
             if ctx.expr(1).getText() in self.registers[self.currentClass].keys():
-                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}"
+                line += f"{self.registers[self.currentClass][ctx.expr(1).getText()]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
                 # print("Gt ", ctx.expr(1).getText())
@@ -1091,7 +1091,7 @@ class CodigoIntermedio(YAPLVisitor):
             self.visit(ctx.expr(1))
             # print("rest ", ctx.expr(1).getText())
             if ctx.expr(1).getText() in self.registers[self.currentClass].keys():
-                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}"
+                line += f"{self.registers[self.currentClass][ctx.expr().getText()]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
                 # print("Gt ", ctx.expr(1).getText())
@@ -1147,7 +1147,7 @@ class CodigoIntermedio(YAPLVisitor):
             self.visit(ctx.expr(1))
             # print("rest ", ctx.expr(1).getText())
             if ctx.expr(1).getText() in self.registers[self.currentClass].keys():
-                line += f"{self.registers[self.currentClass][ctx.expr(0).getText()]}"
+                line += f"{self.registers[self.currentClass][ctx.expr(1).getText()]}"
             else:
                 line += f"{ctx.expr(1).getText()}"
                 # print("Gt ", ctx.expr(1).getText())
