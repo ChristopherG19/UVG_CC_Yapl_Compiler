@@ -293,7 +293,7 @@ class CodigoIntermedio(YAPLVisitor):
         if self.inFunction:
             self.funcText += f"\t\tCALL {self.currentClass}.{id}, {len(paramslist)}\n"
         else:
-            self.funcText += f"\t\tCALL {self.currentClass}.{id}, {len(paramslist)}\n"
+            self.text += f"\t\tCALL {self.currentClass}.{id}, {len(paramslist)}\n"
         if len(self.temp_stack) > 0:
             if self.inFunction:
                 self.funcText += f"\t\tLW {self.temp_stack.pop()}, R\n"
@@ -304,7 +304,7 @@ class CodigoIntermedio(YAPLVisitor):
             if self.inFunction:
                 self.funcText += f"\t\tLW t{self.temp_counter}, R\n"
             else:
-                self.funcText += f"\t\tLW t{self.temp_counter}, R\n"
+                self.text += f"\t\tLW t{self.temp_counter}, R\n"
             self.addToTemp()
          
 
