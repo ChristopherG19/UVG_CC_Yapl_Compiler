@@ -1,11 +1,11 @@
 CLASS A
-		LW SP[4], 0
+		LW SP[0], 0
 	A.value
-		RETURN SP[4]
+		RETURN SP[0]
 	END FUNC value
 	A.set_var
 		LW t0, P
-		LW SP[4], num
+		LW SP[0], num
 		RETURN
 	END FUNC set_var
 	A.method1
@@ -15,9 +15,9 @@ CLASS A
 	A.method2
 		LW t2, P
 		LW t3, P
-		LW SP[4], num1
+		LW SP[8], num1
 		ADD t4, t5, num2
-		PARAM SP[4]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t5, R
 		RETURN t5
@@ -25,8 +25,8 @@ CLASS A
 	A.method3
 		LW t6, P
 		NEG t7, num 
-		LW SP[4], t7
-		PARAM SP[4]
+		LW SP[8], t7
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t8, R
 		RETURN t8
@@ -38,16 +38,16 @@ CLASS A
 		IF t11 > 0 GOTO L_TRUE_0
 		GOTO L_FALSE_0
 L_TRUE_0:
-		LW SP[4], num1
+		LW SP[8], num1
 		SUB t12, t0, num2
-		PARAM SP[4]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t0, R
 		GOTO L_IF_END_0
 L_FALSE_0:
-		LW SP[4], num2
+		LW SP[8], num2
 		SUB t1, t2, num1
-		PARAM SP[4]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t2, R
 		GOTO L_IF_END_0
@@ -56,32 +56,32 @@ L_IF_END_0:
 	END FUNC method4
 	A.method5
 		LW t3, P
-		LW SP[4], 1
-		LW SP[16], 1
+		LW SP[8], 1
+		LW SP[8], 1
 		GOTO L_LOOP_0
 L_LOOP_0:
-		SLE t4, SP[16], num
+		SLE t4, SP[8], num
 		IF t4 = 0 GOTO L_LOOP_END_0
-		LW SP[4], SP[4]
-		MULT t4, t5, SP[16]
-		LW SP[16], SP[16]
+		LW SP[8], SP[8]
+		MULT t4, t5, SP[8]
+		LW SP[8], SP[8]
 		ADD t5, t6, 1
 		GOTO L_LOOP_0
 L_LOOP_END_0:
-		PARAM SP[4]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t6, R
 		RETURN t6
 	END FUNC method5
 EOC
 CLASS B
-		LW SP[4], 0
+		LW SP[0], 0
 	A.value
-		RETURN SP[4]
+		RETURN SP[0]
 	END FUNC value
 	A.set_var
 		LW t0, P
-		LW SP[4], num
+		LW SP[0], num
 		RETURN
 	END FUNC set_var
 	A.method1
@@ -91,9 +91,9 @@ CLASS B
 	A.method2
 		LW t2, P
 		LW t3, P
-		LW SP[4], num1
+		LW SP[8], num1
 		ADD t4, t5, num2
-		PARAM SP[4]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t5, R
 		RETURN t5
@@ -101,8 +101,8 @@ CLASS B
 	A.method3
 		LW t6, P
 		NEG t7, num 
-		LW SP[4], t7
-		PARAM SP[4]
+		LW SP[8], t7
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t8, R
 		RETURN t8
@@ -114,16 +114,16 @@ CLASS B
 		IF t11 > 0 GOTO L_TRUE_0
 		GOTO L_FALSE_0
 L_TRUE_0:
-		LW SP[4], num1
+		LW SP[8], num1
 		SUB t12, t0, num2
-		PARAM SP[4]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t0, R
 		GOTO L_IF_END_0
 L_FALSE_0:
-		LW SP[4], num2
+		LW SP[8], num2
 		SUB t1, t2, num1
-		PARAM SP[4]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t2, R
 		GOTO L_IF_END_0
@@ -132,41 +132,41 @@ L_IF_END_0:
 	END FUNC method4
 	A.method5
 		LW t3, P
-		LW SP[4], 1
-		LW SP[16], 1
+		LW SP[8], 1
+		LW SP[8], 1
 		GOTO L_LOOP_0
 L_LOOP_0:
-		SLE t4, SP[16], num
+		SLE t4, SP[8], num
 		IF t4 = 0 GOTO L_LOOP_END_0
-		LW SP[4], SP[4]
-		MULT t4, t5, SP[16]
-		LW SP[16], SP[16]
+		LW SP[8], SP[8]
+		MULT t4, t5, SP[8]
+		LW SP[8], SP[8]
 		ADD t5, t6, 1
 		GOTO L_LOOP_0
 L_LOOP_END_0:
-		PARAM SP[4]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t6, R
 		RETURN t6
 	END FUNC method5
 	B.method5
 		LW t0, P
-		LW SP[12], num
+		LW SP[8], num
 		MULT t1, t2, num
-		PARAM SP[12]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t2, R
 		RETURN t2
 	END FUNC method5
 EOC
 CLASS C
-		LW SP[4], 0
+		LW SP[0], 0
 	A.value
-		RETURN SP[4]
+		RETURN SP[0]
 	END FUNC value
 	A.set_var
 		LW t0, P
-		LW SP[4], num
+		LW SP[0], num
 		RETURN
 	END FUNC set_var
 	A.method1
@@ -176,9 +176,9 @@ CLASS C
 	A.method2
 		LW t2, P
 		LW t3, P
-		LW SP[4], num1
+		LW SP[8], num1
 		ADD t4, t5, num2
-		PARAM SP[4]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t5, R
 		RETURN t5
@@ -186,8 +186,8 @@ CLASS C
 	A.method3
 		LW t6, P
 		NEG t7, num 
-		LW SP[4], t7
-		PARAM SP[4]
+		LW SP[8], t7
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t8, R
 		RETURN t8
@@ -199,16 +199,16 @@ CLASS C
 		IF t11 > 0 GOTO L_TRUE_0
 		GOTO L_FALSE_0
 L_TRUE_0:
-		LW SP[4], num1
+		LW SP[8], num1
 		SUB t12, t0, num2
-		PARAM SP[4]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t0, R
 		GOTO L_IF_END_0
 L_FALSE_0:
-		LW SP[4], num2
+		LW SP[8], num2
 		SUB t1, t2, num1
-		PARAM SP[4]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t2, R
 		GOTO L_IF_END_0
@@ -217,28 +217,28 @@ L_IF_END_0:
 	END FUNC method4
 	A.method5
 		LW t3, P
-		LW SP[4], 1
-		LW SP[16], 1
+		LW SP[8], 1
+		LW SP[8], 1
 		GOTO L_LOOP_0
 L_LOOP_0:
-		SLE t4, SP[16], num
+		SLE t4, SP[8], num
 		IF t4 = 0 GOTO L_LOOP_END_0
-		LW SP[4], SP[4]
-		MULT t4, t5, SP[16]
-		LW SP[16], SP[16]
+		LW SP[8], SP[8]
+		MULT t4, t5, SP[8]
+		LW SP[8], SP[8]
 		ADD t5, t6, 1
 		GOTO L_LOOP_0
 L_LOOP_END_0:
-		PARAM SP[4]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t6, R
 		RETURN t6
 	END FUNC method5
 	B.method5
 		LW t0, P
-		LW SP[12], num
+		LW SP[8], num
 		MULT t1, t2, num
-		PARAM SP[12]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t2, R
 		RETURN t2
@@ -246,31 +246,31 @@ L_LOOP_END_0:
 	C.method6
 		LW t0, P
 		NEG t1, num 
-		LW SP[12], t1
-		PARAM SP[12]
+		LW SP[8], t1
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t2, R
 		RETURN t2
 	END FUNC method6
 	C.method5
 		LW t3, P
-		LW SP[12], num
+		LW SP[8], num
 		MULT t5, t6, num
 		MULT t4, t5, num
-		PARAM SP[12]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t6, R
 		RETURN t6
 	END FUNC method5
 EOC
 CLASS D
-		LW SP[4], 0
+		LW SP[0], 0
 	A.value
-		RETURN SP[4]
+		RETURN SP[0]
 	END FUNC value
 	A.set_var
 		LW t0, P
-		LW SP[4], num
+		LW SP[0], num
 		RETURN
 	END FUNC set_var
 	A.method1
@@ -280,9 +280,9 @@ CLASS D
 	A.method2
 		LW t2, P
 		LW t3, P
-		LW SP[4], num1
+		LW SP[8], num1
 		ADD t4, t5, num2
-		PARAM SP[4]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t5, R
 		RETURN t5
@@ -290,8 +290,8 @@ CLASS D
 	A.method3
 		LW t6, P
 		NEG t7, num 
-		LW SP[4], t7
-		PARAM SP[4]
+		LW SP[8], t7
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t8, R
 		RETURN t8
@@ -303,16 +303,16 @@ CLASS D
 		IF t11 > 0 GOTO L_TRUE_0
 		GOTO L_FALSE_0
 L_TRUE_0:
-		LW SP[4], num1
+		LW SP[8], num1
 		SUB t12, t0, num2
-		PARAM SP[4]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t0, R
 		GOTO L_IF_END_0
 L_FALSE_0:
-		LW SP[4], num2
+		LW SP[8], num2
 		SUB t1, t2, num1
-		PARAM SP[4]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t2, R
 		GOTO L_IF_END_0
@@ -321,64 +321,64 @@ L_IF_END_0:
 	END FUNC method4
 	A.method5
 		LW t3, P
-		LW SP[4], 1
-		LW SP[16], 1
+		LW SP[8], 1
+		LW SP[8], 1
 		GOTO L_LOOP_0
 L_LOOP_0:
-		SLE t4, SP[16], num
+		SLE t4, SP[8], num
 		IF t4 = 0 GOTO L_LOOP_END_0
-		LW SP[4], SP[4]
-		MULT t4, t5, SP[16]
-		LW SP[16], SP[16]
+		LW SP[8], SP[8]
+		MULT t4, t5, SP[8]
+		LW SP[8], SP[8]
 		ADD t5, t6, 1
 		GOTO L_LOOP_0
 L_LOOP_END_0:
-		PARAM SP[4]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t6, R
 		RETURN t6
 	END FUNC method5
 	B.method5
 		LW t0, P
-		LW SP[12], num
+		LW SP[8], num
 		MULT t1, t2, num
-		PARAM SP[12]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t2, R
 		RETURN t2
 	END FUNC method5
 	D.method7
 		LW t0, P
-		LW SP[12], num
-		SLG t1, SP[12], 0
+		LW SP[8], num
+		SLG t1, SP[8], 0
 		IF t1 > 0 GOTO L_TRUE_1
 		GOTO L_FALSE_1
 L_TRUE_1:
-		NEG t2, SP[12] 
+		NEG t2, SP[8] 
 		PARAM t2
 		CALL D.method7, 1
 		LW t3, R
 		GOTO L_IF_END_1
 L_FALSE_1:
-		SEQ t4, 0, SP[12]
+		SEQ t4, 0, SP[8]
 		IF t4 > 0 GOTO L_TRUE_2
 		GOTO L_FALSE_2
 L_TRUE_2:
 		GOTO L_IF_END_2
 L_FALSE_2:
-		SEQ t5, 1, SP[12]
+		SEQ t5, 1, SP[8]
 		IF t5 > 0 GOTO L_TRUE_3
 		GOTO L_FALSE_3
 L_TRUE_3:
 		GOTO L_IF_END_3
 L_FALSE_3:
-		SEQ t6, 2, SP[12]
+		SEQ t6, 2, SP[8]
 		IF t6 > 0 GOTO L_TRUE_4
 		GOTO L_FALSE_4
 L_TRUE_4:
 		GOTO L_IF_END_4
 L_FALSE_4:
-		SUB t7, SP[12], 3
+		SUB t7, SP[8], 3
 		PARAM t7
 		CALL D.method7, 1
 		LW t8, R
@@ -394,13 +394,13 @@ L_IF_END_1:
 	END FUNC method7
 EOC
 CLASS E
-		LW SP[4], 0
+		LW SP[0], 0
 	A.value
-		RETURN SP[4]
+		RETURN SP[0]
 	END FUNC value
 	A.set_var
 		LW t0, P
-		LW SP[4], num
+		LW SP[0], num
 		RETURN
 	END FUNC set_var
 	A.method1
@@ -410,9 +410,9 @@ CLASS E
 	A.method2
 		LW t2, P
 		LW t3, P
-		LW SP[4], num1
+		LW SP[8], num1
 		ADD t4, t5, num2
-		PARAM SP[4]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t5, R
 		RETURN t5
@@ -420,8 +420,8 @@ CLASS E
 	A.method3
 		LW t6, P
 		NEG t7, num 
-		LW SP[4], t7
-		PARAM SP[4]
+		LW SP[8], t7
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t8, R
 		RETURN t8
@@ -433,16 +433,16 @@ CLASS E
 		IF t11 > 0 GOTO L_TRUE_0
 		GOTO L_FALSE_0
 L_TRUE_0:
-		LW SP[4], num1
+		LW SP[8], num1
 		SUB t12, t0, num2
-		PARAM SP[4]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t0, R
 		GOTO L_IF_END_0
 L_FALSE_0:
-		LW SP[4], num2
+		LW SP[8], num2
 		SUB t1, t2, num1
-		PARAM SP[4]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t2, R
 		GOTO L_IF_END_0
@@ -451,64 +451,64 @@ L_IF_END_0:
 	END FUNC method4
 	A.method5
 		LW t3, P
-		LW SP[4], 1
-		LW SP[16], 1
+		LW SP[8], 1
+		LW SP[8], 1
 		GOTO L_LOOP_0
 L_LOOP_0:
-		SLE t4, SP[16], num
+		SLE t4, SP[8], num
 		IF t4 = 0 GOTO L_LOOP_END_0
-		LW SP[4], SP[4]
-		MULT t4, t5, SP[16]
-		LW SP[16], SP[16]
+		LW SP[8], SP[8]
+		MULT t4, t5, SP[8]
+		LW SP[8], SP[8]
 		ADD t5, t6, 1
 		GOTO L_LOOP_0
 L_LOOP_END_0:
-		PARAM SP[4]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t6, R
 		RETURN t6
 	END FUNC method5
 	B.method5
 		LW t0, P
-		LW SP[12], num
+		LW SP[8], num
 		MULT t1, t2, num
-		PARAM SP[12]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t2, R
 		RETURN t2
 	END FUNC method5
 	D.method7
 		LW t0, P
-		LW SP[12], num
-		SLG t1, SP[12], 0
+		LW SP[8], num
+		SLG t1, SP[8], 0
 		IF t1 > 0 GOTO L_TRUE_1
 		GOTO L_FALSE_1
 L_TRUE_1:
-		NEG t2, SP[12] 
+		NEG t2, SP[8] 
 		PARAM t2
 		CALL D.method7, 1
 		LW t3, R
 		GOTO L_IF_END_1
 L_FALSE_1:
-		SEQ t4, 0, SP[12]
+		SEQ t4, 0, SP[8]
 		IF t4 > 0 GOTO L_TRUE_2
 		GOTO L_FALSE_2
 L_TRUE_2:
 		GOTO L_IF_END_2
 L_FALSE_2:
-		SEQ t5, 1, SP[12]
+		SEQ t5, 1, SP[8]
 		IF t5 > 0 GOTO L_TRUE_3
 		GOTO L_FALSE_3
 L_TRUE_3:
 		GOTO L_IF_END_3
 L_FALSE_3:
-		SEQ t6, 2, SP[12]
+		SEQ t6, 2, SP[8]
 		IF t6 > 0 GOTO L_TRUE_4
 		GOTO L_FALSE_4
 L_TRUE_4:
 		GOTO L_IF_END_4
 L_FALSE_4:
-		SUB t7, SP[12], 3
+		SUB t7, SP[8], 3
 		PARAM t7
 		CALL D.method7, 1
 		LW t8, R
@@ -524,9 +524,9 @@ L_IF_END_1:
 	END FUNC method7
 	E.method6
 		LW t0, P
-		LW SP[12], num
+		LW SP[8], num
 		DIV t1, t2, 8
-		PARAM SP[12]
+		PARAM SP[8]
 		CALL .set_var, 1
 		LW t2, R
 		RETURN t2
@@ -536,30 +536,30 @@ CLASS Main
 		LW SP[212], true
 	Main.is_even
 		LW t0, P
-		LW SP[None], num
-		SLG t1, SP[None], 0
+		LW SP[4], num
+		SLG t1, SP[4], 0
 		IF t1 > 0 GOTO L_TRUE_5
 		GOTO L_FALSE_5
 L_TRUE_5:
-		NEG t2, SP[None] 
+		NEG t2, SP[4] 
 		PARAM t2
 		CALL Main.is_even, 1
 		LW t3, R
 		GOTO L_IF_END_5
 L_FALSE_5:
-		SEQ t4, 0, SP[None]
+		SEQ t4, 0, SP[4]
 		IF t4 > 0 GOTO L_TRUE_6
 		GOTO L_FALSE_6
 L_TRUE_6:
 		GOTO L_IF_END_6
 L_FALSE_6:
-		SEQ t5, 1, SP[None]
+		SEQ t5, 1, SP[4]
 		IF t5 > 0 GOTO L_TRUE_7
 		GOTO L_FALSE_7
 L_TRUE_7:
 		GOTO L_IF_END_7
 L_FALSE_7:
-		SUB t6, SP[None], 2
+		SUB t6, SP[4], 2
 		PARAM t6
 		CALL Main.is_even, 1
 		LW t7, R
@@ -573,7 +573,7 @@ L_IF_END_5:
 	END FUNC is_even
 	Main.main
 		LW t8, A
-		LW SP[517], t8
+		LW SP[2], t8
 		PARAM 2
 		CALL .set_var, 1
 		LW t9, R
@@ -612,7 +612,7 @@ L_IF_END_8:
 		PARAM t6
 		CALL .method2, 2
 		LW t4, R
-		LW SP[517], t4
+		LW SP[2], t4
 		CALL .value, 0
 		LW t7, R
 		PARAM t7
@@ -626,7 +626,7 @@ L_IF_END_8:
 		PARAM t11
 		CALL .method6, 1
 		LW t10, R
-		LW SP[517], t10
+		LW SP[2], t10
 		CALL .value, 0
 		LW t12, R
 		PARAM t12
@@ -647,7 +647,7 @@ L_IF_END_8:
 		PARAM t5
 		CALL .method4, 2
 		LW t3, R
-		LW SP[517], t3
+		LW SP[2], t3
 		CALL .value, 0
 		LW t6, R
 		PARAM t6
@@ -664,7 +664,7 @@ L_IF_END_8:
 		PARAM t11
 		CALL .method5, 1
 		LW t10, R
-		LW SP[517], t10
+		LW SP[2], t10
 		CALL .value, 0
 		LW t12, R
 		PARAM t12
@@ -681,7 +681,7 @@ L_IF_END_8:
 		PARAM t4
 		CALL .method5, 1
 		LW t3, R
-		LW SP[517], t3
+		LW SP[2], t3
 		CALL .value, 0
 		LW t5, R
 		PARAM t5

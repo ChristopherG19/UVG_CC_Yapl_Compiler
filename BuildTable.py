@@ -198,16 +198,21 @@ class YAPLVisitorImpl(YAPLVisitor):
                     self.class_methods[parent_class] = [param_name]
                     
                 tempValDis = None
-                if(self.current_function):
-                    if(tempSpaceId):
-                        tempValDis = self.displacement_cbfunc - tempSpaceId
-                    self.symbolTable.add_info_to_cell(param_name, "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
-                else:
-                    if(self.current_class):
-                        if(tempSpaceId):
-                            tempValDis = self.displacement_cbclass - tempSpaceId
-                        self.symbolTable.add_info_to_cell(param_name, "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
+                rowT = self.symbolTable.get_cell(param_name, addParent=self.current_class)
+                if(rowT):
+                    if(rowT[-4] == None):
+                        if(self.current_function):
+                            if(tempSpaceId):
+                                tempValDis = self.displacement_cbfunc - tempSpaceId
+                            self.symbolTable.add_info_to_cell(param_name, "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
+                        else:
+                            if(self.current_class):
+                                if(tempSpaceId):
+                                    tempValDis = self.displacement_cbclass - tempSpaceId
+                                
+                                self.symbolTable.add_info_to_cell(param_name, "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
 
+                print("DisplacementPARAAAAAAAAAAAAAAM", param_name, self.symbolTable.get_cell(param_name, addParent=self.current_class, addFunctionP=self.current_function), self.current_function, self.current_class)
                 self.visit(formal_param)    
         
         if(self.symbolTable.containsKey(id)):
@@ -424,16 +429,19 @@ class YAPLVisitorImpl(YAPLVisitor):
             
         self.symbolTable.add_info_to_cell(parent_class, "Contains", self.class_methods[parent_class])
         tempValDis = None
-        if(self.current_function):
-            if(tempSpaceId):
-                tempValDis = self.displacement_cbfunc - tempSpaceId
-            self.symbolTable.add_info_to_cell(id, "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
-        else:
-            if(self.current_class):
-                if(tempSpaceId):
-                    tempValDis = self.displacement_cbclass - tempSpaceId
-                
-                self.symbolTable.add_info_to_cell(id, "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
+        rowT = self.symbolTable.get_cell(id, addParent=self.current_class)
+        if(rowT):
+            if(rowT[-4] == None):
+                if(self.current_function):
+                    if(tempSpaceId):
+                        tempValDis = self.displacement_cbfunc - tempSpaceId
+                    self.symbolTable.add_info_to_cell(id, "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
+                else:
+                    if(self.current_class):
+                        if(tempSpaceId):
+                            tempValDis = self.displacement_cbclass - tempSpaceId
+                        
+                        self.symbolTable.add_info_to_cell(id, "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
         
         return type_id
     
@@ -534,17 +542,21 @@ class YAPLVisitorImpl(YAPLVisitor):
             return "Error"
         
         tempValDis = None
-        if(self.current_function):
-            if(tempSpaceId):
-                tempValDis = self.displacement_cbfunc - tempSpaceId
-            self.symbolTable.add_info_to_cell(id, "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
-        else:
-            if(self.current_class):
-                if(tempSpaceId):
-                    tempValDis = self.displacement_cbclass - tempSpaceId
-                
-                self.symbolTable.add_info_to_cell(id, "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
+        rowT = self.symbolTable.get_cell(id, addParent=self.current_class)
+        if(rowT):
+            if(rowT[-4] == None):
+                if(self.current_function):
+                    if(tempSpaceId):
+                        tempValDis = self.displacement_cbfunc - tempSpaceId
+                    self.symbolTable.add_info_to_cell(id, "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
+                else:
+                    if(self.current_class):
+                        if(tempSpaceId):
+                            tempValDis = self.displacement_cbclass - tempSpaceId
+                        
+                        self.symbolTable.add_info_to_cell(id, "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
 
+        print(self.symbolTable.get_cell(id, addParent=self.current_class))
         return type_id
     
     def visitDispatchExplicit(self, ctx: YAPLParser.DispatchExplicitContext):
@@ -743,17 +755,20 @@ class YAPLVisitorImpl(YAPLVisitor):
                     self.symbolTable.add_info_to_cell(params_def[par][0], "Name", row_change[0])
 
             tempValDis = None
-            if(self.current_function):
-                if(tempSpaceId):
-                    tempValDis = self.displacement_cbfunc - tempSpaceId
-                self.symbolTable.add_info_to_cell(params_def[par][0], "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
-            else:
-                if(self.current_class):
-                    if(tempSpaceId):
-                        tempValDis = self.displacement_cbclass - tempSpaceId
-                    
-                    self.symbolTable.add_info_to_cell(params_def[par][0], "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
-                
+            rowT = self.symbolTable.get_cell(params_def[par][0], addParent=self.current_class)
+            if(rowT):
+                if(rowT[-4] == None):
+                    if(self.current_function):
+                        if(tempSpaceId):
+                            tempValDis = self.displacement_cbfunc - tempSpaceId
+                        self.symbolTable.add_info_to_cell(params_def[par][0], "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
+                    else:
+                        if(self.current_class):
+                            if(tempSpaceId):
+                                tempValDis = self.displacement_cbclass - tempSpaceId
+                            
+                            self.symbolTable.add_info_to_cell(params_def[par][0], "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
+
             self.symbolTable.add_info_to_cell(method_name, "Space", param_space)
             return_method_space = self.symbolTable.get_cell(met[1])[-2]
             
@@ -891,16 +906,19 @@ class YAPLVisitorImpl(YAPLVisitor):
             self.symbolTable.add_info_to_cell(self.current_class, "Contains", self.class_methods[self.current_class])
             
             tempValDis = None
-            if(self.current_function):
-                if(tempSpaceId):
-                    tempValDis = self.displacement_cbfunc - tempSpaceId
-                self.symbolTable.add_info_to_cell(id, "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
-            else:
-                if(self.current_class):
-                    if(tempSpaceId):
-                        tempValDis = self.displacement_cbclass - tempSpaceId
-                    
-                    self.symbolTable.add_info_to_cell(id, "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
+            rowT = self.symbolTable.get_cell(id, addParent=self.current_class)
+            if(rowT):
+                if(rowT[-4] == None):
+                    if(self.current_function):
+                        if(tempSpaceId):
+                            tempValDis = self.displacement_cbfunc - tempSpaceId
+                        self.symbolTable.add_info_to_cell(id, "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
+                    else:
+                        if(self.current_class):
+                            if(tempSpaceId):
+                                tempValDis = self.displacement_cbclass - tempSpaceId
+                            
+                            self.symbolTable.add_info_to_cell(id, "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
 
         for i in range(len(ctx.expr())):
             expression_type = self.visit(ctx.expr(i))
@@ -1198,12 +1216,13 @@ class YAPLVisitorImpl(YAPLVisitor):
             return "Error"
     
     def visitEqual(self, ctx: YAPLParser.EqualContext):
-        #print("visitEqual")
+        print("visitEqual")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
         
         left_val = None
         right_val = None
+        
 
         if isinstance(left_type, tuple):
             left_type, left_val = left_type
@@ -1307,6 +1326,8 @@ class YAPLVisitorImpl(YAPLVisitor):
         print("visitId")
         id = ctx.ID().getText()
         row = self.symbolTable.get_cell(id)
+        
+        print("IIIIDDDDDDDDDDDDD", id, row[-4], self.current_class, self.current_function)
 
         if row is None:
             self.customErrors.append(f"{id} no existe")

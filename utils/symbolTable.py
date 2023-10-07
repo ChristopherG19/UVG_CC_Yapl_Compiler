@@ -121,7 +121,7 @@ class Table():
         return matches
         
     def add_info_to_cell(self, name, column_name, value, func=None, classF=None):
-        #print("------->",name, column_name, value, func, classF)
+        print("------->",name, column_name, value, func, classF)
         # Iterate through the symbol table to find the appropriate cell
         for row in self.columns:
             if row[0] == name:
@@ -132,16 +132,21 @@ class Table():
                         if index < len(row):
                             # Update the cell with the new value
                             row[index] = value
+                            print("RR", row)
                             self.build_Table()
                             return True
                     else:
                         print(f"Column '{column_name}' does not exist in the table.")
                         return False
+                elif row[5] != func and row[4] != classF:
+                    continue
                 else:
+                    #print("-->>>",row[4], row[5], row[5] == func, row[4] == classF)
                     if column_name in self.headers:
                         index = self.headers.index(column_name)
                         if index < len(row):
                             row[index] = value
+                            print("RR2", row)
                             self.build_Table()
                             return True
                     else:
