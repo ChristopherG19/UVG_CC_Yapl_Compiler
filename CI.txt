@@ -1,43 +1,79 @@
 CLASS A
-		MULT t0, 9, 5
-		MULT t1, 5, t0
-		LW SP[0], t2
+		LW SP[0], 452
+		LW t0, 5
+		MULT t1, t0, SP[0]
+		LW t2, t1
+		LW t3, SP[0]
+		MULT t4, 4, t3
+		LW t5, t4
+		MULT t6, t2, t5
+		LW SP[4], t6
+		LW t7, False
+		NOT t8, t7
+		LW SP[8], t8
+		LW t0, 5
+		LW SP[9], t0
 	A.returnVar
-		ADD t3, SP[0], 7
+		ADD t1, SP[4], 7
+		RETURN t1
 	END FUNC returnVar
 EOC
 CLASS B
 		CLASS A
-		MULT t0, 9, 5
-		MULT t1, 5, t0
-		LW SP[0], t2
+		LW SP[0], 452
+		LW t0, 5
+		MULT t1, t0, SP[0]
+		LW t2, t1
+		LW t3, SP[0]
+		MULT t4, 4, t3
+		LW t5, t4
+		MULT t6, t2, t5
+		LW SP[4], t6
+		LW t7, False
+		NOT t8, t7
+		LW SP[8], t8
+		LW t0, 5
+		LW SP[9], t0
 	A.returnVar
-		ADD t3, SP[0], 7
+		ADD t1, SP[4], 7
+		RETURN t1
 	END FUNC returnVar
 EOC
 
 		LW SP[4], 5
 	B.setVar1
 		LW t0, P
+		RETURN t0
 	END FUNC setVar1
 EOC
 CLASS Main
 		LW t0, A
+		LW t1, t0
 		LW SP[14], t1
 		ADD t2, 5, 4
+		LW t3, t2
 		LW SP[67], t3
 	Main.meth1
 		LW t4, P
+		RETURN t4
 	END FUNC meth1
 	Main.meth2
+		RETURN t4
 	END FUNC meth2
 	Main.main
-		IF t5 > 0 GOTO L_TRUE_0
+		LW t6, t5
+		IF t7 > 0 GOTO L_TRUE_0
 		GOTO L_FALSE_0
 L_TRUE_0:
 		GOTO L_IF_END_0
 L_FALSE_0:
-		IF t6 > 0 GOTO L_TRUE_1
+		SGE t8, SP[None], 0
+		LW t0, t8
+		SLT t1, SP[None], 10
+		LW t2, t1
+		AND t3, t0, t2
+		LW t4, t3
+		IF t5 > 0 GOTO L_TRUE_1
 		GOTO L_FALSE_1
 L_TRUE_1:
 		GOTO L_IF_END_1
@@ -55,12 +91,19 @@ L_FALSE_2:
 		LW t0, R
 		GOTO L_IF_END_2
 L_IF_END_2:
-		MULT t1, SP[None], 5
-		MULT t2, SP[None], 5
-		ADD t3, t1, t2
-		LW t4, R
-		LW t5, R
+		GOTO L_LOOP_0L_LOOP_0:
+		IF xd = 0 GOTO L_LOOP_END_0
+		SUB t1, t7, 1
+		GOTO L_LOOP_0
+L_LOOP_END_0:
+		SUB t2, SP[None], 5
+		LW t3, t2
+		MULT t4, SP[None], 5
+		ADD t5, t3, t4
 		LW t6, R
+		LW t7, R
+		LW t8, R
+		RETURN
 	END FUNC main
 EOC
 EOF

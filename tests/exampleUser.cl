@@ -1,5 +1,8 @@
 class A {
-   var: Int <- 5 * (9 * 5);
+   og: Int <- 452;
+   var: Int <- ((5) * og) * (4 * (og));
+   booool: Bool <- NOT (False);
+   xdd: Int <- (5);
 
    returnVar(): Int {
       var + 7
