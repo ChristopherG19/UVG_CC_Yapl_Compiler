@@ -1382,7 +1382,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         #     return "Self"
 
 def main():
-    file_name = "./tests/arith.cl"
+    file_name = "./tests/exampleUser.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
