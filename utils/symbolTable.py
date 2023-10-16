@@ -41,15 +41,25 @@ class Table():
         if not self.row_exists_with_attributes(column):
             self.columns.append(column)
             self.build_Table()
-            return True
+            return True,column
         return False
         
     # Revisa id, tipo (method, class, etc.), clase parent
-    def get_cell(self, id, addType=None, addParent=None, addFunctionP=None, addScope=None):
+    def get_cell(self, id, addType=None, addParent=None, addFunctionP=None, addScope=None, typeObj=None):
         for row in self.columns:
-            if row[0] == id and (not addType or row[1] == addType) and (not addParent or row[4] == addParent) and (not addFunctionP or row[5] == addFunctionP) and (not addScope or row[5] == addScope):
+            if row[0] == id and (not addType or row[1] == addType) and (not typeObj or row[2] == typeObj) and (not addParent or row[4] == addParent) and (not addFunctionP or row[5] == addFunctionP) and (not addScope or row[5] == addScope):
                 return row
         return None
+    
+    def update_row_displacement(self, row_data, new_displacement):
+        # Encuentra la fila que coincida con los datos proporcionados en row_data
+        for row in self.columns:
+            if row == row_data:
+                # Actualiza el valor de la columna 'Displacement' en la fila encontrada
+                if new_displacement != None:
+                    row[self.headers.index('Displacement')] = new_displacement
+                    self.build_Table()
+                break
         
     def containsKey(self, id, addType=None, addParent=None, addFunctionP=None):
         if self.get_cell(id, addType, addParent, addFunctionP) is not None:
@@ -132,7 +142,6 @@ class Table():
                         if index < len(row):
                             # Update the cell with the new value
                             row[index] = value
-                            print("RR", row)
                             self.build_Table()
                             return True
                     else:
@@ -141,7 +150,6 @@ class Table():
                 elif row[5] != func and row[4] != classF:
                     continue
                 else:
-                    #print("-->>>",row[4], row[5], row[5] == func, row[4] == classF)
                     if column_name in self.headers:
                         index = self.headers.index(column_name)
                         if index < len(row):
