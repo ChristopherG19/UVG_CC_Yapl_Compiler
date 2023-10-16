@@ -35,10 +35,10 @@ class Main inherits IO {
 
    nnn: Bool <- True;
 
-   meth2(): String {
+   meth2(ppp: String): String {
       {
          {
-            "hola";
+            "Hola";
          };
       }
    };
@@ -87,8 +87,11 @@ class Main inherits IO {
          y <- (x - 5) + x * 5;
 
          out_string(str);
+         out_string("hola");
 
          meth1(5 + 6);
+
+         str.abort();
 
          z <- a.returnVar();
          z <- a.var;
