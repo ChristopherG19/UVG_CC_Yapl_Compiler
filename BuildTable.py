@@ -14,6 +14,7 @@ from utils.node import *
 from utils.symbolTable import *
 from utils.utils import clean_errors, get_space_vars, is_between_quotes
 from CI import *
+from MIPS import *
 
 class YAPLVisitorImpl(YAPLVisitor):
     def __init__(self):
@@ -1397,7 +1398,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         #     return "Self"
 
 def main():
-    file_name = "./tests/testScopes.cl"
+    file_name = "./tests/test1.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
@@ -1423,6 +1424,9 @@ def main():
 
     CI = CodigoIntermedio("CI.txt", YV.symbolTable)
     resCI = CI.visit(tree)
+    
+    MIPS_ = MIPS("CI.txt")
+    MIPS_.get_MIPS_Code()
 
     with open("SymbolTable.txt", "w", encoding="utf-8") as f:
         f.write(treeF.get_string())
