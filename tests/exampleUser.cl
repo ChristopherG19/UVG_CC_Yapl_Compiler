@@ -1,97 +1,132 @@
 class A {
-   var: Int <- 5;
+   og: Int <- 452 + 9;
+   var: Int <- ((5) * og) * (4 * (og));
+   booool: Bool <- NOT (False);
+   xdd: Int <- (5);
 
    returnVar(): Int {
-      var
+      var + 7
    };
 };
 
 class B inherits A {
    var1: Int <- 5;
+
+   setVar1(h: Int): Int {
+      var1 <- h
+   };
 };
 
-class Main inherits IO {
-	
-   x: Int;
-   str: String;
-   y: Int;
-   z: Int;
+class C inherits B {
 
-   a: A <- (new A);
-
-   m: Int;
-   n: Int <- (5 + 4);
-
-   meth1(n:Int, k: String): Int {
-      m <- n
+   method6(num : Int) : A { -- negate
+      (let x : Int in
+         {
+            x <- ~num;
+	    (new A).set_var(x);
+         }
+      )
    };
 
-   meth2(): String {
-      {
+   method5(num : Int) : A {  -- cube
+      (let x : Int in
+	 {
+            x <- num * num * num;
+	    (new A).set_var(x);
+	 }
+      )
+   };
+
+};
+
+class D inherits B {  
+		
+   method7(num : Int) : Bool {  -- divisible by 3
+      (let x : Int <- num in
+            if x < 0 then method7(~x) else
+            if 0 = x then true else
+            if 1 = x then false else
+	    if 2 = x then false else
+	       method7(x - 3)
+	    fi fi fi fi
+      )
+   };
+
+};
+
+class E inherits D {
+
+   method6(num : Int) : A {  -- division
+      (let x : Int in
          {
-            "hola";
-         };
-      }
+            x <- num / 8;
+	    (new A).set_var(x);
+         }
+      )
+   };
+
+};
+
+
+class Main inherits IO {
+   
+   char : String;
+   avar : A; 
+   a_var : A;
+   flag : Bool <- true;
+
+
+
+   is_even(num : Int) : Bool {
+      (let x : Int <- num in
+            if x < 0 then is_even(~x) else
+            if 0 = x then true else
+	    if 1 = x then false else
+	          is_even(x - 2)
+	    fi fi fi
+      )
    };
 
    main() : SELF_TYPE {
       {
-         x <- ~ 5;
+         avar <- (new A);
+	      avar.set_var(2);
+         out_int(avar.value());
+         
+         if is_even(avar.value()) then
+	          out_string(" es par!\n")
+	      else
+	          out_string(" es impar!\n")
+	      fi;
+	     
+         a_var <- (new A).set_var(3);
+	      avar <- (new B).method2(avar.value(), a_var.value());
+         out_int(avar.value());
+         out_string("\n");
+         
+         
+         avar <- (new C).method6(avar.value());
+         out_int(avar.value());
+         out_string("\n");
+        
+         a_var <- (new A).set_var(5);
+         avar <- (new D).method4(avar.value(), a_var.value());
+         out_int(avar.value());
+         out_string("\n");
+        
+         avar.set_var(5);
+         avar <- (new C)@A.method5(avar.value());
+         out_int(avar.value());
+         out_string("\n");
+      	 
+         avar.set_var(6);
+         avar <- (new C)@A.method5(avar.value());
+         out_int(avar.value());
+         out_string("\n");
 
-         if (x = 5) then 
-            str <- "igual"
-         else
-            if ((x >= 0) & (x < 10)) then 
-               str <- "mayor"
-            else
-               str <- "menor"
-         fi fi;
 
-         if x = 0 then 
-            out_string("igual")
-         else
-            out_string("desigual")
-         fi;
-
-         while NOT (x = 0)
-         LOOP 
-            x <- x - 1
-         POOL;
-
-         let 
-            str2: String <- "hehe,", 
-            jjj: Int <- (5*8),
-            lll: Int <- 5,
-            mmm: Int, 
-            nnn: Bool 
-         in 
-         {
-            mmm <- jjj;
-            if mmm = 5 then
-               nnn <- False
-            else
-               nnn <- True
-            fi;
-            out_string(str2);
-         };
-
-         y <- (x - 5) + x * 5;
-
-         out_string(str);
-
-         meth1(5 + 6, "string");
-
-         z <- a.returnVar();
-         z <- a.var;
-
-         str.abort();
 
       }
    };
 };
-
-
-
-
-
 

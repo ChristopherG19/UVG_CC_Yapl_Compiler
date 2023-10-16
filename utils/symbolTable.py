@@ -45,9 +45,9 @@ class Table():
         return False
         
     # Revisa id, tipo (method, class, etc.), clase parent
-    def get_cell(self, id, addType=None, addParent=None, addFunctionP=None):
+    def get_cell(self, id, addType=None, addParent=None, addFunctionP=None, addScope=None):
         for row in self.columns:
-            if row[0] == id and (not addType or row[1] == addType) and (not addParent or row[4] == addParent) and (not addFunctionP or row[5] == addFunctionP):
+            if row[0] == id and (not addType or row[1] == addType) and (not addParent or row[4] == addParent) and (not addFunctionP or row[5] == addFunctionP) and (not addScope or row[5] == addScope):
                 return row
         return None
         

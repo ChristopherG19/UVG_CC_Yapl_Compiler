@@ -152,19 +152,19 @@
 |   substr   |   String   |    Method   |   None   |   String  |    None    |     None     | Global |   0   |  None |
 |    iPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     | Local  |   0   |  None |
 |    lPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     | Local  |   0   |  None |
-|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     | Global |  947  |  None |
+|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     | Global |  189  |  None |
 | out_string | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
-|   xParS    |   String   |    Param    |   None   |    Main   | out_string |     113      | Local  |   0   |  None |
+|   xParS    |   String   |    Param    |   None   |    Main   | out_string |     None     | Local  |   0   |  None |
 |  out_int   | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
 |   xParI    |    Int     |    Param    |   None   |    Main   |  out_int   |     105      | Local  |   0   |  None |
 | in_string  |   String   |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
 |  int_int   |    Int     |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
 |    char    |   String   |   Instance  |   None   |    Main   |    None    |      0       | Global |   2   |   ''  |
-|    avar    |     A      |   Instance  |   None   |    Main   |    None    |      2       | Global |  105  |  None |
+|    avar    |     A      |   Instance  |   None   |    Main   |    None    |     517      | Global |  105  |  None |
 |   a_var    |     A      |   Instance  |   None   |    Main   |    None    |     107      | Global |  105  |  None |
 |    flag    |    Bool    |   Instance  |   None   |    Main   |    None    |     212      | Global |   1   | False |
-|    num     |    Int     |    Param    |   None   |    Main   |  is_even   |      0       | Local  |   4   |  None |
+|    num     |    Int     |    Param    |   None   |    Main   |  is_even   |     None     | Local  |   4   |  None |
 |  is_even   |    Bool    |    Method   |   None   |    Main   |    None    |     None     | Global |   5   |  None |
-|     x      |    Int     |   Variable  |   None   |    Main   |  is_even   |      4       | Local  |   4   |  None |
+|     x      |    Int     |   Variable  |   None   |    Main   |  is_even   |     None     | Local  |   4   |  None |
 |    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |  715  |  None |
 +------------+------------+-------------+----------+-----------+------------+--------------+--------+-------+-------+
