@@ -28,53 +28,53 @@ CLASS B
 		RETURN t5
 	END FUNC returnVar
 
-		LW GP[4], 5
+		LW GP[13], 5
 	B.setVar1
 		PARAM SP[0], P0
-		LW SP[4], SP[0]
-		RETURN SP[4]
+		LW SP[13], SP[0]
+		RETURN SP[13]
 	END FUNC setVar1
 EOC
 CLASS Main
 		LW t0, A
 		LW GP[14], t0
 		ADD t1, 5, 4
-		LW GP[79], t1
+		LW GP[35], t1
 	Main.meth1
 		PARAM SP[None], P0
-		LW SP[None], SP[None]
-		RETURN SP[None]
+		LW SP[31], SP[None]
+		RETURN SP[31]
 	END FUNC meth1
-		LW GP[54], True
+		LW GP[39], True
 	Main.meth2
 		PARAM SP[0], P0
 		RETURN "Hola"
 	END FUNC meth2
 	Main.main
 		NEG t4, 5
-		LW SP[30], t4
-		SEQ t5, GP[30], 5
+		LW SP[0], t4
+		SEQ t5, GP[0], 5
 		IF t5 > 0 GOTO L_TRUE_0
 		GOTO L_FALSE_0
 L_TRUE_0:
-		LW SP[None], "igual"
+		LW SP[4], "igual"
 		GOTO L_IF_END_0
 L_FALSE_0:
-		SGE t6, GP[30], 0
-		SLT t7, GP[30], 10
+		SGE t6, GP[0], 0
+		SLT t7, GP[0], 10
 		AND t8, t6, t7
 		IF t8 > 0 GOTO L_TRUE_1
 		GOTO L_FALSE_1
 L_TRUE_1:
-		LW SP[None], "mayor"
+		LW SP[4], "mayor"
 		GOTO L_IF_END_1
 L_FALSE_1:
-		LW SP[None], "menor"
+		LW SP[4], "menor"
 		GOTO L_IF_END_1
 L_IF_END_1:
 		GOTO L_IF_END_0
 L_IF_END_0:
-		SEQ t0, GP[30], 0
+		SEQ t0, GP[0], 0
 		IF t0 > 0 GOTO L_TRUE_2
 		GOTO L_FALSE_2
 L_TRUE_2:
@@ -88,37 +88,37 @@ L_FALSE_2:
 L_IF_END_2:
 		GOTO L_LOOP_0
 L_LOOP_0:
-		SEQ t1, GP[30], 0
+		SEQ t1, GP[0], 0
 		NOT t2, t1
 		IF t2 = 0 GOTO L_LOOP_END_0
 		MULT t3, 4, 5
 		ADD t4, 1, t3
-		SUB t5, GP[30], t4
-		LW SP[30], t5
+		SUB t5, GP[0], t4
+		LW SP[0], t5
 		GOTO L_LOOP_0
 L_LOOP_END_0:
 		LW SP[34], "hehe,"
 		MULT t6, 5, 8
 		LW SP[36], t6
 		LW SP[40], 5
-		LW SP[49], SP[36]
-		SEQ t7, SP[49], 5
+		LW SP[44], SP[36]
+		SEQ t7, SP[44], 5
 		IF t7 > 0 GOTO L_TRUE_3
 		GOTO L_FALSE_3
 L_TRUE_3:
-		LW SP[54], False
+		LW SP[39], False
 		GOTO L_IF_END_3
 L_FALSE_3:
-		LW SP[54], True
+		LW SP[39], True
 		GOTO L_IF_END_3
 L_IF_END_3:
 		PARAM SP[34]
 		CALL IO.out_string, 1
-		SUB t8, GP[30], 5
-		LW SP[57], t8
-		MULT t0, GP[30], 5
+		SUB t8, GP[0], 5
+		LW SP[6], t8
+		MULT t0, GP[0], 5
 		ADD t1, True, t0
-		PARAM GP[None]
+		PARAM GP[4]
 		CALL IO.out_string, 1
 		PARAM "hola"
 		CALL IO.out_string, 1
@@ -126,13 +126,13 @@ L_IF_END_3:
 		PARAM t2
 		CALL Main.meth1, 1
 		LW t3, RET
-		CALL GP[None].abort, 0
+		CALL GP[4].abort, 0
 		CALL GP[14].returnVar, 0
 		LW t5, RET
-		LW SP[87], t5
+		LW SP[10], t5
 		CALL GP[14].GP[4], 0
 		LW t6, RET
-		LW SP[87], t6
+		LW SP[10], t6
 		RETURN
 	END FUNC main
 EOC
