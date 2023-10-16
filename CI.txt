@@ -69,19 +69,19 @@ CLASS Main
 		LW SP[30], t6
 		SEQ t7, GP[30], 5
 		LW t8, t7
-		IF t0 > 0 GOTO L_TRUE_0
+		IF t8 > 0 GOTO L_TRUE_0
 		GOTO L_FALSE_0
 L_TRUE_0:
 		LW SP[None], "igual"
 		GOTO L_IF_END_0
 L_FALSE_0:
-		SGE t1, GP[30], 0
-		LW t2, t1
-		SLT t3, GP[30], 10
-		LW t4, t3
-		AND t5, t2, t4
-		LW t6, t5
-		IF t7 > 0 GOTO L_TRUE_1
+		SGE t0, GP[30], 0
+		LW t1, t0
+		SLT t2, GP[30], 10
+		LW t3, t2
+		AND t4, t1, t3
+		LW t5, t4
+		IF t5 > 0 GOTO L_TRUE_1
 		GOTO L_FALSE_1
 L_TRUE_1:
 		LW SP[None], "mayor"
@@ -92,8 +92,8 @@ L_FALSE_1:
 L_IF_END_1:
 		GOTO L_IF_END_0
 L_IF_END_0:
-		SEQ t8, GP[30], 0
-		IF t0 > 0 GOTO L_TRUE_2
+		SEQ t6, GP[30], 0
+		IF t6 > 0 GOTO L_TRUE_2
 		GOTO L_FALSE_2
 L_TRUE_2:
 		PARAM "igual"
@@ -106,25 +106,25 @@ L_FALSE_2:
 L_IF_END_2:
 		GOTO L_LOOP_0
 L_LOOP_0:
-		SEQ t1, GP[30], 0
-		LW t2, t1
-		NOT t3, t2
-		IF t3 = 0 GOTO L_LOOP_END_0
-		MULT t4, 4, 5
-		ADD t5, 1, t4
-		SUB t6, GP[30], t5
-		LW t7, t6
-		LW SP[30], t7
+		SEQ t7, GP[30], 0
+		LW t8, t7
+		NOT t0, t8
+		IF t0 = 0 GOTO L_LOOP_END_0
+		MULT t1, 4, 5
+		ADD t2, 1, t1
+		SUB t3, GP[30], t2
+		LW t4, t3
+		LW SP[30], t4
 		GOTO L_LOOP_0
 L_LOOP_END_0:
 		LW SP[34], "hehe,"
-		MULT t8, 5, 8
-		LW t0, t8
-		LW SP[36], t0
+		MULT t5, 5, 8
+		LW t6, t5
+		LW SP[36], t6
 		LW SP[40], 5
 		LW SP[49], SP[36]
-		SEQ t1, SP[49], 5
-		IF t2 > 0 GOTO L_TRUE_3
+		SEQ t7, SP[49], 5
+		IF t7 > 0 GOTO L_TRUE_3
 		GOTO L_FALSE_3
 L_TRUE_3:
 		LW SP[54], False
@@ -135,25 +135,26 @@ L_FALSE_3:
 L_IF_END_3:
 		PARAM SP[34]
 		CALL IO.out_string, 1
-		SUB t3, GP[30], 5
-		LW t4, t3
-		LW SP[57], t4
-		MULT t5, GP[30], 5
-		ADD t6, True, t5
+		SUB t8, GP[30], 5
+		LW t0, t8
+		LW SP[57], t0
+		MULT t1, GP[30], 5
+		ADD t2, True, t1
 		PARAM GP[None]
 		CALL IO.out_string, 1
 		PARAM "hola"
 		CALL IO.out_string, 1
-		ADD t7, 5, 6
-		PARAM t7
+		ADD t3, 5, 6
+		PARAM t3
 		CALL Main.meth1, 1
-		LW t8, R
-		CALL .abort, 0
-		LW t0, R
-		CALL .returnVar, 0
-		LW t1, R
+		LW t4, RET
+		CALL GP[None].abort, 0
+		CALL GP[14].returnVar, 0
+		LW t6, RET
 		LW SP[87], t6
-		LW SP[87], False
+		CALL GP[14].GP[4], 0
+		LW t7, RET
+		LW SP[87], t7
 		RETURN
 	END FUNC main
 EOC

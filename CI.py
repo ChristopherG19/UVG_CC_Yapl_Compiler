@@ -218,23 +218,22 @@ class CodigoIntermedio(YAPLVisitor):
         print("#dispatchExplicit")
         retText = ""
 
-        expr_ = ""
-        exprText_0 = ctx.expr(0).getText()
-        # print("exprText ", exprText_0)
-        if ctx.expr(0).getChildCount() > 1: 
-            print(">>1")
+        # parte izquierda
+        p_iz = ""
+        if ctx.expr(0).getChildCount() > 1:
+            print(">> 1")
             retText += self.visit(ctx.expr(0))
-            if len(self.temp_stack)> 0:
-                expr_ = self.temp_stack.pop()
-            else: 
-                expr_ = "tt"
-        else:
-            print("==1")
-            # revisar si está en la lista
-            if exprText_0 in self.registers[self.currentClass].keys():
-                expr_ = self.registers[self.currentClass][exprText_0]
-            else: 
-                expr_ = exprText
+            if len(self.temp_stack) > 0: 
+                p_iz = self.temp_stack.pop()
+            else:
+                p_iz = "tt"
+        else: 
+            print("== 1")
+            p_iz = ctx.expr(0).getText()
+            # revisar si está en el diccionario de registros
+            if p_iz in self.registers[self.currentClass].keys():
+                p_iz = self.registers[self.currentClass][p_iz]
+        
 
         id = ctx.ID().getText()
 
@@ -269,17 +268,26 @@ class CodigoIntermedio(YAPLVisitor):
             retText += f"\t\tPARAM {p}\n"
 
         # print("info ", id, ", ", self.currentClass)
-        row1 = self.symbolTable.get_cell(id= ctx.ID().getText(), addParent = self.currentClass)
+        row1 = self.symbolTable.get_cell(id= ctx.ID().getText())
         # print("row ", row1)
         bClass = ""
 
-        retText += f"\t\tCALL {bClass}.{id}, {len(paramlist)}\n"
+        retText += f"\t\tCALL {p_iz}.{id}, {len(paramlist)}\n"
 
         # if (not (row[1].upper() == "SELF_TYPE" or row[1].upper() == "VOID")):
         name = f"t{self.temp_counter}"
         self.addToTemp()
+        self.temp_stack.append(name)
 
-        retText += f"\t\tLW {name}, R\n"
+        if (not (
+            row1[1].upper() == "SELF_TYPE" or 
+            row1[1].upper() == "VOID" or 
+            row1[1].upper() == "OBJECT"
+            )):
+            
+            retText += f"\t\tLW {name}, RET\n"
+
+            self.lastStatement = name
 
         self.lastStatement = name
 
@@ -324,10 +332,15 @@ class CodigoIntermedio(YAPLVisitor):
         # print("row1 ", row1)
         retText += f"\t\tCALL {row1[4]}.{id}, {len(paramlist)}\n"
 
-        if (not (row1[1].upper() == "SELF_TYPE" or row1[1].upper() == "VOID")):
+        if (not (
+            row1[1].upper() == "SELF_TYPE" or 
+            row1[1].upper() == "VOID" or 
+            row1[1].upper() == "OBJECT"
+            )):
             name = f"t{self.temp_counter}"
             self.addToTemp()
-            retText += f"\t\tLW {name}, R\n"
+            self.temp_stack.append(name)
+            retText += f"\t\tLW {name}, RET\n"
 
             self.lastStatement = name
 
@@ -337,7 +350,51 @@ class CodigoIntermedio(YAPLVisitor):
         print("#dispatchAttribute")
         retText = ""
 
-        retText += self.visit(ctx.expr()) #TODO
+        # parte izquierda
+        p_iz = ""
+        if ctx.expr().getChildCount() > 1:
+            print(">> 1")
+            retText += self.visit(ctx.expr())
+            if len(self.temp_stack) > 0: 
+                p_iz = self.temp_stack.pop()
+            else:
+                p_iz = "tt"
+        else: 
+            print("== 1")
+            p_iz = ctx.expr().getText()
+            # revisar si está en el diccionario de registros
+            if p_iz in self.registers[self.currentClass].keys():
+                p_iz = self.registers[self.currentClass][p_iz]
+        
+        id = ctx.ID().getText()
+
+        # print("info ", id, ", ", self.currentClass)
+        row = self.symbolTable.get_cell(id= ctx.expr().getText(), addParent = self.currentClass)
+        print(row)
+        if row:
+            id = self.registers[row[1]][id]
+        
+        # print("row ", row1)
+        bClass = ""
+
+        retText += f"\t\tCALL {p_iz}.{id}, 0\n"
+
+        # if (not (row[1].upper() == "SELF_TYPE" or row[1].upper() == "VOID")):
+        name = f"t{self.temp_counter}"
+        self.addToTemp()
+        self.temp_stack.append(name)
+
+        if (not (
+            row[1].upper() == "SELF_TYPE" or 
+            row[1].upper() == "VOID" or 
+            row[1].upper() == "OBJECT"
+            )):
+            
+            retText += f"\t\tLW {name}, RET\n"
+
+            self.lastStatement = name
+
+        self.lastStatement = name
 
         return retText
     
@@ -349,7 +406,6 @@ class CodigoIntermedio(YAPLVisitor):
         name = ""
         exprText = ctx.expr().getText()
         if ctx.expr().getChildCount() > 1:
-            # print("> 1")
             # revisar si es un string
             if exprText[:1] == '"':
                 print("string")
@@ -400,9 +456,11 @@ class CodigoIntermedio(YAPLVisitor):
         # visitar la condición
         retText += self.visit(ctx.expr(0))
 
-        temp_ = f"t{self.temp_counter}"
-        self.addToTemp()
-        self.temp_stack.append(temp_)
+        temp_ = ""
+        if len(self.temp_stack) > 0:
+            temp_ = self.temp_stack.pop()
+        else:
+            temp_ = "tt"
 
         # obtener contadores
         if_ = self.goto_if
