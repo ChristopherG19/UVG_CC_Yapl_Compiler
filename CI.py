@@ -1226,12 +1226,15 @@ class CodigoIntermedio(YAPLVisitor):
             if p_iz in self.registers[self.currentClass].keys():
                 p_iz = self.registers[self.currentClass][p_iz]
         
-        temp_ = f"t{self.temp_counter}"
-        self.addToTemp()
-        self.temp_stack.append(temp_)
+        # volver a meter el valor al stack
+        self.temp_stack.append(p_iz)
+        
+        # temp_ = f"t{self.temp_counter}"
+        # self.addToTemp()
+        # self.temp_stack.append(temp_)
 
-        retText += f"\t\tLW {temp_}, {p_iz}\n"
-        self.lastStatement = temp_
+        # retText += f"\t\tLW {temp_}, {p_iz}\n"
+        # self.lastStatement = temp_
 
         return retText
     
