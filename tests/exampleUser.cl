@@ -1,5 +1,5 @@
 class A {
-   og: Int <- 452;
+   og: Int <- 452 + 9;
    var: Int <- ((5) * og) * (4 * (og));
    booool: Bool <- NOT (False);
    xdd: Int <- (5);
@@ -33,6 +33,8 @@ class Main inherits IO {
       m <- n
    };
 
+   nnn: Bool <- True;
+
    meth2(): String {
       {
          {
@@ -62,7 +64,7 @@ class Main inherits IO {
 
          while NOT (x = 0)
          LOOP 
-            x <- x - 1
+            x <- (x - 1 + 4 * 5)
          POOL;
 
          let 
@@ -91,9 +93,12 @@ class Main inherits IO {
          z <- a.returnVar();
          z <- a.var;
 
+
+
       }
    };
 };
+
 
 
 

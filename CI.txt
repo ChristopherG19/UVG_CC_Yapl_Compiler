@@ -1,49 +1,52 @@
 CLASS A
-		LW SP[0], 452
-		LW t0, 5
-		MULT t1, t0, SP[0]
-		LW t2, t1
-		LW t3, SP[0]
-		MULT t4, 4, t3
-		LW t5, t4
-		MULT t6, t2, t5
-		LW SP[4], t6
-		LW t7, False
-		NOT t8, t7
-		LW SP[8], t8
-		LW t0, 5
-		LW SP[9], t0
+		ADD t0, 452, 9
+		LW SP[0], t0
+		LW t1, 5
+		MULT t2, t1, SP[0]
+		LW t3, t2
+		LW t4, SP[0]
+		MULT t5, 4, t4
+		LW t6, t5
+		MULT t7, t3, t6
+		LW SP[4], t7
+		LW t8, False
+		NOT t0, t8
+		LW SP[8], t0
+		LW t1, 5
+		LW SP[9], t1
 	A.returnVar
-		ADD t1, SP[4], 7
-		RETURN t1
+		ADD t2, SP[4], 7
+		RETURN t2
 	END FUNC returnVar
 EOC
 CLASS B
 		CLASS A
-		LW SP[0], 452
-		LW t0, 5
-		MULT t1, t0, SP[0]
-		LW t2, t1
-		LW t3, SP[0]
-		MULT t4, 4, t3
-		LW t5, t4
-		MULT t6, t2, t5
-		LW SP[4], t6
-		LW t7, False
-		NOT t8, t7
-		LW SP[8], t8
-		LW t0, 5
-		LW SP[9], t0
+		ADD t0, 452, 9
+		LW SP[0], t0
+		LW t1, 5
+		MULT t2, t1, SP[0]
+		LW t3, t2
+		LW t4, SP[0]
+		MULT t5, 4, t4
+		LW t6, t5
+		MULT t7, t3, t6
+		LW SP[4], t7
+		LW t8, False
+		NOT t0, t8
+		LW SP[8], t0
+		LW t1, 5
+		LW SP[9], t1
 	A.returnVar
-		ADD t1, SP[4], 7
-		RETURN t1
+		ADD t2, SP[4], 7
+		RETURN t2
 	END FUNC returnVar
 EOC
 
 		LW SP[4], 5
 	B.setVar1
 		LW t0, P
-		RETURN t0
+		LW SP[4], h
+		RETURN SP[4]
 	END FUNC setVar1
 EOC
 CLASS Main
@@ -52,57 +55,94 @@ CLASS Main
 		LW SP[14], t1
 		ADD t2, 5, 4
 		LW t3, t2
-		LW SP[67], t3
+		LW SP[71], t3
 	Main.meth1
 		LW t4, P
-		RETURN t4
+		LW SP[None], SP[71]
+		RETURN SP[None]
 	END FUNC meth1
+		LW SP[54], True
 	Main.meth2
-		RETURN t4
+		RETURN SP[54]
 	END FUNC meth2
 	Main.main
-		LW t6, t5
-		IF t7 > 0 GOTO L_TRUE_0
+		NEG t5, 5
+		LW SP[30], t5
+		SEQ t6, SP[30], 5
+		LW t7, t6
+		IF t8 > 0 GOTO L_TRUE_0
 		GOTO L_FALSE_0
 L_TRUE_0:
+		LW SP[None], "igual"
 		GOTO L_IF_END_0
 L_FALSE_0:
-		SGE t8, SP[None], 0
-		LW t0, t8
-		SLT t1, SP[None], 10
-		LW t2, t1
-		AND t3, t0, t2
-		LW t4, t3
-		IF t5 > 0 GOTO L_TRUE_1
+		SGE t0, SP[30], 0
+		LW t1, t0
+		SLT t2, SP[30], 10
+		LW t3, t2
+		AND t4, t1, t3
+		LW t5, t4
+		IF t6 > 0 GOTO L_TRUE_1
 		GOTO L_FALSE_1
 L_TRUE_1:
+		LW SP[None], "mayor"
 		GOTO L_IF_END_1
 L_FALSE_1:
+		LW SP[None], "menor"
 		GOTO L_IF_END_1
 L_IF_END_1:
 		GOTO L_IF_END_0
 L_IF_END_0:
-		IF t7 > 0 GOTO L_TRUE_2
+		SEQ t7, SP[30], 0
+		IF t8 > 0 GOTO L_TRUE_2
 		GOTO L_FALSE_2
 L_TRUE_2:
-		LW t8, R
-		GOTO L_IF_END_2
-L_FALSE_2:
 		LW t0, R
 		GOTO L_IF_END_2
+L_FALSE_2:
+		LW t1, R
+		GOTO L_IF_END_2
 L_IF_END_2:
-		GOTO L_LOOP_0L_LOOP_0:
-		IF xd = 0 GOTO L_LOOP_END_0
-		SUB t1, t7, 1
+		GOTO L_LOOP_0
+L_LOOP_0:
+		SEQ t2, SP[30], 0
+		LW t3, t2
+		NOT t4, t3
+		IF t4 = 0 GOTO L_LOOP_END_0
+		MULT t5, 4, 5
+		ADD t6, 1, t5
+		SUB t7, SP[30], t6
+		LW t8, t7
+		LW SP[30], t8
 		GOTO L_LOOP_0
 L_LOOP_END_0:
-		SUB t2, SP[None], 5
-		LW t3, t2
-		MULT t4, SP[None], 5
-		ADD t5, t3, t4
-		LW t6, R
-		LW t7, R
-		LW t8, R
+		LW SP[34], "hehe,"
+		MULT t0, 5, 8
+		LW t1, t0
+		LW SP[36], t1
+		LW SP[40], 5
+		LW SP[49], SP[36]
+		SEQ t2, SP[49], 5
+		IF t3 > 0 GOTO L_TRUE_3
+		GOTO L_FALSE_3
+L_TRUE_3:
+		LW SP[54], False
+		GOTO L_IF_END_3
+L_FALSE_3:
+		LW SP[54], True
+		GOTO L_IF_END_3
+L_IF_END_3:
+		LW t4, R
+		SUB t5, SP[30], 5
+		LW t6, t5
+		LW SP[57], t6
+		MULT t7, SP[30], 5
+		ADD t8, True, t7
+		LW t0, R
+		LW t1, R
+		LW t2, R
+		LW SP[79], t8
+		LW SP[79], False
 		RETURN
 	END FUNC main
 EOC
