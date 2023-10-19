@@ -27,6 +27,9 @@ class CodigoIntermedio(YAPLVisitor):
         # other variables
         self.currentClass = ""
 
+        self.position = []
+        self.let = 0
+
         # self.functions = {}
         self.registers = {}
         self.functions = {}
@@ -39,7 +42,7 @@ class CodigoIntermedio(YAPLVisitor):
     # ================================================================================
 
     def visitStart(self, ctx:YAPLParser.StartContext):
-        print("#start")
+        # print("#start")
         self.finalText = ""
         stages = ctx.class_def()
         for stage in stages:
@@ -58,13 +61,14 @@ class CodigoIntermedio(YAPLVisitor):
         print("\n=================")
         # print(self.functions, "\n")
         for r in self.registers:
+            print(r)
             print(self.registers[r])
         print(self.temp_stack)
         # print(self.classes)
 
     
     def visitDefClass(self, ctx:YAPLParser.DefClassContext):
-        print("#defClass")
+        # print("#defClass")
         retText = ""
 
         self.temp_counter = 0
@@ -109,10 +113,11 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitDefFunc(self, ctx:YAPLParser.DefFuncContext):
-        print("#defFun")
+        # print("#defFun")
         retText = ""
 
         id = ctx.ID().getText()
+        self.currentFun = id
         print("id ", id)
         retText += f"\t{self.currentClass}.{id}\n"
 
@@ -140,7 +145,7 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitDefAssign(self, ctx:YAPLParser.DefAssignContext):
-        print("#defAssign")
+        # print("#defAssign")
         retText = ""
 
         # solamente hacer algo si la variable es definida
@@ -196,7 +201,7 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitFormalAssign(self, ctx:YAPLParser.FormalAssignContext):
-        print("#formalAssign")
+        # print("#formalAssign")
         retText = ""
 
         temp_ = f"t{self.temp_counter}"
@@ -215,20 +220,20 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitDispatchExplicit(self, ctx:YAPLParser.DispatchExplicitContext):
-        print("#dispatchExplicit")
+        # print("#dispatchExplicit")
         retText = ""
 
         # parte izquierda
         p_iz = ""
         if ctx.expr(0).getChildCount() > 1:
-            print(">> 1")
+            # print(">> 1")
             retText += self.visit(ctx.expr(0))
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
                 p_iz = "tt"
         else: 
-            print("== 1")
+            # print("== 1")
             p_iz = ctx.expr(0).getText()
             # revisar si está en el diccionario de registros
             if p_iz in self.registers[self.currentClass].keys():
@@ -242,19 +247,19 @@ class CodigoIntermedio(YAPLVisitor):
         for i, expr in enumerate(ctx.expr()):
             if i == 0:
                 continue # nos saltamos el primer expr
-            print("in expr°")
+            # print("in expr°")
             par = ""
             exprText = expr.getText()
             # print("exprText ", exprText)
             if expr.getChildCount() > 1: 
-                print(">>1")
+                # print(">>1")
                 retText += self.visit(expr)
                 if len(self.temp_stack)> 0:
                     par = self.temp_stack.pop()
                 else: 
                     par = "tt"
             else:
-                print("==1")
+                # print("==1")
                 # revisar si está en la lista
                 if exprText in self.registers[self.currentClass].keys():
                     par = self.registers[self.currentClass][exprText]
@@ -294,7 +299,7 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitDispatchImplicit(self, ctx:YAPLParser.DispatchImplicitContext):
-        print("#dispatchImplicit")
+        # print("#dispatchImplicit")
         retText = ""
 
         id = ctx.ID().getText()
@@ -307,14 +312,14 @@ class CodigoIntermedio(YAPLVisitor):
             exprText = expr.getText()
             # print("exprText ", exprText)
             if expr.getChildCount() > 1: 
-                # print(">>1")
+                # # print(">>1")
                 retText += self.visit(expr)
                 if len(self.temp_stack)> 0:
                     par = self.temp_stack.pop()
                 else: 
                     par = "tt"
             else:
-                # print("==1")
+                # # print("==1")
                 # revisar si está en la lista
                 if exprText in self.registers[self.currentClass].keys():
                     par = self.registers[self.currentClass][exprText]
@@ -347,20 +352,20 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitDispatchAttribute(self, ctx:YAPLParser.DispatchAttributeContext):
-        print("#dispatchAttribute")
+        # print("#dispatchAttribute")
         retText = ""
 
         # parte izquierda
         p_iz = ""
         if ctx.expr().getChildCount() > 1:
-            print(">> 1")
+            # print(">> 1")
             retText += self.visit(ctx.expr())
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
                 p_iz = "tt"
         else: 
-            print("== 1")
+            # print("== 1")
             p_iz = ctx.expr().getText()
             # revisar si está en el diccionario de registros
             if p_iz in self.registers[self.currentClass].keys():
@@ -399,7 +404,7 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitAssignment(self, ctx:YAPLParser.AssignmentContext):
-        print("#assignment")
+        # print("#assignment")
         # print("ass ", ctx.getText())
         retText = ""
         
@@ -434,6 +439,7 @@ class CodigoIntermedio(YAPLVisitor):
             text_ = ctx.expr().getText()
             if text_ in self.registers[self.currentClass].keys():
                 name = self.registers[self.currentClass][text_]
+                print(f"\n{text_}, {name}\n")
             else:
                 name = text_
             retText += self.visit(ctx.expr())
@@ -450,7 +456,7 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitIf(self, ctx:YAPLParser.IfContext):
-        print("#if")
+        # print("#if")
         retText = ""
 
         # visitar la condición
@@ -466,7 +472,7 @@ class CodigoIntermedio(YAPLVisitor):
         if_ = self.goto_if
         self.goto_if += 1
 
-        retText += f"\t\tIF {temp_} > 0 GOTO L_TRUE_{if_}\n"
+        retText += f"\t\tIF {temp_} < 0 GOTO L_TRUE_{if_}\n"
         retText += f"\t\tGOTO L_FALSE_{if_}\n"
 
         # caso real
@@ -485,7 +491,7 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitWhile(self, ctx:YAPLParser.WhileContext):
-        print("#while")
+        # print("#while")
         retText = ""
 
         # guardar las etiquetas a usar
@@ -515,7 +521,7 @@ class CodigoIntermedio(YAPLVisitor):
                 p_iz = self.registers[self.currentClass][p_iz]
         
 
-        retText += f"\t\tIF {p_iz} = 0 GOTO {end_}\n"
+        retText += f"\t\tIF {p_iz} < 0 GOTO {end_}\n"
 
         # hacer lo de adentro 
         # print("res ", type(ctx.expr(1)))
@@ -527,7 +533,7 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitBlock(self, ctx:YAPLParser.BlockContext):
-        print("#block")
+        # print("#block")
         retText = ""
 
         for expr in ctx.expr():
@@ -536,7 +542,7 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitLetId(self, ctx:YAPLParser.LetIdContext):
-        print("#letId")
+        # print("#letId")
         retText = ""
         
         trips = []
@@ -609,7 +615,7 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitNew(self, ctx:YAPLParser.NewContext):
-        print("#new")
+        # print("#new")
         retText = ""
 
         temp_ = f"t{self.temp_counter}"
@@ -622,20 +628,20 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitNegative(self, ctx:YAPLParser.NegativeContext):
-        print("#negative")
+        # print("#negative")
         retText = ""
 
         # parte 
         p_iz = ""
         if ctx.expr().getChildCount() > 1:
-            # print(">> 1")
+            # # print(">> 1")
             retText += self.visit(ctx.expr())
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
                 p_iz = "tt"
         else: 
-            print("== 1")
+            # print("== 1")
             p_iz = ctx.expr().getText()
             # revisar si está en el diccionario de registros
             if p_iz in self.registers[self.currentClass].keys():
@@ -651,26 +657,26 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitIsvoid(self, ctx:YAPLParser.IsvoidContext):
-        print("#isvoid")
+        # print("#isvoid")
         retText = ""
 
         return retText
     
     def visitTimes(self, ctx:YAPLParser.TimesContext):
-        print("#times")
+        # print("#times")
         retText = ""
 
         # parte izquierda
         p_iz = ""
         if ctx.expr(0).getChildCount() > 1:
-            # print(">> 1")
+            # # print(">> 1")
             retText += self.visit(ctx.expr(0))
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
                 p_iz = "tt"
         else: 
-            print("== 1")
+            # print("== 1")
             p_iz = ctx.expr(0).getText()
             # revisar si está en el diccionario de registros
             if p_iz in self.registers[self.currentClass].keys():
@@ -704,20 +710,20 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitDiv(self, ctx:YAPLParser.DivContext):
-        print("#div")
+        # print("#div")
         retText = ""
 
         # parte izquierda
         p_iz = ""
         if ctx.expr(0).getChildCount() > 1:
-            print(">> 1")
+            # print(">> 1")
             retText += self.visit(ctx.expr(0))
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
                 p_iz = "tt"
         else: 
-            print("== 1")
+            # print("== 1")
             p_iz = ctx.expr(0).getText()
             # revisar si está en el diccionario de registros
             if p_iz in self.registers[self.currentClass].keys():
@@ -751,20 +757,20 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitPlus(self, ctx:YAPLParser.PlusContext):
-        print("#plus")
+        # print("#plus")
         retText = ""
 
         # parte izquierda
         p_iz = ""
         if ctx.expr(0).getChildCount() > 1:
-            print(">> 1")
+            # print(">> 1")
             retText += self.visit(ctx.expr(0))
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
                 p_iz = "tt"
         else: 
-            print("== 1")
+            # print("== 1")
             p_iz = ctx.expr(0).getText()
             # revisar si está en el diccionario de registros
             if p_iz in self.registers[self.currentClass].keys():
@@ -798,20 +804,20 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitMinus(self, ctx:YAPLParser.MinusContext):
-        print("#minus")
+        # print("#minus")
         retText = ""
 
         # parte izquierda
         p_iz = ""
         if ctx.expr(0).getChildCount() > 1:
-            print(">> 1")
+            # print(">> 1")
             retText += self.visit(ctx.expr(0))
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
                 p_iz = "tt"
         else: 
-            print("== 1")
+            # print("== 1")
             p_iz = ctx.expr(0).getText()
             # revisar si está en el diccionario de registros
             if p_iz in self.registers[self.currentClass].keys():
@@ -845,20 +851,20 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitLessThanOrEqual(self, ctx:YAPLParser.LessThanContext):
-        print("#lessThanOrEqual")
+        # print("#lessThanOrEqual")
         retText = ""
 
         # parte izquierda
         p_iz = ""
         if ctx.expr(0).getChildCount() > 1:
-            print(">> 1")
+            # print(">> 1")
             retText += self.visit(ctx.expr(0))
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
                 p_iz = "tt"
         else: 
-            print("== 1")
+            # print("== 1")
             p_iz = ctx.expr(0).getText()
             # revisar si está en el diccionario de registros
             if p_iz in self.registers[self.currentClass].keys():
@@ -892,21 +898,21 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitLessThan(self, ctx:YAPLParser.LessThanOrEqualContext):
-        print("#lessThan")
+        # print("#lessThan")
         retText = ""
 
         # parte izquierda
         # parte izquierda
         p_iz = ""
         if ctx.expr(0).getChildCount() > 1:
-            print(">> 1")
+            # print(">> 1")
             retText += self.visit(ctx.expr(0))
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
                 p_iz = "tt"
         else: 
-            print("== 1")
+            # print("== 1")
             p_iz = ctx.expr(0).getText()
             # revisar si está en el diccionario de registros
             if p_iz in self.registers[self.currentClass].keys():
@@ -940,20 +946,20 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitGreaterThan(self, ctx:YAPLParser.GreaterThanContext):
-        print("#greaterThan")
+        # print("#greaterThan")
         retText = ""
 
         # parte izquierda
         p_iz = ""
         if ctx.expr(0).getChildCount() > 1:
-            print(">> 1")
+            # print(">> 1")
             retText += self.visit(ctx.expr(0))
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
                 p_iz = "tt"
         else: 
-            print("== 1")
+            # print("== 1")
             p_iz = ctx.expr(0).getText()
             # revisar si está en el diccionario de registros
             if p_iz in self.registers[self.currentClass].keys():
@@ -987,20 +993,20 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitGreaterThanOrEqual(self, ctx:YAPLParser.GreaterThanOrEqualContext):
-        print("#greaterThanOrEqual")
+        # print("#greaterThanOrEqual")
         retText = ""
 
         # parte izquierda
         p_iz = ""
         if ctx.expr(0).getChildCount() > 1:
-            print(">> 1")
+            # print(">> 1")
             retText += self.visit(ctx.expr(0))
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
                 p_iz = "tt"
         else: 
-            print("== 1")
+            # print("== 1")
             p_iz = ctx.expr(0).getText()
             # revisar si está en el diccionario de registros
             if p_iz in self.registers[self.currentClass].keys():
@@ -1034,20 +1040,20 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitEqual(self, ctx:YAPLParser.EqualContext):
-        print("#equal")
+        # print("#equal")
         retText = ""
 
         # parte izquierda
         p_iz = ""
         if ctx.expr(0).getChildCount() > 1:
-            print(">> 1")
+            # print(">> 1")
             retText += self.visit(ctx.expr(0))
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
                 p_iz = "tt"
         else: 
-            print("== 1")
+            # print("== 1")
             p_iz = ctx.expr(0).getText()
             # revisar si está en el diccionario de registros
             if p_iz in self.registers[self.currentClass].keys():
@@ -1082,20 +1088,20 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitAnd(self, ctx:YAPLParser.AndContext):
-        print("#and")
+        # print("#and")
         retText = ""
 
         # parte izquierda
         p_iz = ""
         if ctx.expr(0).getChildCount() > 1:
-            print(">> 1")
+            # print(">> 1")
             retText += self.visit(ctx.expr(0))
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
                 p_iz = "tt"
         else: 
-            print("== 1")
+            # print("== 1")
             p_iz = ctx.expr(0).getText()
             # revisar si está en el diccionario de registros
             if p_iz in self.registers[self.currentClass].keys():
@@ -1129,20 +1135,20 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitOr(self, ctx:YAPLParser.OrContext):
-        print("#or")
+        # print("#or")
         retText = ""
 
         # parte izquierda
         p_iz = ""
         if ctx.expr(0).getChildCount() > 1:
-            print(">> 1")
+            # print(">> 1")
             retText += self.visit(ctx.expr(0))
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
                 p_iz = "tt"
         else: 
-            print("== 1")
+            # print("== 1")
             p_iz = ctx.expr(0).getText()
             # revisar si está en el diccionario de registros
             if p_iz in self.registers[self.currentClass].keys():
@@ -1176,20 +1182,20 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitNeg(self, ctx:YAPLParser.NegContext):
-        print("#neg")
+        # print("#neg")
         retText = ""
 
         # parte 
         p_iz = ""
         if ctx.expr().getChildCount() > 1:
-            print(">> 1")
+            # print(">> 1")
             retText += self.visit(ctx.expr())
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
                 p_iz = "tt"
         else: 
-            print("== 1")
+            # print("== 1")
             p_iz = ctx.expr().getText()
             # revisar si está en el diccionario de registros
             if p_iz in self.registers[self.currentClass].keys():
@@ -1205,7 +1211,7 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
 
     def visitParens(self, ctx:YAPLParser.ParensContext):
-        print("#parens")
+        # print("#parens")
         retText = ""
         # print("par ", ctx.getText())
 
@@ -1213,14 +1219,14 @@ class CodigoIntermedio(YAPLVisitor):
         # print("expr ", ctx.expr().getText())
         p_iz = ""
         if ctx.expr().getChildCount() > 1:
-            print(">> 1")
+            # print(">> 1")
             retText += self.visit(ctx.expr())
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
                 p_iz = "tt"
         else: 
-            print("== 1")
+            # print("== 1")
             p_iz = ctx.expr().getText()
             # revisar si está en el diccionario de registros
             if p_iz in self.registers[self.currentClass].keys():
@@ -1239,28 +1245,28 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitId(self, ctx:YAPLParser.IdContext):
-        print("#id") 
+        # print("#id") 
         retText = ""
         pos_ = self.registers[self.currentClass][ctx.getText()]
         self.lastStatement = pos_
         return retText
     
     def visitInt(self, ctx:YAPLParser.IntContext):
-        print("#int")
+        # print("#int")
         retText = ""
         self.lastStatement = ctx.getText()
 
         return retText
 
     def visitString(self, ctx:YAPLParser.StringContext):
-        print("#string")
+        # print("#string")
         retText = ""
         self.lastStatement = ctx.getText()
 
         return retText
     
     def visitBoolean(self, ctx:YAPLParser.BooleanContext):
-        print("#boolean")
+        # print("#boolean")
         retText = ""
         self.lastStatement = ctx.getText()
 
@@ -1269,7 +1275,7 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitSelf(self, ctx:YAPLParser.SelfContext):
-        print("#self")
+        # print("#self")
         retText = ""
 
         return retText
@@ -1301,11 +1307,11 @@ class CodigoIntermedio(YAPLVisitor):
 
         # agregar
         for x in st.columns:
-            print(x[0], x[2], x[8], x[7])
+            # print(x[0], x[2], x[8], x[7])
             if (x[2] == "Instance" or x[2] == "Variable" or x[2] == "Param") and x[4].lower() not in noClases:
-                print("yes")
+                # print("yes")
                 if (x[8] == "Global"):
                     self.registers[x[4]][x[0]] = f"GP[{x[7]}]"
                 elif (x[8] == "Local"):
                     self.registers[x[4]][x[0]] = f"SP[{x[7]}]"
-                    print("Agregado!")
+                    # print("Agregado!")

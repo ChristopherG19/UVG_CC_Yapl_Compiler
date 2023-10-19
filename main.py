@@ -15,6 +15,7 @@ from tkinter import scrolledtext, filedialog
 from PIL import Image, ImageTk
 from antlr4 import *
 from BuildTable import YAPLVisitorImpl
+from CI import *
 
 from utils.utils import CustomErrorListener, beautify_lisp_string
 
@@ -105,6 +106,8 @@ def create_g4():
                     print()
                 else:
                     Terminal.insert(tk.END, "\nResultado Lectura: Todo está semánticamente correcto\n")
+                    CI = CodigoIntermedio("CI.txt", YV.symbolTable)
+                    resCI = CI.visit(tree)
                 treeF = YV.symbolTable.build_Table()
                 with open("SymbolTable.txt", 'w', encoding="utf-8") as f:
                     f.write(treeF.get_string())

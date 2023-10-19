@@ -18,7 +18,7 @@ class Fibonacci {
         {( let f : Int in
       	 if n=1 then f<-1 else
          if n=2 then f<-1 else
-        	 f<-fibonacci(n-1)+fibonacci(n-2)
+        	 f<-(fibonacci(n-1)+fibonacci(n-2)+fibonacci(n-3))
          fi fi
        );}
      };

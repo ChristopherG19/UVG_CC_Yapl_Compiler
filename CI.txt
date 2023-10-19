@@ -1,138 +1,692 @@
 CLASS A
-		ADD t0, 452, 9
-		LW GP[0], t0
-		MULT t1, 5, GP[0]
-		MULT t2, 4, GP[0]
-		MULT t3, t1, t2
-		LW GP[4], t3
-		NOT t4, False
-		LW GP[8], t4
-		LW GP[9], 5
-	A.returnVar
-		ADD t5, GP[4], 7
-		RETURN t5
-	END FUNC returnVar
-EOC
-CLASS B
-		ADD t0, 452, 9
-		LW GP[0], t0
-		MULT t1, 5, GP[0]
-		MULT t2, 4, GP[0]
-		MULT t3, t1, t2
-		LW GP[4], t3
-		NOT t4, False
-		LW GP[8], t4
-		LW GP[9], 5
-	B.returnVar
-		ADD t5, GP[4], 7
-		RETURN t5
-	END FUNC returnVar
-
-		LW GP[13], 5
-	B.setVar1
+		LW GP[0], 0
+	A.value
+		RETURN GP[0]
+	END FUNC value
+	A.set_var
 		PARAM SP[0], P0
-		LW SP[13], SP[0]
-		RETURN SP[13]
-	END FUNC setVar1
-EOC
-CLASS Main
+		LW SP[0], SP[0]
+		RETURN
+	END FUNC set_var
+	A.method1
+		PARAM SP[0], P0
+		RETURN
+	END FUNC method1
+	A.method2
+		PARAM SP[0], P0
+		PARAM SP[4], P1
+		LW SP[8], SP[0]
+		ADD t4, t3, SP[4]
+		LW t5, A
+		PARAM SP[4]
+		CALL t5.set_var, 1
+		RETURN t6
+	END FUNC method2
+	A.method3
+		PARAM SP[0], P0
+		NEG t8, SP[0]
+		LW SP[8], t8
 		LW t0, A
-		LW GP[14], t0
-		ADD t1, 5, 4
-		LW GP[35], t1
-	Main.meth1
-		PARAM SP[None], P0
-		LW SP[31], SP[None]
-		RETURN SP[31]
-	END FUNC meth1
-		LW GP[39], True
-	Main.meth2
+		PARAM SP[4]
+		CALL t0.set_var, 1
+		RETURN t1
+	END FUNC method3
+	A.method4
 		PARAM SP[0], P0
-		RETURN "Hola"
-	END FUNC meth2
-	Main.main
-		NEG t4, 5
-		LW SP[0], t4
-		SEQ t5, GP[0], 5
-		IF t5 > 0 GOTO L_TRUE_0
+		PARAM SP[4], P1
+		SLT t4, SP[4], SP[0]
+		IF t4 < 0 GOTO L_TRUE_0
 		GOTO L_FALSE_0
 L_TRUE_0:
-		LW SP[4], "igual"
+		LW SP[8], SP[0]
+		SUB t5, t3, SP[4]
+		LW t6, A
+		PARAM SP[4]
+		CALL t6.set_var, 1
 		GOTO L_IF_END_0
 L_FALSE_0:
-		SGE t6, GP[0], 0
-		SLT t7, GP[0], 10
-		AND t8, t6, t7
-		IF t8 > 0 GOTO L_TRUE_1
-		GOTO L_FALSE_1
-L_TRUE_1:
-		LW SP[4], "mayor"
-		GOTO L_IF_END_1
-L_FALSE_1:
-		LW SP[4], "menor"
-		GOTO L_IF_END_1
-L_IF_END_1:
+		LW SP[8], SP[4]
+		SUB t8, t7, SP[0]
+		LW t0, A
+		PARAM SP[4]
+		CALL t0.set_var, 1
 		GOTO L_IF_END_0
 L_IF_END_0:
-		SEQ t0, GP[0], 0
-		IF t0 > 0 GOTO L_TRUE_2
-		GOTO L_FALSE_2
-L_TRUE_2:
-		PARAM "igual"
-		CALL IO.out_string, 1
-		GOTO L_IF_END_2
-L_FALSE_2:
-		PARAM "desigual"
-		CALL IO.out_string, 1
-		GOTO L_IF_END_2
-L_IF_END_2:
+		RETURN t1
+	END FUNC method4
+	A.method5
+		PARAM SP[0], P0
+		LW SP[8], 1
+		LW SP[8], 1
 		GOTO L_LOOP_0
 L_LOOP_0:
-		SEQ t1, GP[0], 0
-		NOT t2, t1
-		IF t2 = 0 GOTO L_LOOP_END_0
-		MULT t3, 4, 5
-		ADD t4, 1, t3
-		SUB t5, GP[0], t4
-		LW SP[0], t5
+		SLE t3, SP[8], SP[0]
+		IF t3 < 0 GOTO L_LOOP_END_0
+		MULT t4, SP[4], SP[8]
+		LW SP[8], t4
+		ADD t5, SP[8], 1
+		LW SP[8], t5
 		GOTO L_LOOP_0
 L_LOOP_END_0:
-		LW SP[34], "hehe,"
-		MULT t6, 5, 8
-		LW SP[36], t6
-		LW SP[40], 5
-		LW SP[44], SP[36]
-		SEQ t7, SP[44], 5
-		IF t7 > 0 GOTO L_TRUE_3
+		LW t6, A
+		PARAM SP[4]
+		CALL t6.set_var, 1
+		RETURN t7
+	END FUNC method5
+EOC
+CLASS B
+		LW GP[0], 0
+	B.value
+		RETURN GP[0]
+	END FUNC value
+	B.set_var
+		PARAM SP[0], P0
+		LW SP[0], SP[0]
+		RETURN
+	END FUNC set_var
+	B.method1
+		PARAM SP[0], P0
+		RETURN
+	END FUNC method1
+	B.method2
+		PARAM SP[0], P0
+		PARAM SP[4], P1
+		LW SP[8], SP[0]
+		ADD t4, t3, SP[4]
+		LW t5, A
+		PARAM SP[4]
+		CALL t5.set_var, 1
+		RETURN t6
+	END FUNC method2
+	B.method3
+		PARAM SP[0], P0
+		NEG t8, SP[0]
+		LW SP[8], t8
+		LW t0, A
+		PARAM SP[4]
+		CALL t0.set_var, 1
+		RETURN t1
+	END FUNC method3
+	B.method4
+		PARAM SP[0], P0
+		PARAM SP[4], P1
+		SLT t4, SP[4], SP[0]
+		IF t4 < 0 GOTO L_TRUE_0
+		GOTO L_FALSE_0
+L_TRUE_0:
+		LW SP[8], SP[0]
+		SUB t5, t3, SP[4]
+		LW t6, A
+		PARAM SP[4]
+		CALL t6.set_var, 1
+		GOTO L_IF_END_0
+L_FALSE_0:
+		LW SP[8], SP[4]
+		SUB t8, t7, SP[0]
+		LW t0, A
+		PARAM SP[4]
+		CALL t0.set_var, 1
+		GOTO L_IF_END_0
+L_IF_END_0:
+		RETURN t1
+	END FUNC method4
+	B.method5
+		PARAM SP[0], P0
+		LW SP[8], 1
+		LW SP[8], 1
+		GOTO L_LOOP_0
+L_LOOP_0:
+		SLE t3, SP[8], SP[0]
+		IF t3 < 0 GOTO L_LOOP_END_0
+		MULT t4, SP[4], SP[8]
+		LW SP[8], t4
+		ADD t5, SP[8], 1
+		LW SP[8], t5
+		GOTO L_LOOP_0
+L_LOOP_END_0:
+		LW t6, A
+		PARAM SP[4]
+		CALL t6.set_var, 1
+		RETURN t7
+	END FUNC method5
+
+	B.method5
+		PARAM SP[0], P0
+		LW SP[8], SP[0]
+		MULT t1, t0, SP[0]
+		LW t2, A
+		PARAM SP[4]
+		CALL t2.set_var, 1
+		RETURN t3
+	END FUNC method5
+EOC
+CLASS C
+		LW GP[0], 0
+	C.value
+		RETURN GP[0]
+	END FUNC value
+	C.set_var
+		PARAM SP[0], P0
+		LW SP[0], SP[0]
+		RETURN
+	END FUNC set_var
+	C.method1
+		PARAM SP[0], P0
+		RETURN
+	END FUNC method1
+	C.method2
+		PARAM SP[0], P0
+		PARAM SP[4], P1
+		LW SP[8], SP[0]
+		ADD t4, t3, SP[4]
+		LW t5, A
+		PARAM SP[4]
+		CALL t5.set_var, 1
+		RETURN t6
+	END FUNC method2
+	C.method3
+		PARAM SP[0], P0
+		NEG t8, SP[0]
+		LW SP[8], t8
+		LW t0, A
+		PARAM SP[4]
+		CALL t0.set_var, 1
+		RETURN t1
+	END FUNC method3
+	C.method4
+		PARAM SP[0], P0
+		PARAM SP[4], P1
+		SLT t4, SP[4], SP[0]
+		IF t4 < 0 GOTO L_TRUE_0
+		GOTO L_FALSE_0
+L_TRUE_0:
+		LW SP[8], SP[0]
+		SUB t5, t3, SP[4]
+		LW t6, A
+		PARAM SP[4]
+		CALL t6.set_var, 1
+		GOTO L_IF_END_0
+L_FALSE_0:
+		LW SP[8], SP[4]
+		SUB t8, t7, SP[0]
+		LW t0, A
+		PARAM SP[4]
+		CALL t0.set_var, 1
+		GOTO L_IF_END_0
+L_IF_END_0:
+		RETURN t1
+	END FUNC method4
+	C.method5
+		PARAM SP[0], P0
+		LW SP[8], 1
+		LW SP[8], 1
+		GOTO L_LOOP_0
+L_LOOP_0:
+		SLE t3, SP[8], SP[0]
+		IF t3 < 0 GOTO L_LOOP_END_0
+		MULT t4, SP[4], SP[8]
+		LW SP[8], t4
+		ADD t5, SP[8], 1
+		LW SP[8], t5
+		GOTO L_LOOP_0
+L_LOOP_END_0:
+		LW t6, A
+		PARAM SP[4]
+		CALL t6.set_var, 1
+		RETURN t7
+	END FUNC method5
+
+	C.method5
+		PARAM SP[0], P0
+		LW SP[8], SP[0]
+		MULT t1, t0, SP[0]
+		LW t2, A
+		PARAM SP[4]
+		CALL t2.set_var, 1
+		RETURN t3
+	END FUNC method5
+
+	C.method6
+		PARAM SP[0], P0
+		NEG t1, SP[0]
+		LW SP[8], t1
+		LW t2, A
+		PARAM SP[4]
+		CALL t2.set_var, 1
+		RETURN t3
+	END FUNC method6
+	C.method5
+		PARAM SP[0], P0
+		LW SP[8], SP[0]
+		MULT t5, t4, SP[0]
+		MULT t6, t5, SP[0]
+		LW t7, A
+		PARAM SP[4]
+		CALL t7.set_var, 1
+		RETURN t8
+	END FUNC method5
+EOC
+CLASS D
+		LW GP[0], 0
+	D.value
+		RETURN GP[0]
+	END FUNC value
+	D.set_var
+		PARAM SP[0], P0
+		LW SP[0], SP[0]
+		RETURN
+	END FUNC set_var
+	D.method1
+		PARAM SP[0], P0
+		RETURN
+	END FUNC method1
+	D.method2
+		PARAM SP[0], P0
+		PARAM SP[4], P1
+		LW SP[8], SP[0]
+		ADD t4, t3, SP[4]
+		LW t5, A
+		PARAM SP[4]
+		CALL t5.set_var, 1
+		RETURN t6
+	END FUNC method2
+	D.method3
+		PARAM SP[0], P0
+		NEG t8, SP[0]
+		LW SP[8], t8
+		LW t0, A
+		PARAM SP[4]
+		CALL t0.set_var, 1
+		RETURN t1
+	END FUNC method3
+	D.method4
+		PARAM SP[0], P0
+		PARAM SP[4], P1
+		SLT t4, SP[4], SP[0]
+		IF t4 < 0 GOTO L_TRUE_0
+		GOTO L_FALSE_0
+L_TRUE_0:
+		LW SP[8], SP[0]
+		SUB t5, t3, SP[4]
+		LW t6, A
+		PARAM SP[4]
+		CALL t6.set_var, 1
+		GOTO L_IF_END_0
+L_FALSE_0:
+		LW SP[8], SP[4]
+		SUB t8, t7, SP[0]
+		LW t0, A
+		PARAM SP[4]
+		CALL t0.set_var, 1
+		GOTO L_IF_END_0
+L_IF_END_0:
+		RETURN t1
+	END FUNC method4
+	D.method5
+		PARAM SP[0], P0
+		LW SP[8], 1
+		LW SP[8], 1
+		GOTO L_LOOP_0
+L_LOOP_0:
+		SLE t3, SP[8], SP[0]
+		IF t3 < 0 GOTO L_LOOP_END_0
+		MULT t4, SP[4], SP[8]
+		LW SP[8], t4
+		ADD t5, SP[8], 1
+		LW SP[8], t5
+		GOTO L_LOOP_0
+L_LOOP_END_0:
+		LW t6, A
+		PARAM SP[4]
+		CALL t6.set_var, 1
+		RETURN t7
+	END FUNC method5
+
+	D.method5
+		PARAM SP[0], P0
+		LW SP[8], SP[0]
+		MULT t1, t0, SP[0]
+		LW t2, A
+		PARAM SP[4]
+		CALL t2.set_var, 1
+		RETURN t3
+	END FUNC method5
+
+	D.method7
+		PARAM SP[0], P0
+		LW SP[8], SP[0]
+		SLT t1, SP[4], 0
+		IF t1 < 0 GOTO L_TRUE_1
+		GOTO L_FALSE_1
+L_TRUE_1:
+		NEG t2, SP[4]
+		PARAM t2
+		CALL D.method7, 1
+		LW t3, RET
+		GOTO L_IF_END_1
+L_FALSE_1:
+		SEQ t4, 0, SP[4]
+		IF t4 < 0 GOTO L_TRUE_2
+		GOTO L_FALSE_2
+L_TRUE_2:
+		GOTO L_IF_END_2
+L_FALSE_2:
+		SEQ t5, 1, SP[4]
+		IF t5 < 0 GOTO L_TRUE_3
 		GOTO L_FALSE_3
 L_TRUE_3:
-		LW SP[39], False
 		GOTO L_IF_END_3
 L_FALSE_3:
-		LW SP[39], True
+		SEQ t6, 2, SP[4]
+		IF t6 < 0 GOTO L_TRUE_4
+		GOTO L_FALSE_4
+L_TRUE_4:
+		GOTO L_IF_END_4
+L_FALSE_4:
+		SUB t7, SP[4], 3
+		PARAM t7
+		CALL D.method7, 1
+		LW t8, RET
+		GOTO L_IF_END_4
+L_IF_END_4:
 		GOTO L_IF_END_3
 L_IF_END_3:
-		PARAM SP[34]
-		CALL IO.out_string, 1
-		SUB t8, GP[0], 5
-		LW SP[6], t8
-		MULT t0, GP[0], 5
-		ADD t1, True, t0
-		PARAM GP[4]
-		CALL IO.out_string, 1
-		PARAM "hola"
-		CALL IO.out_string, 1
-		ADD t2, 5, 6
+		GOTO L_IF_END_2
+L_IF_END_2:
+		GOTO L_IF_END_1
+L_IF_END_1:
+		RETURN t8
+	END FUNC method7
+EOC
+CLASS E
+		LW GP[0], 0
+	E.value
+		RETURN GP[0]
+	END FUNC value
+	E.set_var
+		PARAM SP[0], P0
+		LW SP[0], SP[0]
+		RETURN
+	END FUNC set_var
+	E.method1
+		PARAM SP[0], P0
+		RETURN
+	END FUNC method1
+	E.method2
+		PARAM SP[0], P0
+		PARAM SP[4], P1
+		LW SP[8], SP[0]
+		ADD t4, t3, SP[4]
+		LW t5, A
+		PARAM SP[4]
+		CALL t5.set_var, 1
+		RETURN t6
+	END FUNC method2
+	E.method3
+		PARAM SP[0], P0
+		NEG t8, SP[0]
+		LW SP[8], t8
+		LW t0, A
+		PARAM SP[4]
+		CALL t0.set_var, 1
+		RETURN t1
+	END FUNC method3
+	E.method4
+		PARAM SP[0], P0
+		PARAM SP[4], P1
+		SLT t4, SP[4], SP[0]
+		IF t4 < 0 GOTO L_TRUE_0
+		GOTO L_FALSE_0
+L_TRUE_0:
+		LW SP[8], SP[0]
+		SUB t5, t3, SP[4]
+		LW t6, A
+		PARAM SP[4]
+		CALL t6.set_var, 1
+		GOTO L_IF_END_0
+L_FALSE_0:
+		LW SP[8], SP[4]
+		SUB t8, t7, SP[0]
+		LW t0, A
+		PARAM SP[4]
+		CALL t0.set_var, 1
+		GOTO L_IF_END_0
+L_IF_END_0:
+		RETURN t1
+	END FUNC method4
+	E.method5
+		PARAM SP[0], P0
+		LW SP[8], 1
+		LW SP[8], 1
+		GOTO L_LOOP_0
+L_LOOP_0:
+		SLE t3, SP[8], SP[0]
+		IF t3 < 0 GOTO L_LOOP_END_0
+		MULT t4, SP[4], SP[8]
+		LW SP[8], t4
+		ADD t5, SP[8], 1
+		LW SP[8], t5
+		GOTO L_LOOP_0
+L_LOOP_END_0:
+		LW t6, A
+		PARAM SP[4]
+		CALL t6.set_var, 1
+		RETURN t7
+	END FUNC method5
+
+	E.method5
+		PARAM SP[0], P0
+		LW SP[8], SP[0]
+		MULT t1, t0, SP[0]
+		LW t2, A
+		PARAM SP[4]
+		CALL t2.set_var, 1
+		RETURN t3
+	END FUNC method5
+
+	E.method7
+		PARAM SP[0], P0
+		LW SP[8], SP[0]
+		SLT t1, SP[4], 0
+		IF t1 < 0 GOTO L_TRUE_1
+		GOTO L_FALSE_1
+L_TRUE_1:
+		NEG t2, SP[4]
 		PARAM t2
-		CALL Main.meth1, 1
+		CALL D.method7, 1
 		LW t3, RET
-		CALL GP[4].abort, 0
-		CALL GP[14].returnVar, 0
+		GOTO L_IF_END_1
+L_FALSE_1:
+		SEQ t4, 0, SP[4]
+		IF t4 < 0 GOTO L_TRUE_2
+		GOTO L_FALSE_2
+L_TRUE_2:
+		GOTO L_IF_END_2
+L_FALSE_2:
+		SEQ t5, 1, SP[4]
+		IF t5 < 0 GOTO L_TRUE_3
+		GOTO L_FALSE_3
+L_TRUE_3:
+		GOTO L_IF_END_3
+L_FALSE_3:
+		SEQ t6, 2, SP[4]
+		IF t6 < 0 GOTO L_TRUE_4
+		GOTO L_FALSE_4
+L_TRUE_4:
+		GOTO L_IF_END_4
+L_FALSE_4:
+		SUB t7, SP[4], 3
+		PARAM t7
+		CALL D.method7, 1
+		LW t8, RET
+		GOTO L_IF_END_4
+L_IF_END_4:
+		GOTO L_IF_END_3
+L_IF_END_3:
+		GOTO L_IF_END_2
+L_IF_END_2:
+		GOTO L_IF_END_1
+L_IF_END_1:
+		RETURN t8
+	END FUNC method7
+
+	E.method6
+		PARAM SP[0], P0
+		LW SP[8], SP[0]
+		DIV t1, t0, 8
+		LW t2, A
+		PARAM SP[4]
+		CALL t2.set_var, 1
+		RETURN t3
+	END FUNC method6
+EOC
+CLASS Main
+		LW GP[212], true
+	Main.is_even
+		PARAM SP[0], P0
+		LW SP[4], SP[0]
+		SLT t1, SP[4], 0
+		IF t1 < 0 GOTO L_TRUE_5
+		GOTO L_FALSE_5
+L_TRUE_5:
+		NEG t2, SP[4]
+		PARAM t2
+		CALL Main.is_even, 1
+		LW t3, RET
+		GOTO L_IF_END_5
+L_FALSE_5:
+		SEQ t4, 0, SP[4]
+		IF t4 < 0 GOTO L_TRUE_6
+		GOTO L_FALSE_6
+L_TRUE_6:
+		GOTO L_IF_END_6
+L_FALSE_6:
+		SEQ t5, 1, SP[4]
+		IF t5 < 0 GOTO L_TRUE_7
+		GOTO L_FALSE_7
+L_TRUE_7:
+		GOTO L_IF_END_7
+L_FALSE_7:
+		SUB t6, SP[4], 2
+		PARAM t6
+		CALL Main.is_even, 1
+		LW t7, RET
+		GOTO L_IF_END_7
+L_IF_END_7:
+		GOTO L_IF_END_6
+L_IF_END_6:
+		GOTO L_IF_END_5
+L_IF_END_5:
+		RETURN t7
+	END FUNC is_even
+	Main.main
+		LW t8, A
+		LW SP[2], t8
+		PARAM 2
+		CALL GP[2].set_var, 1
+		CALL GP[2].value, 0
+		LW t1, RET
+		PARAM t1
+		CALL IO.out_int, 1
+		CALL GP[2].value, 0
+		LW t2, RET
+		PARAM t2
+		CALL Main.is_even, 1
+		LW t3, RET
+		IF t3 < 0 GOTO L_TRUE_8
+		GOTO L_FALSE_8
+L_TRUE_8:
+		PARAM " es par!\n"
+		CALL IO.out_string, 1
+		GOTO L_IF_END_8
+L_FALSE_8:
+		PARAM " es impar!\n"
+		CALL IO.out_string, 1
+		GOTO L_IF_END_8
+L_IF_END_8:
+		LW t4, A
+		PARAM 3
+		CALL t4.set_var, 1
+		LW SP[107], t5
+		LW t6, B
+		CALL GP[2].value, 0
+		LW t7, RET
+		CALL GP[107].value, 0
+		LW t8, RET
+		PARAM t7
+		PARAM t8
+		CALL t6.method2, 2
+		LW t0, RET
+		LW SP[2], t0
+		CALL GP[2].value, 0
+		LW t1, RET
+		PARAM t1
+		CALL IO.out_int, 1
+		PARAM "\n"
+		CALL IO.out_string, 1
+		LW t2, C
+		CALL GP[2].value, 0
+		LW t3, RET
+		PARAM t3
+		CALL t2.method6, 1
+		LW t4, RET
+		LW SP[2], t4
+		CALL GP[2].value, 0
 		LW t5, RET
-		LW SP[10], t5
-		CALL GP[14].GP[4], 0
+		PARAM t5
+		CALL IO.out_int, 1
+		PARAM "\n"
+		CALL IO.out_string, 1
+		LW t6, A
+		PARAM 5
+		CALL t6.set_var, 1
+		LW SP[107], t7
+		LW t8, D
+		CALL GP[2].value, 0
+		LW t0, RET
+		CALL GP[107].value, 0
+		LW t1, RET
+		PARAM t0
+		PARAM t1
+		CALL t8.method4, 2
+		LW t2, RET
+		LW SP[2], t2
+		CALL GP[2].value, 0
+		LW t3, RET
+		PARAM t3
+		CALL IO.out_int, 1
+		PARAM "\n"
+		CALL IO.out_string, 1
+		PARAM 5
+		CALL GP[2].set_var, 1
+		LW t5, C
+		CALL GP[2].value, 0
 		LW t6, RET
-		LW SP[10], t6
+		PARAM t6
+		CALL t5.method5, 1
+		LW t7, RET
+		LW SP[2], t7
+		CALL GP[2].value, 0
+		LW t8, RET
+		PARAM t8
+		CALL IO.out_int, 1
+		PARAM "\n"
+		CALL IO.out_string, 1
+		PARAM 6
+		CALL GP[2].set_var, 1
+		LW t1, C
+		CALL GP[2].value, 0
+		LW t2, RET
+		PARAM t2
+		CALL t1.method5, 1
+		LW t3, RET
+		LW SP[2], t3
+		CALL GP[2].value, 0
+		LW t4, RET
+		PARAM t4
+		CALL IO.out_int, 1
+		PARAM "\n"
+		CALL IO.out_string, 1
 		RETURN
 	END FUNC main
 EOC
