@@ -28,6 +28,9 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.displacement_cbclass = 0
         self.count_bytes_func = 0
         self.displacement_cbfunc = 0
+        self.letCount = 0
+        self.letGroup = []
+        self.position = []
         self.add_other_classes()
         
     def add_other_classes(self):
@@ -99,10 +102,12 @@ class YAPLVisitorImpl(YAPLVisitor):
         print("defClass")
         self.count_bytes_class = 0
         self.displacement_cbclass = 0
+        self.letCount = 0
         
         id = ctx.TYPE(0).getText()
         type_id = ctx.CLASS_N().__str__()
         self.current_class = id
+        self.position.append(id)
         if ctx.INHERITS():
             inherits = ctx.TYPE(1).getText()
             
@@ -156,6 +161,7 @@ class YAPLVisitorImpl(YAPLVisitor):
                         self.symbolTable.add_info_to_cell(id, "Type_Value", type_class)
         
         self.symbolTable.add_info_to_cell(self.current_class, "Space", self.count_bytes_class)
+        self.position.pop()
         return type_class
     
     def visitDefFunc(self, ctx: YAPLParser.DefFuncContext):
@@ -167,6 +173,8 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.current_function = id
         self.count_bytes_func = 0
         self.displacement_cbfunc = 0
+        self.letCount = 0
+        self.position.append(id)
         
         print("init",id, type_id, parent_class)
         
@@ -176,6 +184,7 @@ class YAPLVisitorImpl(YAPLVisitor):
                 self.customErrors.append(f"Método main no puede tener parámetros formales")
                 return "Error"
             
+            scope = "Local"
             for formal_param in formal_parameters:
                 tempSpaceId = 0
                 param_name = formal_param.ID().getText()
@@ -192,7 +201,11 @@ class YAPLVisitorImpl(YAPLVisitor):
                     self.count_bytes_class += space
                     self.displacement_cbclass += space
                 # print(self.current_class, self.current_function, self.current_count_bytes)
-                res, val = self.symbolTable.add_column([param_name, param_type, "Param", None, parent_class, self.current_function, None, None, "Local", space, None])
+                if(self.current_function != None):
+                    scope = f"{''.join(list('.'.join(self.position))[:-1])}.{param_name}"
+                else:
+                    scope = f"{''.join(list('.'.join(self.position))[:-1])}.{param_name}"
+                res, val = self.symbolTable.add_column([param_name, param_type, "Param", None, parent_class, self.current_function, None, None, scope, space, None])
                 if parent_class in self.class_methods:
                     self.class_methods[parent_class].append(param_name)
                 else:
@@ -314,6 +327,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.symbolTable.add_info_to_cell(self.current_function, "Space", self.count_bytes_func)
         self.count_bytes_class += self.count_bytes_func
         self.current_function = None
+        self.position.pop()
         return type_id_b
     
     def visitDefAssign(self, ctx: YAPLParser.DefAssignContext):
@@ -360,6 +374,7 @@ class YAPLVisitorImpl(YAPLVisitor):
                 return "Error"
             else:
                 print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", id, val)
+                scope = "Global"
                 if(val == None):
                     val = self.symbolTable.get_cell(type_id)[-1]
                     if (val != None):
@@ -383,7 +398,11 @@ class YAPLVisitorImpl(YAPLVisitor):
                             
                         print("##################", self.symbolTable.containsKey(id, type_id, parent_class), id, type_id, parent_class)
                         # if(not(self.symbolTable.containsKey(id, type_id, parent_class))):
-                        res, new_row = self.symbolTable.add_column([id, type_id, "Instance", None, parent_class, self.current_function, None, None, "Global", newSpace, val])
+                        if(self.current_function != None):
+                            scope = f"{''.join(list('.'.join(self.position))[:-1])}.{id}"
+                        else:
+                            scope = f"{''.join(list('.'.join(self.position)))}.{id}"
+                        res, new_row = self.symbolTable.add_column([id, type_id, "Instance", None, parent_class, self.current_function, None, None, scope, newSpace, val])
                     else:
                         self.class_methods[parent_class].append(id)
                         newSpace = get_space_vars(type_id)
@@ -406,7 +425,12 @@ class YAPLVisitorImpl(YAPLVisitor):
                             
                         print("##################", self.symbolTable.containsKey(id, type_id, parent_class), id, type_id, parent_class)
                         # if(not(self.symbolTable.containsKey(id, type_id, parent_class))):
-                        res, new_row = self.symbolTable.add_column([id, type_id, "Instance", None, parent_class, self.current_function, None, None, "Global", newSpace, val])
+                        if(self.current_function != None):
+                            scope = f"{self.current_class}.{self.current_function}.{id}"
+                        else:
+                            scope = f"{self.current_class}.{id}"
+                            
+                        res, new_row = self.symbolTable.add_column([id, type_id, "Instance", None, parent_class, self.current_function, None, None, scope, newSpace, val])
                 
                 elif(val != None):
                     newSpace = get_space_vars(type_id, val)
@@ -422,7 +446,11 @@ class YAPLVisitorImpl(YAPLVisitor):
                     print("##################222", self.symbolTable.get_cell(id, type_id, parent_class), self.symbolTable.containsKey(id, type_id, parent_class), id, type_id, parent_class)
                     if(not(self.symbolTable.containsKey(id, type_id, parent_class))):
                         print("##################333", id, type_id, "Instance", None, parent_class, self.current_function, None, None, "Global", newSpace, val)
-                    res, new_row = self.symbolTable.add_column([id, type_id, "Instance", None, parent_class, self.current_function, None, None, "Global", newSpace, val])
+                    if(self.current_function != None):
+                        scope = f"{self.current_class}.{self.current_function}.{id}"
+                    else:
+                        scope = f"{self.current_class}.{id}"
+                    res, new_row = self.symbolTable.add_column([id, type_id, "Instance", None, parent_class, self.current_function, None, None, scope, newSpace, val])
         else:
             self.class_methods[parent_class] = [id]
             
@@ -871,9 +899,12 @@ class YAPLVisitorImpl(YAPLVisitor):
     
     def visitLetId(self, ctx: YAPLParser.LetIdContext):
         print("visitLetId")
+        self.letCount += 1
+        self.position.append(f"Let{self.letCount}")
         expression_types = []
         new_row = None
         for i in range(len(ctx.ID())):
+            scope = ""
             tempSpaceId = 0
             id = ctx.ID(i).getText()
             print("TTTTTYPE ", ctx.TYPE(i))
@@ -894,10 +925,20 @@ class YAPLVisitorImpl(YAPLVisitor):
                 self.displacement_cbclass += space
                 
             if self.current_class in self.class_methods:
+                scope = "Local"
+                if(self.current_function != None):
+                    scope = f"{''.join(list('.'.join(self.position)))}.{id}"
+                else:
+                    scope = f"{''.join(list('.'.join(self.position)))}.{id}"
                 self.class_methods[self.current_class].append(id)
-                res, new_row = self.symbolTable.add_column([id, _type, "Variable", None, self.current_class, self.current_function, None, None, "Local", space, None])
+                res, new_row = self.symbolTable.add_column([id, _type, "Variable", None, self.current_class, self.current_function, None, None, scope, space, None])
             else:
-                res, new_row = self.symbolTable.add_column([id, _type, "Variable", None, self.current_class, self.current_function, None, None, "Global", space, None])
+                scope = "Global"
+                if(self.current_function != None):
+                    scope = f"{''.join(list('.'.join(self.position))[:-1])}.{id}"
+                else:
+                    scope = f"{''.join(list('.'.join(self.position))[:-1])}.{id}"
+                res, new_row = self.symbolTable.add_column([id, _type, "Variable", None, self.current_class, self.current_function, None, None, scope, space, None])
                 self.class_methods[self.current_class] = [id]
             
             self.symbolTable.add_info_to_cell(self.current_class, "Contains", self.class_methods[self.current_class])
@@ -919,6 +960,7 @@ class YAPLVisitorImpl(YAPLVisitor):
             expression_type = self.visit(ctx.expr(i))
             expression_types.append(expression_type)
         
+        self.position.pop()
         return expression_types[-1]
 
     def visitNew(self, ctx: YAPLParser.NewContext):
@@ -1422,11 +1464,11 @@ def main():
     treeF = YV.symbolTable.build_Table()
     #print(treeF)
 
-    CI = CodigoIntermedio("CI.txt", YV.symbolTable)
-    resCI = CI.visit(tree)
+    # CI = CodigoIntermedio("CI.txt", YV.symbolTable)
+    # resCI = CI.visit(tree)
     
-    MIPS_ = MIPS("CI.txt")
-    MIPS_.get_MIPS_Code()
+    # MIPS_ = MIPS("CI.txt")
+    # MIPS_.get_MIPS_Code()
 
     with open("SymbolTable.txt", "w", encoding="utf-8") as f:
         f.write(treeF.get_string())
