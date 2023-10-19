@@ -55,8 +55,8 @@ class A {
 	    (let y : Int <- 1 in
 	       while y <= num loop
 	          {
-                x <- x * y;
-	             y <- y + 1;
+                x <- (x * y);
+	             y <- (y + 1);
 	          }
 	       pool
 	    );
