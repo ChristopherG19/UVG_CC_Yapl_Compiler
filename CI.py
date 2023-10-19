@@ -27,14 +27,25 @@ class CodigoIntermedio(YAPLVisitor):
         # 0: current class
         # 1: current function
         # 2: let
-        self.let_counter = 0
+        self.let_counter = 1
 
         # self.functions = {}
         self.registers = {}
+        self.registers2 = {}
         self.functions = {}
         self.classes = {}
 
         self.genSP(self.symbolTable)
+        self.genDictionary(self.symbolTable)
+        
+        print("==================================")
+        print("==================================")
+        print(self.registers)
+        print("==================================")
+        print("==================================")
+        print(self.registers2)
+        print("==================================")
+        print("==================================")
 
     # ================================================================================
     # visitor
@@ -120,12 +131,11 @@ class CodigoIntermedio(YAPLVisitor):
         retText = ""
 
         id = ctx.ID().getText()
-        self.currentFun = id
-        print("id ", id)
+        # self.currentFun = id
+        #print("id ", id)
         retText += f"\t{self.position[0]}.{id}\n"
-
         self.position.append(id) 
-        self.let_counter = 0 # reiniciar el conteo de lets por función
+        self.let_counter = 1 # reiniciar el conteo de lets por función
 
         self.parNames = {}
 
@@ -140,7 +150,7 @@ class CodigoIntermedio(YAPLVisitor):
         self.functions[self.position[0]][id] = ret_
 
         # valor de retorno
-        print("type ", ctx.TYPE().getText(), ctx.TYPE().getText().upper())
+        # print("type ", ctx.TYPE().getText(), ctx.TYPE().getText().upper())
         if (ctx.TYPE().getText().upper() == "SELF_TYPE" or ctx.TYPE().getText().upper() == "VOID"):
             retText += f"\t\tRETURN\n"
         else:
@@ -158,53 +168,33 @@ class CodigoIntermedio(YAPLVisitor):
 
         # solamente hacer algo si la variable es definida
         if ctx.expr():
-            name = ""
+            # obtener id
+            id_ = ctx.ID().getText()
+            var, _ = self.getRegister(id_)
+
+            # obtener expresión
+            value = ""
             exprText = ctx.expr().getText()
             if ctx.expr().getChildCount() > 1:
-                print("> 1")
-                # revisar si es un string
-                if exprText[:1] == '"':
-                    print("string")
-                    name = ctx.expr().getText()
+                print("> 1", ctx.expr().getText())
 
+                retText += self.visit(ctx.expr())
+                # print("deffasin retTExt ", retText)
+                if len(self.temp_stack) > 0:
+                    value = self.temp_stack.pop()
                 else:
-                    # revisar si el parámetro existe
-                    bool_ = False
-                    try:
-                        bool_ =  ctx.expr().getText() in self.parNames.keys()
-                    except:
-                        0
-
-                    if bool_:
-                        name = self.parNames[ctx.expr().getText()]
-
-                    else:
-                        retText += self.visit(ctx.expr())
-                        # print("deffasin retTExt ", retText)
-                        if len(self.temp_stack) > 0:
-                            name = self.temp_stack.pop()
-                        else:
-                            name = "tt"
+                    value = "tt"
 
             else:
-                print("1")
+                # print("1")
                 text_ = ctx.expr().getText()
-                if text_ in self.registers[self.position[0]].keys():
-                    name = self.registers[self.position[0]][text_]
-                else:
-                    name = text_
+                print("text ", text_)
+                value, _ = self.getRegister(text_)
+                print("text ret ", text_)
                 retText += self.visit(ctx.expr())
 
-            # obtener desplazamiento
-            id_ = ctx.ID().getText()
-            type_ = ctx.TYPE().getText()
-            
-            disp = self.symbolTable.get_displacement(id = id_, addType = type_, addParent = self.position[0])
-            var = f"GP[{disp}]"
-
+            retText += f"\t\tLW {var}, {value}\n"
             self.lastStatement = var
-
-            retText += f"\t\tLW {var}, {name}\n"
 
         return retText
     
@@ -212,18 +202,10 @@ class CodigoIntermedio(YAPLVisitor):
         # print("#formalAssign")
         retText = ""
 
-        temp_ = f"t{self.temp_counter}"
-        self.addToTemp()
-        self.temp_stack.append(temp_)
-
-        # guardar
-        self.parNames[ctx.ID().getText()] = temp_
-
         id_f = ctx.ID().getText()
-        pos_ = self.registers[self.position[0]][id_f]
+        pos_, _ = self.getRegister(id_f)
         retText += f"\t\tPARAM {pos_}, P{self.param_num}\n"
 
-        self.lastStatement = temp_
 
         return retText
     
@@ -416,50 +398,33 @@ class CodigoIntermedio(YAPLVisitor):
         # print("ass ", ctx.getText())
         retText = ""
         
-        name = ""
+        # obtener id
+        id_ = ctx.ID().getText()
+        var, _ = self.getRegister(id_)
+
+        # obtener expresión
+        value = ""
         exprText = ctx.expr().getText()
         if ctx.expr().getChildCount() > 1:
-            # revisar si es un string
-            if exprText[:1] == '"':
-                print("string")
-                name = ctx.expr().getText()
+            print("> 1", ctx.expr().getText())
 
+            retText += self.visit(ctx.expr())
+            # print("deffasin retTExt ", retText)
+            if len(self.temp_stack) > 0:
+                value = self.temp_stack.pop()
             else:
-                # revisar si el parámetro existe
-                bool_ = False
-                try:
-                    bool_ =  ctx.expr().getText() in self.parNames.keys()
-                except:
-                    0
-
-                if bool_:
-                    name = self.parNames[ctx.expr().getText()]
-
-                else:
-                    retText += self.visit(ctx.expr())
-                    # print("deffasin retTExt ", retText)
-                    if len(self.temp_stack) > 0:
-                        name = self.temp_stack.pop()
-                    else:
-                        name = "tt"
+                value = "tt"
 
         else:
+            # print("1")
             text_ = ctx.expr().getText()
-            if text_ in self.registers[self.position[0]].keys():
-                name = self.registers[self.position[0]][text_]
-                print(f"\n{text_}, {name}\n")
-            else:
-                name = text_
+            print("text ", text_)
+            value, _ = self.getRegister(text_)
+            print("text ret ", text_)
             retText += self.visit(ctx.expr())
 
-        # obtener desplazamiento
-        id_ = ctx.ID().getText()
-        disp = self.symbolTable.get_displacement(id = id_, addParent = self.position[0])
-        var = f"SP[{disp}]"
+        retText += f"\t\tLW {var}, {value}\n"
         self.lastStatement = var
-
-        retText += f"\t\tLW {var}, {name}\n"
-        
 
         return retText
     
@@ -556,10 +521,12 @@ class CodigoIntermedio(YAPLVisitor):
         trips = []
 
         #position
-        posName = f"let{self.let_counter}"
+        posName = f"Let{self.let_counter}"
+        self.let_counter += 1 #añadir al contador
         self.position.append(posName)
+        # print(self.position)
 
-        # parte del let 
+        # parte de las asignaciones
         cant = ctx.getChildCount()
         trip = []
         for i,  ch in enumerate(ctx.getChildren()):
@@ -571,57 +538,39 @@ class CodigoIntermedio(YAPLVisitor):
                 else:
                     trip.append(ch)
 
-
         for t in trips: 
             if len(t) == 5:
+                # obtener id
+                id_ = t[0].getText()
+                print(self.position, id_)
+                var, _ = self.getRegister(id_)
+
                 # se le ha asignado algo 
                 expr = t[4]
-                exprText = expr.getText()
+                value = ""
                 if expr.getChildCount() > 1:
-                    # print("> 1")
-                    # revisar si es un string
-                    if exprText[:1] == '"':
-                        print("string")
-                        name = expr.getText()
+                    print("> 1", expr.getText())
 
+                    retText += self.visit(expr)
+                    # print("deffasin retTExt ", retText)
+                    if len(self.temp_stack) > 0:
+                        value = self.temp_stack.pop()
                     else:
-                        # revisar si el parámetro existe
-                        bool_ = False
-                        try:
-                            bool_ =  expr.getText() in self.parNames.keys()
-                        except:
-                            0
-
-                        if bool_:
-                            name = self.parNames[expr.getText()]
-
-                        else:
-                            retText += self.visit(expr)
-                            # print("letid retTExt ", retText)
-                            if len(self.temp_stack) > 0:
-                                name = self.temp_stack.pop()
-                            else:
-                                name = "tt"
+                        value = "tt"
 
                 else:
-                    print("1")
+                    # print("1")
                     text_ = expr.getText()
-                    if text_ in self.registers[self.position[0]].keys():
-                        name = self.registers[self.position[0]][text_]
-                    else:
-                        name = text_
+                    print("text ", text_)
+                    value, _ = self.getRegister(text_)
+                    print("text ret ", text_)
                     retText += self.visit(expr)
 
-                # obtener desplazamiento
-                id_ = t[0].getText()
-                disp = self.symbolTable.get_displacement(id = id_, addParent = self.position[0])
-                var = f"SP[{disp}]"
-                self.lastStatement = var
-
-                retText += f"\t\tLW {var}, {name}\n"
+                retText += f"\t\tLW {var}, {value}\n"
+                # self.lastStatement = var
 
         # parte del in
-        print("in")
+        # print("in")
         retText += self.visit(ctx.expr(len(ctx.expr()) - 1))
 
         self.position.pop() # salirse del let
@@ -677,7 +626,7 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitTimes(self, ctx:YAPLParser.TimesContext):
-        # print("#times")
+        print("#times")
         retText = ""
 
         # parte izquierda
@@ -693,6 +642,10 @@ class CodigoIntermedio(YAPLVisitor):
             # print("== 1")
             p_iz = ctx.expr(0).getText()
             # revisar si está en el diccionario de registros
+            pos_ = ""
+            for p_ in self.position: pos_ += p_ + "."
+            print("pos", pos_) 
+            
             if p_iz in self.registers[self.position[0]].keys():
                 p_iz = self.registers[self.position[0]][p_iz]
         
@@ -711,6 +664,10 @@ class CodigoIntermedio(YAPLVisitor):
         else: 
             p_der = ctx.expr(1).getText()
             # revisar si está en el diccionario de registros
+            pos_ = ""
+            for p_ in self.position: pos_ += p_ + "."
+            print("pos", pos_) 
+            
             if p_der in self.registers[self.position[0]].keys():
                 p_der = self.registers[self.position[0]][p_der]
 
@@ -1324,10 +1281,7 @@ class CodigoIntermedio(YAPLVisitor):
             # print(x[0], x[2], x[8], x[7])
             if (x[2] == "Instance" or x[2] == "Variable" or x[2] == "Param") and x[4].lower() not in noClases:
                 # print("yes")
-                if (x[8] == "Global"):
-                    self.registers[x[4]][x[0]] = f"GP[{x[7]}]"
-                elif (x[8] == "Local"):
-                    self.registers[x[4]][x[0]] = f"SP[{x[7]}]"
+                self.registers[x[4]][x[0]] = f"GP[{x[7]}]"
                     # print("Agregado!")
 
     def genDictionary(self, st:Table):
@@ -1336,6 +1290,48 @@ class CodigoIntermedio(YAPLVisitor):
         noClases = ["object", "self_type", "io", "void", "string", "int", "bool"]
 
         for x in st.columns:
-            if x[6] and x[7]:
-                self.registers[x[6]] = x[7]
-                # {class_name.method_name.let_#.variable_name}
+            if (x[2] == "Instance" or x[2] == "Variable" or x[2] == "Param") and x[4].lower() not in noClases:
+                # print(x[0], x[7], x[8])
+                if type(x[7]) == int: #revisar que no sea null
+                    # determinar el largo
+                    pos_ = x[8].split(".") # separamos por puntos
+                    if len(pos_) > 2:
+                        # es una variable global
+                        self.registers2[x[8]] = f"SP[{x[7]}]"
+                    else:
+                        # es una variable local
+                        self.registers2[x[8]] = f"GP[{x[7]}]"
+                    # {class_name.method_name.let_#.variable_name}
+
+    def getRegister(self, name_:str):
+        ret = ""
+
+        # copiar la posición
+        pos = []
+        for x in self.position:
+            pos.append(x)
+
+        while (len(pos) >= 1):
+            # conseguir el nombre
+            search = ""
+            for p in pos:
+                search += p + "."
+            search += name_ 
+            print(search)
+
+            # buscar si existe en el diccionario
+            if search in self.registers2.keys():
+                # conseguir el registro correcto
+                ret = self.registers2[search]
+                # print("break ", name_)
+                break # salirse del loop
+
+            else:
+                pos.pop() # buscar un nivel más arriba
+
+        if ret != "":
+            # encontró el registro
+            return ret, True
+        else:
+            # retornar lo que se estaba buscando
+            return name_, False

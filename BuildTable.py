@@ -174,7 +174,8 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.count_bytes_func = 0
         self.displacement_cbfunc = 0
         self.letCount = 0
-        self.position.append(id)
+        self.position.append(id) 
+        print("fun id ", id)
         
         print("init",id, type_id, parent_class)
         
@@ -202,9 +203,9 @@ class YAPLVisitorImpl(YAPLVisitor):
                     self.displacement_cbclass += space
                 # print(self.current_class, self.current_function, self.current_count_bytes)
                 if(self.current_function != None):
-                    scope = f"{''.join(list('.'.join(self.position))[:-1])}.{param_name}"
+                    scope = f"{''.join(list('.'.join(self.position)))}.{param_name}"
                 else:
-                    scope = f"{''.join(list('.'.join(self.position))[:-1])}.{param_name}"
+                    scope = f"{''.join(list('.'.join(self.position)))}.{param_name}"
                 res, val = self.symbolTable.add_column([param_name, param_type, "Param", None, parent_class, self.current_function, None, None, scope, space, None])
                 if parent_class in self.class_methods:
                     self.class_methods[parent_class].append(param_name)
@@ -314,8 +315,8 @@ class YAPLVisitorImpl(YAPLVisitor):
             
             else:
                 if not ((type_id == "Int" and type_id_b == "Bool") or (type_id == "Bool" and type_id_b == "Int")):
-                    print("Fun Type_id_B", type_id_b)
-                    print("ERRRRRRRRRRRROOOOOOOOORRRRRRRRRR",id, type_id, type_id_b)
+                    # print("Fun Type_id_B", type_id_b)
+                    # print("ERRRRRRRRRRRROOOOOOOOORRRRRRRRRR",id, type_id, type_id_b)
                     self.customErrors.append(f"Función {id} definida como {type_id} pero se encontró {type_id_b}")
                     return "Error"
         
@@ -1440,7 +1441,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         #     return "Self"
 
 def main():
-    file_name = "./tests/test1.cl"
+    file_name = "./tests/exampleUser.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
@@ -1464,8 +1465,8 @@ def main():
     treeF = YV.symbolTable.build_Table()
     #print(treeF)
 
-    # CI = CodigoIntermedio("CI.txt", YV.symbolTable)
-    # resCI = CI.visit(tree)
+    CI = CodigoIntermedio("CI.txt", YV.symbolTable)
+    resCI = CI.visit(tree)
     
     # MIPS_ = MIPS("CI.txt")
     # MIPS_.get_MIPS_Code()
