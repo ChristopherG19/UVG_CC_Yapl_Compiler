@@ -1,23 +1,43 @@
+class A {
+   var : Int <- 3;
+
+   getVar() : Int {
+      var
+   };
+};
+
+class B {
+   var1 : Int <- 0;
+   var : Int <- 3;
+
+   getVar() : Int {
+      var
+   };
+};
+
 class Main inherits IO {
    a: Int <- 0;
    c: Int <- 2;
-   d: Int <- (a*c);
+   d: Int <- a - (~ c);
    e: String;
    f: String <- "hehe";
 
-   setA(numB: Int, d: Int): Int {
-      a <- d
-   };
+   setA(numB: Int, d: Int): Int {{
+      g <- (a < d);
+      a <- (numB * d);
+   }};
 
    method1(num : Int, numB: Int) : SELF_TYPE {{  -- same
       a <- d;
    }};
 
+   classA : A <- (new A);
+
    main() : SELF_TYPE {{
-      let x: Int <- 9 in {
-        let x: Int <- 10 in out_int(x);
-        out_int(x);
-        let y: Int <- 11 in out_int(y);
+      a <- (classA.var);
+      let classA : B <- (new B) in {
+         a <- (classA.var);
+      };
       };
    }};
 };

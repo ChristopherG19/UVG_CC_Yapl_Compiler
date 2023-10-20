@@ -1,13 +1,30 @@
+CLASS A
+		LW GP[0], 3
+	A.getVar
+		RETURN GP[0]
+	END FUNC getVar
+EOC
+CLASS B
+		LW GP[0], 0
+		LW GP[4], 3
+	B.getVar
+		RETURN GP[4]
+	END FUNC getVar
+EOC
 CLASS Main
 		LW GP[0], 0
 		LW GP[4], 2
-		MULT t0, GP[0], GP[4]
-		LW GP[8], t0
+		NEG t0, GP[4]
+		SUB t1, GP[0], t0
+		LW GP[8], t1
 		LW GP[14], "hehe"
 	Main.setA
 		PARAM SP[0], P0
 		PARAM SP[4], P1
-		LW GP[0], SP[4]
+		SLT t2, GP[0], SP[4]
+		LW g, t2
+		MULT t3, SP[0], SP[4]
+		LW GP[0], t3
 		RETURN GP[0]
 	END FUNC setA
 	Main.method1
@@ -16,16 +33,17 @@ CLASS Main
 		LW GP[0], GP[8]
 		RETURN
 	END FUNC method1
+		LW t4, A
+		LW GP[22], t4
 	Main.main
-		LW SP[0], 9
-		LW SP[4], 10
-		PARAM GP[4]
-		CALL IO.out_int, 1
-		PARAM GP[4]
-		CALL IO.out_int, 1
-		LW SP[16], 11
-		PARAM GP[16]
-		CALL IO.out_int, 1
+		CALL GP[22].GP[0], 0
+		LW t5, RET
+		LW GP[0], t5
+		LW t6, B
+		LW SP[4], t6
+		CALL SP[4].GP[0], 0
+		LW t7, RET
+		LW GP[0], t7
 		RETURN
 	END FUNC main
 EOC

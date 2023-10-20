@@ -21,6 +21,11 @@ class CodigoIntermedio(YAPLVisitor):
 
         # stacks
         self.temp_stack = []
+        self.available_temps_stack = [
+            "t8", "t7", "t6",
+            "t5", "t4", "t3",
+            "t1", "t1", "t0",
+            ]
 
         # other variables
         self.position = [] 
@@ -31,20 +36,13 @@ class CodigoIntermedio(YAPLVisitor):
 
         # self.functions = {}
         self.registers = {}
-        self.registers2 = {}
         self.functions = {}
         self.classes = {}
 
-        self.genSP(self.symbolTable)
         self.genDictionary(self.symbolTable)
         
         print("==================================")
-        print("==================================")
         print(self.registers)
-        print("==================================")
-        print("==================================")
-        print(self.registers2)
-        print("==================================")
         print("==================================")
 
     # ================================================================================
@@ -68,14 +66,6 @@ class CodigoIntermedio(YAPLVisitor):
         except:
             print(f"El archivo {self.filename} no se pudo abrir")
 
-        print("\n=================")
-        # print(self.functions, "\n")
-        for r in self.registers:
-            print(r)
-            print(self.registers[r])
-        print(self.temp_stack)
-        # print(self.classes)
-
     
     def visitDefClass(self, ctx:YAPLParser.DefClassContext):
         # print("#defClass")
@@ -90,7 +80,6 @@ class CodigoIntermedio(YAPLVisitor):
 
         # iniciar diccionarios de diccioanrios
         self.functions[self.position[0]] = {}
-        # self.registers[self.position[0]] = {}
 
         content = ""
 
@@ -102,8 +91,7 @@ class CodigoIntermedio(YAPLVisitor):
             if inherits_ != "IO":
                 # copiar
                 self.functions[self.position[0]] = self.functions[inherits_]
-                # self.registers[self.position[0]] = self.registers[inherits_]
-                
+                                
                 content += self.classes[inherits_] + "\n"
 
                 # reemplazar nombre
@@ -188,9 +176,9 @@ class CodigoIntermedio(YAPLVisitor):
             else:
                 # print("1")
                 text_ = ctx.expr().getText()
-                print("text ", text_)
+                # print("text ", text_)
                 value, _ = self.getRegister(text_)
-                print("text ret ", text_)
+                # print("text ret ", text_)
                 retText += self.visit(ctx.expr())
 
             retText += f"\t\tLW {var}, {value}\n"
@@ -224,48 +212,40 @@ class CodigoIntermedio(YAPLVisitor):
                 p_iz = "tt"
         else: 
             # print("== 1")
-            p_iz = ctx.expr(0).getText()
-            # revisar si está en el diccionario de registros
-            if p_iz in self.registers[self.position[0]].keys():
-                p_iz = self.registers[self.position[0]][p_iz]
-        
+            p_iz_t = ctx.expr(0).getText()
+            p_iz, found = self.getRegister(p_iz_t)
 
-        id = ctx.ID().getText()
+            if not found:
+                temp_ = f"t{self.temp_counter}"
+                self.addToTemp()
+                retText += f"\t\tLW {temp_}, {p_iz}\n"
+                p_iz = temp_
+
 
         paramlist = []
-
         for i, expr in enumerate(ctx.expr()):
             if i == 0:
                 continue # nos saltamos el primer expr
-            # print("in expr°")
+
             par = ""
-            exprText = expr.getText()
-            # print("exprText ", exprText)
             if expr.getChildCount() > 1: 
-                # print(">>1")
+                # visitar hijos
                 retText += self.visit(expr)
                 if len(self.temp_stack)> 0:
                     par = self.temp_stack.pop()
                 else: 
                     par = "tt"
-            else:
-                # print("==1")
-                # revisar si está en la lista
-                if exprText in self.registers[self.position[0]].keys():
-                    par = self.registers[self.position[0]][exprText]
-                else: 
-                    par = exprText
-            
-            if par != "":
-                paramlist.append(par)
+            else: 
+                # obtener valor individual
+                exprText = expr.getText()
+                par, _ = self.getRegister(exprText)
+                paramlist.append(par)  
 
         for p in paramlist:
             retText += f"\t\tPARAM {p}\n"
 
-        # print("info ", id, ", ", self.position[0])
+        id = ctx.ID().getText()
         row1 = self.symbolTable.get_cell(id= ctx.ID().getText())
-        # print("row ", row1)
-        bClass = ""
 
         retText += f"\t\tCALL {p_iz}.{id}, {len(paramlist)}\n"
 
@@ -297,34 +277,24 @@ class CodigoIntermedio(YAPLVisitor):
         paramlist = []
 
         for expr in ctx.expr():
-            # print("in expr°")
             par = ""
-            exprText = expr.getText()
-            # print("exprText ", exprText)
             if expr.getChildCount() > 1: 
-                # # print(">>1")
+                # visitar hijos
                 retText += self.visit(expr)
                 if len(self.temp_stack)> 0:
                     par = self.temp_stack.pop()
                 else: 
                     par = "tt"
-            else:
-                # # print("==1")
-                # revisar si está en la lista
-                if exprText in self.registers[self.position[0]].keys():
-                    par = self.registers[self.position[0]][exprText]
-                else: 
-                    par = exprText
-            
-            if par != "":
-                paramlist.append(par)
-
+            else: 
+                # obtener valor individual
+                exprText = expr.getText()
+                par, _ = self.getRegister(exprText)
+                paramlist.append(par)  
 
         for p in paramlist:
             retText += f"\t\tPARAM {p}\n"
 
         row1 = self.symbolTable.get_cell(id= ctx.ID().getText())
-        # print("row1 ", row1)
         retText += f"\t\tCALL {row1[4]}.{id}, {len(paramlist)}\n"
 
         if (not (
@@ -345,32 +315,32 @@ class CodigoIntermedio(YAPLVisitor):
         # print("#dispatchAttribute")
         retText = ""
 
-        # parte izquierda
+        # parte de la expresión
         p_iz = ""
         if ctx.expr().getChildCount() > 1:
-            # print(">> 1")
+            # visitar hijos
             retText += self.visit(ctx.expr())
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
                 p_iz = "tt"
         else: 
-            # print("== 1")
-            p_iz = ctx.expr().getText()
-            # revisar si está en el diccionario de registros
-            if p_iz in self.registers[self.position[0]].keys():
-                p_iz = self.registers[self.position[0]][p_iz]
+            # obtener valor individual
+            p_iz_t = ctx.expr().getText()
+            p_iz, direction = self.getRegister(p_iz_t)
+
+        # row1 = self.symbolTable.get_cell(id=)
         
         id = ctx.ID().getText()
 
-        # print("info ", id, ", ", self.position[0])
+        print("id_expr ", ctx.expr().getText())
         row = self.symbolTable.get_cell(id= ctx.expr().getText(), addParent = self.position[0])
         print(row)
+        print("id ", id)
+        print("direccion ", direction)
         if row:
-            id = self.registers[row[1]][id]
-        
-        # print("row ", row1)
-        bClass = ""
+            id, _ = self.getRegister(id, [row[1]])
+        print("id ", id)
 
         retText += f"\t\tCALL {p_iz}.{id}, 0\n"
 
@@ -406,21 +376,17 @@ class CodigoIntermedio(YAPLVisitor):
         value = ""
         exprText = ctx.expr().getText()
         if ctx.expr().getChildCount() > 1:
-            print("> 1", ctx.expr().getText())
-
+            # visitar hijos
             retText += self.visit(ctx.expr())
-            # print("deffasin retTExt ", retText)
             if len(self.temp_stack) > 0:
                 value = self.temp_stack.pop()
             else:
                 value = "tt"
 
         else:
-            # print("1")
+            # obtener valor único
             text_ = ctx.expr().getText()
-            print("text ", text_)
             value, _ = self.getRegister(text_)
-            print("text ret ", text_)
             retText += self.visit(ctx.expr())
 
         retText += f"\t\tLW {var}, {value}\n"
@@ -479,22 +445,21 @@ class CodigoIntermedio(YAPLVisitor):
 
         # evaluar la expresión de la condición
         # parte 
-        p_iz = ""
+        condition = ""
         if ctx.expr(0).getChildCount() > 1:
             retText += self.visit(ctx.expr(0))
             if len(self.temp_stack) > 0: 
-                p_iz = self.temp_stack.pop()
+                condition = self.temp_stack.pop()
             else:
-                p_iz = "tt"
+                condition = "tt"
         else: 
-            p_iz = ctx.expr(0).getText()
-            print("p_iz ", p_iz, " ", ctx.getText())
+            condition_t = ctx.expr(0).getText()
+            print("condition ", condition, " ", ctx.getText())
             # revisar si está en el diccionario de registros
-            if p_iz in self.registers[self.position[0]].keys():
-                p_iz = self.registers[self.position[0]][p_iz]
+            condition, _ = self.getRegister(p_iz_t)
         
 
-        retText += f"\t\tIF {p_iz} < 0 GOTO {end_}\n"
+        retText += f"\t\tIF {condition} < 0 GOTO {end_}\n"
 
         # hacer lo de adentro 
         # print("res ", type(ctx.expr(1)))
@@ -542,15 +507,13 @@ class CodigoIntermedio(YAPLVisitor):
             if len(t) == 5:
                 # obtener id
                 id_ = t[0].getText()
-                print(self.position, id_)
+                # print(self.position, id_)
                 var, _ = self.getRegister(id_)
 
                 # se le ha asignado algo 
                 expr = t[4]
                 value = ""
                 if expr.getChildCount() > 1:
-                    print("> 1", expr.getText())
-
                     retText += self.visit(expr)
                     # print("deffasin retTExt ", retText)
                     if len(self.temp_stack) > 0:
@@ -561,16 +524,15 @@ class CodigoIntermedio(YAPLVisitor):
                 else:
                     # print("1")
                     text_ = expr.getText()
-                    print("text ", text_)
+                    # print("text ", text_)
                     value, _ = self.getRegister(text_)
-                    print("text ret ", text_)
+                    # print("text ret ", text_)
                     retText += self.visit(expr)
 
                 retText += f"\t\tLW {var}, {value}\n"
                 # self.lastStatement = var
 
         # parte del in
-        # print("in")
         retText += self.visit(ctx.expr(len(ctx.expr()) - 1))
 
         self.position.pop() # salirse del let
@@ -597,18 +559,16 @@ class CodigoIntermedio(YAPLVisitor):
         # parte 
         p_iz = ""
         if ctx.expr().getChildCount() > 1:
-            # # print(">> 1")
+            # visitar hijos
             retText += self.visit(ctx.expr())
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
                 p_iz = "tt"
         else: 
-            # print("== 1")
-            p_iz = ctx.expr().getText()
-            # revisar si está en el diccionario de registros
-            if p_iz in self.registers[self.position[0]].keys():
-                p_iz = self.registers[self.position[0]][p_iz]
+            # obtener valor individual
+            p_iz_t = ctx.expr().getText()
+            p_iz, _ = self.getRegister(p_iz_t)
         
         temp_ = f"t{self.temp_counter}"
         self.addToTemp()
@@ -632,44 +592,30 @@ class CodigoIntermedio(YAPLVisitor):
         # parte izquierda
         p_iz = ""
         if ctx.expr(0).getChildCount() > 1:
-            # # print(">> 1")
+            # visitar a los hijos
             retText += self.visit(ctx.expr(0))
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
-                p_iz = "tt"
+                p_iz = "tt" # hubo un error
         else: 
-            # print("== 1")
-            p_iz = ctx.expr(0).getText()
-            # revisar si está en el diccionario de registros
-            pos_ = ""
-            for p_ in self.position: pos_ += p_ + "."
-            print("pos", pos_) 
-            
-            if p_iz in self.registers[self.position[0]].keys():
-                p_iz = self.registers[self.position[0]][p_iz]
+            # obtener valor individual
+            p_iz_t = ctx.expr(0).getText()
+            p_iz, _ = self.getRegister(p_iz_t)
         
         # parte derecha
         p_der = ""
         if ctx.expr(1).getChildCount() > 1:
+            # visitar a los hijos
             retText += self.visit(ctx.expr(1))
-            if len(self.temp_stack) > 0: # TODO
+            if len(self.temp_stack) > 0:
                 p_der = self.temp_stack.pop()
-            else:
-                retText += self.visit(ctx.expr(1))
-                if len(self.temp_stack) > 0:
-                    p_der = self.temp_stack.pop()
-                else: 
-                    p_der = "tt"
+            else: 
+                p_der = "tt" # hubo un error
         else: 
-            p_der = ctx.expr(1).getText()
-            # revisar si está en el diccionario de registros
-            pos_ = ""
-            for p_ in self.position: pos_ += p_ + "."
-            print("pos", pos_) 
-            
-            if p_der in self.registers[self.position[0]].keys():
-                p_der = self.registers[self.position[0]][p_der]
+            # obtener valor individual
+            p_der_t = ctx.expr(1).getText()
+            p_der, _ = self.getRegister(p_der_t)
 
         temp_ = f"t{self.temp_counter}"
         self.addToTemp()
@@ -687,36 +633,30 @@ class CodigoIntermedio(YAPLVisitor):
         # parte izquierda
         p_iz = ""
         if ctx.expr(0).getChildCount() > 1:
-            # print(">> 1")
+            # visitar a los hijos
             retText += self.visit(ctx.expr(0))
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
-                p_iz = "tt"
+                p_iz = "tt" # hubo un error
         else: 
-            # print("== 1")
-            p_iz = ctx.expr(0).getText()
-            # revisar si está en el diccionario de registros
-            if p_iz in self.registers[self.position[0]].keys():
-                p_iz = self.registers[self.position[0]][p_iz]
+            # obtener valor individual
+            p_iz_t = ctx.expr(0).getText()
+            p_iz, _ = self.getRegister(p_iz_t)
         
         # parte derecha
         p_der = ""
         if ctx.expr(1).getChildCount() > 1:
+            # visitar a los hijos
             retText += self.visit(ctx.expr(1))
-            if len(self.temp_stack) > 0: # TODO
+            if len(self.temp_stack) > 0:
                 p_der = self.temp_stack.pop()
-            else:
-                retText += self.visit(ctx.expr(1))
-                if len(self.temp_stack) > 0:
-                    p_der = self.temp_stack.pop()
-                else: 
-                    p_der = "tt"
+            else: 
+                p_der = "tt" # hubo un error
         else: 
-            p_der = ctx.expr(1).getText()
-            # revisar si está en el diccionario de registros
-            if p_der in self.registers[self.position[0]].keys():
-                p_der = self.registers[self.position[0]][p_der]
+            # obtener valor individual
+            p_der_t = ctx.expr(1).getText()
+            p_der, _ = self.getRegister(p_der_t)
 
         temp_ = f"t{self.temp_counter}"
         self.addToTemp()
@@ -734,36 +674,30 @@ class CodigoIntermedio(YAPLVisitor):
         # parte izquierda
         p_iz = ""
         if ctx.expr(0).getChildCount() > 1:
-            # print(">> 1")
+            # visitar a los hijos
             retText += self.visit(ctx.expr(0))
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
-                p_iz = "tt"
+                p_iz = "tt" # hubo un error
         else: 
-            # print("== 1")
-            p_iz = ctx.expr(0).getText()
-            # revisar si está en el diccionario de registros
-            if p_iz in self.registers[self.position[0]].keys():
-                p_iz = self.registers[self.position[0]][p_iz]
+            # obtener valor individual
+            p_iz_t = ctx.expr(0).getText()
+            p_iz, _ = self.getRegister(p_iz_t)
         
         # parte derecha
         p_der = ""
         if ctx.expr(1).getChildCount() > 1:
+            # visitar a los hijos
             retText += self.visit(ctx.expr(1))
-            if len(self.temp_stack) > 0: # TODO
+            if len(self.temp_stack) > 0:
                 p_der = self.temp_stack.pop()
-            else:
-                retText += self.visit(ctx.expr(1))
-                if len(self.temp_stack) > 0:
-                    p_der = self.temp_stack.pop()
-                else: 
-                    p_der = "tt"
+            else: 
+                p_der = "tt" # hubo un error
         else: 
-            p_der = ctx.expr(1).getText()
-            # revisar si está en el diccionario de registros
-            if p_der in self.registers[self.position[0]].keys():
-                p_der = self.registers[self.position[0]][p_der]
+            # obtener valor individual
+            p_der_t = ctx.expr(1).getText()
+            p_der, _ = self.getRegister(p_der_t)
 
         temp_ = f"t{self.temp_counter}"
         self.addToTemp()
@@ -781,36 +715,30 @@ class CodigoIntermedio(YAPLVisitor):
         # parte izquierda
         p_iz = ""
         if ctx.expr(0).getChildCount() > 1:
-            # print(">> 1")
+            # visitar a los hijos
             retText += self.visit(ctx.expr(0))
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
-                p_iz = "tt"
+                p_iz = "tt" # hubo un error
         else: 
-            # print("== 1")
-            p_iz = ctx.expr(0).getText()
-            # revisar si está en el diccionario de registros
-            if p_iz in self.registers[self.position[0]].keys():
-                p_iz = self.registers[self.position[0]][p_iz]
+            # obtener valor individual
+            p_iz_t = ctx.expr(0).getText()
+            p_iz, _ = self.getRegister(p_iz_t)
         
         # parte derecha
         p_der = ""
         if ctx.expr(1).getChildCount() > 1:
+            # visitar a los hijos
             retText += self.visit(ctx.expr(1))
-            if len(self.temp_stack) > 0: # TODO
+            if len(self.temp_stack) > 0:
                 p_der = self.temp_stack.pop()
-            else:
-                retText += self.visit(ctx.expr(1))
-                if len(self.temp_stack) > 0:
-                    p_der = self.temp_stack.pop()
-                else: 
-                    p_der = "tt"
+            else: 
+                p_der = "tt" # hubo un error
         else: 
-            p_der = ctx.expr(1).getText()
-            # revisar si está en el diccionario de registros
-            if p_der in self.registers[self.position[0]].keys():
-                p_der = self.registers[self.position[0]][p_der]
+            # obtener valor individual
+            p_der_t = ctx.expr(1).getText()
+            p_der, _ = self.getRegister(p_der_t)
 
         temp_ = f"t{self.temp_counter}"
         self.addToTemp()
@@ -828,36 +756,30 @@ class CodigoIntermedio(YAPLVisitor):
         # parte izquierda
         p_iz = ""
         if ctx.expr(0).getChildCount() > 1:
-            # print(">> 1")
+            # visitar a los hijos
             retText += self.visit(ctx.expr(0))
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
-                p_iz = "tt"
+                p_iz = "tt" # hubo un error
         else: 
-            # print("== 1")
-            p_iz = ctx.expr(0).getText()
-            # revisar si está en el diccionario de registros
-            if p_iz in self.registers[self.position[0]].keys():
-                p_iz = self.registers[self.position[0]][p_iz]
+            # obtener valor individual
+            p_iz_t = ctx.expr(0).getText()
+            p_iz, _ = self.getRegister(p_iz_t)
         
         # parte derecha
         p_der = ""
         if ctx.expr(1).getChildCount() > 1:
+            # visitar a los hijos
             retText += self.visit(ctx.expr(1))
-            if len(self.temp_stack) > 0: # TODO
+            if len(self.temp_stack) > 0:
                 p_der = self.temp_stack.pop()
-            else:
-                retText += self.visit(ctx.expr(1))
-                if len(self.temp_stack) > 0:
-                    p_der = self.temp_stack.pop()
-                else: 
-                    p_der = "tt"
+            else: 
+                p_der = "tt" # hubo un error
         else: 
-            p_der = ctx.expr(1).getText()
-            # revisar si está en el diccionario de registros
-            if p_der in self.registers[self.position[0]].keys():
-                p_der = self.registers[self.position[0]][p_der]
+            # obtener valor individual
+            p_der_t = ctx.expr(1).getText()
+            p_der, _ = self.getRegister(p_der_t)
 
         temp_ = f"t{self.temp_counter}"
         self.addToTemp()
@@ -873,39 +795,32 @@ class CodigoIntermedio(YAPLVisitor):
         retText = ""
 
         # parte izquierda
-        # parte izquierda
         p_iz = ""
         if ctx.expr(0).getChildCount() > 1:
-            # print(">> 1")
+            # visitar a los hijos
             retText += self.visit(ctx.expr(0))
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
-                p_iz = "tt"
+                p_iz = "tt" # hubo un error
         else: 
-            # print("== 1")
-            p_iz = ctx.expr(0).getText()
-            # revisar si está en el diccionario de registros
-            if p_iz in self.registers[self.position[0]].keys():
-                p_iz = self.registers[self.position[0]][p_iz]
+            # obtener valor individual
+            p_iz_t = ctx.expr(0).getText()
+            p_iz, _ = self.getRegister(p_iz_t)
         
         # parte derecha
         p_der = ""
         if ctx.expr(1).getChildCount() > 1:
+            # visitar a los hijos
             retText += self.visit(ctx.expr(1))
-            if len(self.temp_stack) > 0: # TODO
+            if len(self.temp_stack) > 0:
                 p_der = self.temp_stack.pop()
-            else:
-                retText += self.visit(ctx.expr(1))
-                if len(self.temp_stack) > 0:
-                    p_der = self.temp_stack.pop()
-                else: 
-                    p_der = "tt"
+            else: 
+                p_der = "tt" # hubo un error
         else: 
-            p_der = ctx.expr(1).getText()
-            # revisar si está en el diccionario de registros
-            if p_der in self.registers[self.position[0]].keys():
-                p_der = self.registers[self.position[0]][p_der]
+            # obtener valor individual
+            p_der_t = ctx.expr(1).getText()
+            p_der, _ = self.getRegister(p_der_t)
 
         temp_ = f"t{self.temp_counter}"
         self.addToTemp()
@@ -923,36 +838,30 @@ class CodigoIntermedio(YAPLVisitor):
         # parte izquierda
         p_iz = ""
         if ctx.expr(0).getChildCount() > 1:
-            # print(">> 1")
+            # visitar a los hijos
             retText += self.visit(ctx.expr(0))
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
-                p_iz = "tt"
+                p_iz = "tt" # hubo un error
         else: 
-            # print("== 1")
-            p_iz = ctx.expr(0).getText()
-            # revisar si está en el diccionario de registros
-            if p_iz in self.registers[self.position[0]].keys():
-                p_iz = self.registers[self.position[0]][p_iz]
+            # obtener valor individual
+            p_iz_t = ctx.expr(0).getText()
+            p_iz, _ = self.getRegister(p_iz_t)
         
         # parte derecha
         p_der = ""
         if ctx.expr(1).getChildCount() > 1:
+            # visitar a los hijos
             retText += self.visit(ctx.expr(1))
-            if len(self.temp_stack) > 0: # TODO
+            if len(self.temp_stack) > 0:
                 p_der = self.temp_stack.pop()
-            else:
-                retText += self.visit(ctx.expr(1))
-                if len(self.temp_stack) > 0:
-                    p_der = self.temp_stack.pop()
-                else: 
-                    p_der = "tt"
+            else: 
+                p_der = "tt" # hubo un error
         else: 
-            p_der = ctx.expr(1).getText()
-            # revisar si está en el diccionario de registros
-            if p_der in self.registers[self.position[0]].keys():
-                p_der = self.registers[self.position[0]][p_der]
+            # obtener valor individual
+            p_der_t = ctx.expr(1).getText()
+            p_der, _ = self.getRegister(p_der_t)
 
         temp_ = f"t{self.temp_counter}"
         self.addToTemp()
@@ -970,36 +879,30 @@ class CodigoIntermedio(YAPLVisitor):
         # parte izquierda
         p_iz = ""
         if ctx.expr(0).getChildCount() > 1:
-            # print(">> 1")
+            # visitar a los hijos
             retText += self.visit(ctx.expr(0))
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
-                p_iz = "tt"
+                p_iz = "tt" # hubo un error
         else: 
-            # print("== 1")
-            p_iz = ctx.expr(0).getText()
-            # revisar si está en el diccionario de registros
-            if p_iz in self.registers[self.position[0]].keys():
-                p_iz = self.registers[self.position[0]][p_iz]
+            # obtener valor individual
+            p_iz_t = ctx.expr(0).getText()
+            p_iz, _ = self.getRegister(p_iz_t)
         
         # parte derecha
         p_der = ""
         if ctx.expr(1).getChildCount() > 1:
+            # visitar a los hijos
             retText += self.visit(ctx.expr(1))
-            if len(self.temp_stack) > 0: # TODO
+            if len(self.temp_stack) > 0:
                 p_der = self.temp_stack.pop()
-            else:
-                retText += self.visit(ctx.expr(1))
-                if len(self.temp_stack) > 0:
-                    p_der = self.temp_stack.pop()
-                else: 
-                    p_der = "tt"
+            else: 
+                p_der = "tt" # hubo un error
         else: 
-            p_der = ctx.expr(1).getText()
-            # revisar si está en el diccionario de registros
-            if p_der in self.registers[self.position[0]].keys():
-                p_der = self.registers[self.position[0]][p_der]
+            # obtener valor individual
+            p_der_t = ctx.expr(1).getText()
+            p_der, _ = self.getRegister(p_der_t)
 
         temp_ = f"t{self.temp_counter}"
         self.addToTemp()
@@ -1017,36 +920,30 @@ class CodigoIntermedio(YAPLVisitor):
         # parte izquierda
         p_iz = ""
         if ctx.expr(0).getChildCount() > 1:
-            # print(">> 1")
+            # visitar a los hijos
             retText += self.visit(ctx.expr(0))
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
-                p_iz = "tt"
+                p_iz = "tt" # hubo un error
         else: 
-            # print("== 1")
-            p_iz = ctx.expr(0).getText()
-            # revisar si está en el diccionario de registros
-            if p_iz in self.registers[self.position[0]].keys():
-                p_iz = self.registers[self.position[0]][p_iz]
+            # obtener valor individual
+            p_iz_t = ctx.expr(0).getText()
+            p_iz, _ = self.getRegister(p_iz_t)
         
         # parte derecha
         p_der = ""
         if ctx.expr(1).getChildCount() > 1:
+            # visitar a los hijos
             retText += self.visit(ctx.expr(1))
-            if len(self.temp_stack) > 0: # TODO
+            if len(self.temp_stack) > 0:
                 p_der = self.temp_stack.pop()
-            else:
-                retText += self.visit(ctx.expr(1))
-                if len(self.temp_stack) > 0:
-                    p_der = self.temp_stack.pop()
-                else: 
-                    p_der = "tt"
+            else: 
+                p_der = "tt" # hubo un error
         else: 
-            p_der = ctx.expr(1).getText()
-            # revisar si está en el diccionario de registros
-            if p_der in self.registers[self.position[0]].keys():
-                p_der = self.registers[self.position[0]][p_der]
+            # obtener valor individual
+            p_der_t = ctx.expr(1).getText()
+            p_der, _ = self.getRegister(p_der_t)
 
         temp_ = f"t{self.temp_counter}"
         self.addToTemp()
@@ -1065,36 +962,30 @@ class CodigoIntermedio(YAPLVisitor):
         # parte izquierda
         p_iz = ""
         if ctx.expr(0).getChildCount() > 1:
-            # print(">> 1")
+            # visitar a los hijos
             retText += self.visit(ctx.expr(0))
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
-                p_iz = "tt"
+                p_iz = "tt" # hubo un error
         else: 
-            # print("== 1")
-            p_iz = ctx.expr(0).getText()
-            # revisar si está en el diccionario de registros
-            if p_iz in self.registers[self.position[0]].keys():
-                p_iz = self.registers[self.position[0]][p_iz]
+            # obtener valor individual
+            p_iz_t = ctx.expr(0).getText()
+            p_iz, _ = self.getRegister(p_iz_t)
         
         # parte derecha
         p_der = ""
         if ctx.expr(1).getChildCount() > 1:
+            # visitar a los hijos
             retText += self.visit(ctx.expr(1))
-            if len(self.temp_stack) > 0: # TODO
+            if len(self.temp_stack) > 0:
                 p_der = self.temp_stack.pop()
-            else:
-                retText += self.visit(ctx.expr(1))
-                if len(self.temp_stack) > 0:
-                    p_der = self.temp_stack.pop()
-                else: 
-                    p_der = "tt"
+            else: 
+                p_der = "tt" # hubo un error
         else: 
-            p_der = ctx.expr(1).getText()
-            # revisar si está en el diccionario de registros
-            if p_der in self.registers[self.position[0]].keys():
-                p_der = self.registers[self.position[0]][p_der]
+            # obtener valor individual
+            p_der_t = ctx.expr(1).getText()
+            p_der, _ = self.getRegister(p_der_t)
 
         temp_ = f"t{self.temp_counter}"
         self.addToTemp()
@@ -1112,36 +1003,30 @@ class CodigoIntermedio(YAPLVisitor):
         # parte izquierda
         p_iz = ""
         if ctx.expr(0).getChildCount() > 1:
-            # print(">> 1")
+            # visitar a los hijos
             retText += self.visit(ctx.expr(0))
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
-                p_iz = "tt"
+                p_iz = "tt" # hubo un error
         else: 
-            # print("== 1")
-            p_iz = ctx.expr(0).getText()
-            # revisar si está en el diccionario de registros
-            if p_iz in self.registers[self.position[0]].keys():
-                p_iz = self.registers[self.position[0]][p_iz]
+            # obtener valor individual
+            p_iz_t = ctx.expr(0).getText()
+            p_iz, _ = self.getRegister(p_iz_t)
         
         # parte derecha
         p_der = ""
         if ctx.expr(1).getChildCount() > 1:
+            # visitar a los hijos
             retText += self.visit(ctx.expr(1))
-            if len(self.temp_stack) > 0: # TODO
+            if len(self.temp_stack) > 0:
                 p_der = self.temp_stack.pop()
-            else:
-                retText += self.visit(ctx.expr(1))
-                if len(self.temp_stack) > 0:
-                    p_der = self.temp_stack.pop()
-                else: 
-                    p_der = "tt"
+            else: 
+                p_der = "tt" # hubo un error
         else: 
-            p_der = ctx.expr(1).getText()
-            # revisar si está en el diccionario de registros
-            if p_der in self.registers[self.position[0]].keys():
-                p_der = self.registers[self.position[0]][p_der]
+            # obtener valor individual
+            p_der_t = ctx.expr(1).getText()
+            p_der, _ = self.getRegister(p_der_t)
 
         temp_ = f"t{self.temp_counter}"
         self.addToTemp()
@@ -1159,18 +1044,16 @@ class CodigoIntermedio(YAPLVisitor):
         # parte 
         p_iz = ""
         if ctx.expr().getChildCount() > 1:
-            # print(">> 1")
+            # visitar hijos
             retText += self.visit(ctx.expr())
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
                 p_iz = "tt"
         else: 
-            # print("== 1")
-            p_iz = ctx.expr().getText()
-            # revisar si está en el diccionario de registros
-            if p_iz in self.registers[self.position[0]].keys():
-                p_iz = self.registers[self.position[0]][p_iz]
+            # obtener valor individual
+            p_iz_t = ctx.expr().getText()
+            p_iz, _ = self.getRegister(p_iz_t)
         
         temp_ = f"t{self.temp_counter}"
         self.addToTemp()
@@ -1190,35 +1073,26 @@ class CodigoIntermedio(YAPLVisitor):
         # print("expr ", ctx.expr().getText())
         p_iz = ""
         if ctx.expr().getChildCount() > 1:
-            # print(">> 1")
+            # visitar hijos
             retText += self.visit(ctx.expr())
             if len(self.temp_stack) > 0: 
                 p_iz = self.temp_stack.pop()
             else:
                 p_iz = "tt"
         else: 
-            # print("== 1")
-            p_iz = ctx.expr().getText()
-            # revisar si está en el diccionario de registros
-            if p_iz in self.registers[self.position[0]].keys():
-                p_iz = self.registers[self.position[0]][p_iz]
+            # obtener valor individual
+            p_iz_t = ctx.expr().getText()
+            p_iz, _ = self.getRegister(p_iz_t)
         
         # volver a meter el valor al stack
         self.temp_stack.append(p_iz)
-        
-        # temp_ = f"t{self.temp_counter}"
-        # self.addToTemp()
-        # self.temp_stack.append(temp_)
-
-        # retText += f"\t\tLW {temp_}, {p_iz}\n"
-        # self.lastStatement = temp_
 
         return retText
     
     def visitId(self, ctx:YAPLParser.IdContext):
         # print("#id") 
         retText = ""
-        pos_ = self.registers[self.position[0]][ctx.getText()]
+        pos_, _ = self.getRegister(ctx.getText())
         self.lastStatement = pos_
         return retText
     
@@ -1264,26 +1138,6 @@ class CodigoIntermedio(YAPLVisitor):
     def resetTemp(self):
         self.temp_counter = 0
 
-    def genSP(self, st:Table):
-        # conseguir todas las clases 
-        noClases = ["object", "self_type", "io", "void", "string", "int", "bool"]
-        classes = []
-        for x in st.columns:
-            if x[4].lower() not in noClases and x[4] not in classes:
-                classes.append(x[4])
-        
-        # crear diccionarios individuales
-        for c in classes:
-            self.registers[c] = {}
-
-        # agregar
-        for x in st.columns:
-            # print(x[0], x[2], x[8], x[7])
-            if (x[2] == "Instance" or x[2] == "Variable" or x[2] == "Param") and x[4].lower() not in noClases:
-                # print("yes")
-                self.registers[x[4]][x[0]] = f"GP[{x[7]}]"
-                    # print("Agregado!")
-
     def genDictionary(self, st:Table):
         # conseguir las clases 
         # clases que se ignoran
@@ -1297,32 +1151,38 @@ class CodigoIntermedio(YAPLVisitor):
                     pos_ = x[8].split(".") # separamos por puntos
                     if len(pos_) > 2:
                         # es una variable global
-                        self.registers2[x[8]] = f"SP[{x[7]}]"
+                        self.registers[x[8]] = f"SP[{x[7]}]"
                     else:
                         # es una variable local
-                        self.registers2[x[8]] = f"GP[{x[7]}]"
+                        self.registers[x[8]] = f"GP[{x[7]}]"
                     # {class_name.method_name.let_#.variable_name}
 
-    def getRegister(self, name_:str):
+    def getRegister(self, name_:str, position = None):
         ret = ""
 
-        # copiar la posición
         pos = []
-        for x in self.position:
-            pos.append(x)
+        if position:
+            # copiar la posición dada
+            for x in position:
+                pos.append(x)
+        else:
+            # copiar la posición global
+            for x in self.position:
+                pos.append(x)
 
+        search = ""
         while (len(pos) >= 1):
             # conseguir el nombre
             search = ""
             for p in pos:
                 search += p + "."
             search += name_ 
-            print(search)
+            # print(search)
 
             # buscar si existe en el diccionario
-            if search in self.registers2.keys():
+            if search in self.registers.keys():
                 # conseguir el registro correcto
-                ret = self.registers2[search]
+                ret = self.registers[search]
                 # print("break ", name_)
                 break # salirse del loop
 
@@ -1331,7 +1191,7 @@ class CodigoIntermedio(YAPLVisitor):
 
         if ret != "":
             # encontró el registro
-            return ret, True
+            return ret, search
         else:
             # retornar lo que se estaba buscando
-            return name_, False
+            return name_, None
