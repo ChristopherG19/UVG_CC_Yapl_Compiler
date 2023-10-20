@@ -33,7 +33,7 @@
 |   substr   |   String   |    Method   |   None   |   String  |    None    |     None     |         Global        |   0   |  None |
 |    iPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     |         Local         |   0   |  None |
 |    lPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     |         Local         |   0   |  None |
-|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     |         Global        |   70  |  None |
+|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     |         Global        |   77  |  None |
 | out_string | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     |         Global        |   0   |  None |
 |   xParS    |   String   |    Param    |   None   |    Main   | out_string |     None     |         Local         |   0   |  None |
 |  out_int   | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     |         Global        |   0   |  None |
@@ -45,13 +45,14 @@
 |     d      |    Int     |   Instance  |   None   |    Main   |    None    |      8       |         Main.d        |   4   |   0   |
 |     e      |   String   |   Instance  |   None   |    Main   |    None    |      12      |         Main.e        |   2   |   ''  |
 |     f      |   String   |   Instance  |   None   |    Main   |    None    |      14      |         Main.f        |   8   |  hehe |
+|     g      |    Bool    |   Instance  |   None   |    Main   |    None    |      22      |         Main.g        |   1   | False |
 |    numB    |    Int     |    Param    |   None   |    Main   |    setA    |      0       |     Main.setA.numB    |   4   |  None |
 |     d      |    Int     |    Param    |   None   |    Main   |    setA    |      4       |      Main.setA.d      |   4   |  None |
-|    setA    |    Int     |    Method   |   None   |    Main   |    None    |     None     |         Global        |   16  |  None |
+|    setA    |    Int     |    Method   |   None   |    Main   |    None    |     None     |         Global        |   17  |  None |
 |    num     |    Int     |    Param    |   None   |    Main   |  method1   |      0       |    Main.method1.num   |   4   |  None |
 |    numB    |    Int     |    Param    |   None   |    Main   |  method1   |      4       |   Main.method1.numB   |   4   |  None |
-|  method1   | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     |         Global        |   12  |  None |
-|   classA   |     A      |   Instance  |   None   |    Main   |    None    |      22      |      Main.classA      |   8   |  None |
+|  method1   | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     |         Global        |   17  |  None |
+|   classA   |     A      |   Instance  |   None   |    Main   |    None    |      23      |      Main.classA      |   8   |  None |
 |    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     |         Global        |   12  |  None |
 |   classA   |     B      |   Variable  |   None   |    Main   |    main    |      4       | Main.main.Let1.classA |   0   |  None |
 +------------+------------+-------------+----------+-----------+------------+--------------+-----------------------+-------+-------+

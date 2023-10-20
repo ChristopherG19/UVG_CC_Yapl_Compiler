@@ -17,10 +17,11 @@ class B {
 
 class Main inherits IO {
    a: Int <- 0;
-   c: Int <- 2;
+   c: Int <- ((a + 1) * (a - 3));
    d: Int <- a - (~ c);
    e: String;
    f: String <- "hehe";
+   g: Bool <- True;
 
    setA(numB: Int, d: Int): Int {{
       g <- (a < d);
@@ -29,6 +30,11 @@ class Main inherits IO {
 
    method1(num : Int, numB: Int) : SELF_TYPE {{  -- same
       a <- d;
+      if g = True then 
+         a <- 9
+      else
+         a <- numB
+      fi;
    }};
 
    classA : A <- (new A);
@@ -36,8 +42,8 @@ class Main inherits IO {
    main() : SELF_TYPE {{
       a <- (classA.var);
       let classA : B <- (new B) in {
-         a <- (classA.var);
-      };
+         a <- (classA.getVar());
       };
    }};
 };
+

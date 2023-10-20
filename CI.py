@@ -115,7 +115,7 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitDefFunc(self, ctx:YAPLParser.DefFuncContext):
-        # print("#defFun")
+        print("#defFun")
         retText = ""
 
         id = ctx.ID().getText()
@@ -198,7 +198,7 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitDispatchExplicit(self, ctx:YAPLParser.DispatchExplicitContext):
-        # print("#dispatchExplicit")
+        print("#dispatchExplicit")
         retText = ""
 
         # parte izquierda
@@ -221,7 +221,6 @@ class CodigoIntermedio(YAPLVisitor):
                 retText += f"\t\tLW {temp_}, {p_iz}\n"
                 p_iz = temp_
 
-
         paramlist = []
         for i, expr in enumerate(ctx.expr()):
             if i == 0:
@@ -239,37 +238,46 @@ class CodigoIntermedio(YAPLVisitor):
                 # obtener valor individual
                 exprText = expr.getText()
                 par, _ = self.getRegister(exprText)
-                paramlist.append(par)  
+            paramlist.append(par)  
 
         for p in paramlist:
             retText += f"\t\tPARAM {p}\n"
 
         id = ctx.ID().getText()
         row1 = self.symbolTable.get_cell(id= ctx.ID().getText())
+        # print("id ", id)
+        # print("row1 ", row1)
 
         retText += f"\t\tCALL {p_iz}.{id}, {len(paramlist)}\n"
+        print(f"\t\tCALL {p_iz}.{id}, {len(paramlist)}\n")
 
         # if (not (row[1].upper() == "SELF_TYPE" or row[1].upper() == "VOID")):
-        name = f"t{self.temp_counter}"
-        self.addToTemp()
-        self.temp_stack.append(name)
+        # name = f"t{self.temp_counter}"
+        # self.addToTemp()
+        # self.temp_stack.append(name)
+        name = self.lastStatement
+        print("row1 ", row1)
 
         if (not (
             row1[1].upper() == "SELF_TYPE" or 
             row1[1].upper() == "VOID" or 
             row1[1].upper() == "OBJECT"
             )):
+            print("retonro")
             
             retText += f"\t\tLW {name}, RET\n"
 
             self.lastStatement = name
 
+        else: print("no retorno")
+
         self.lastStatement = name
+        print("name", name)
 
         return retText
     
     def visitDispatchImplicit(self, ctx:YAPLParser.DispatchImplicitContext):
-        # print("#dispatchImplicit")
+        print("#dispatchImplicit")
         retText = ""
 
         id = ctx.ID().getText()
@@ -278,6 +286,7 @@ class CodigoIntermedio(YAPLVisitor):
 
         for expr in ctx.expr():
             par = ""
+            print("par")
             if expr.getChildCount() > 1: 
                 # visitar hijos
                 retText += self.visit(expr)
@@ -289,7 +298,9 @@ class CodigoIntermedio(YAPLVisitor):
                 # obtener valor individual
                 exprText = expr.getText()
                 par, _ = self.getRegister(exprText)
-                paramlist.append(par)  
+            paramlist.append(par)  
+
+        print("paramlist ", paramlist)
 
         for p in paramlist:
             retText += f"\t\tPARAM {p}\n"
@@ -312,7 +323,7 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitDispatchAttribute(self, ctx:YAPLParser.DispatchAttributeContext):
-        # print("#dispatchAttribute")
+        print("#dispatchAttribute")
         retText = ""
 
         # parte de la expresión
@@ -329,18 +340,22 @@ class CodigoIntermedio(YAPLVisitor):
             p_iz_t = ctx.expr().getText()
             p_iz, direction = self.getRegister(p_iz_t)
 
-        # row1 = self.symbolTable.get_cell(id=)
-        
         id = ctx.ID().getText()
-
-        print("id_expr ", ctx.expr().getText())
-        row = self.symbolTable.get_cell(id= ctx.expr().getText(), addParent = self.position[0])
-        print(row)
-        print("id ", id)
-        print("direccion ", direction)
+        if direction:
+            split = direction.split('.')
+            id_dir = split[len(split) - 1]
+            row = self.symbolTable.get_cell(id=id_dir, addScope = direction)
+            # print("row1, ", row)
+        
+        else:
+            # print("id_expr ", ctx.expr().getText())
+            row = self.symbolTable.get_cell(id= ctx.expr().getText(), addParent = self.position[0])
+        # print("row, ", row)
+        # print("id ", id)
+        # print("direccion ", direction)
         if row:
             id, _ = self.getRegister(id, [row[1]])
-        print("id ", id)
+        # print("id ", id)
 
         retText += f"\t\tCALL {p_iz}.{id}, 0\n"
 
@@ -411,7 +426,7 @@ class CodigoIntermedio(YAPLVisitor):
         if_ = self.goto_if
         self.goto_if += 1
 
-        retText += f"\t\tIF {temp_} < 0 GOTO L_TRUE_{if_}\n"
+        retText += f"\t\tIF {temp_} > 0 GOTO L_TRUE_{if_}\n"
         retText += f"\t\tGOTO L_FALSE_{if_}\n"
 
         # caso real
@@ -456,10 +471,10 @@ class CodigoIntermedio(YAPLVisitor):
             condition_t = ctx.expr(0).getText()
             print("condition ", condition, " ", ctx.getText())
             # revisar si está en el diccionario de registros
-            condition, _ = self.getRegister(p_iz_t)
+            condition, _ = self.getRegister(condition_t)
         
 
-        retText += f"\t\tIF {condition} < 0 GOTO {end_}\n"
+        retText += f"\t\tIF {condition} = 0 GOTO {end_}\n"
 
         # hacer lo de adentro 
         # print("res ", type(ctx.expr(1)))
@@ -480,7 +495,7 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitLetId(self, ctx:YAPLParser.LetIdContext):
-        # print("#letId")
+        print("#letId")
         retText = ""
         
         trips = []
@@ -586,7 +601,7 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitTimes(self, ctx:YAPLParser.TimesContext):
-        print("#times")
+        # print("#times")
         retText = ""
 
         # parte izquierda
@@ -1070,7 +1085,7 @@ class CodigoIntermedio(YAPLVisitor):
         # print("par ", ctx.getText())
 
         # parte 
-        # print("expr ", ctx.expr().getText())
+        # print("parens expr ", ctx.expr().getText())
         p_iz = ""
         if ctx.expr().getChildCount() > 1:
             # visitar hijos
