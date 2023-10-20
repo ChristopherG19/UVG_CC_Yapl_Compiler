@@ -1,63 +1,15 @@
-CLASS A
-		LW GP[0], 3
-	A.getVar
-		RETURN GP[0]
-	END FUNC getVar
-EOC
-CLASS B
-		LW GP[0], 0
-		LW GP[4], 3
-	B.getVar
-		RETURN GP[4]
-	END FUNC getVar
-EOC
 CLASS Main
 		LW GP[0], 0
-		ADD t0, GP[0], 1
-		SUB t1, GP[0], 3
+		LW GP[4], 8
+		MULT t0, GP[0], 9
+		MULT t1, GP[4], 7
 		MULT t2, t0, t1
-		LW GP[4], t2
-		NEG t3, GP[4]
-		SUB t4, GP[0], t3
-		LW GP[8], t4
-		LW GP[14], "hehe"
-		LW GP[22], True
-	Main.setA
-		PARAM SP[0], P0
-		PARAM SP[4], P1
-		SLT t5, GP[0], SP[4]
-		LW GP[22], t5
-		MULT t6, SP[0], SP[4]
-		LW GP[0], t6
-		RETURN GP[0]
-	END FUNC setA
-	Main.method1
-		PARAM SP[0], P0
-		PARAM SP[4], P1
-		LW GP[0], GP[8]
-		SEQ t7, GP[22], True
-		IF t7 > 0 GOTO L_TRUE_0
-		GOTO L_FALSE_0
-L_TRUE_0:
-		LW GP[0], 9
-		GOTO L_IF_END_0
-L_FALSE_0:
-		LW GP[0], SP[4]
-		GOTO L_IF_END_0
-L_IF_END_0:
-		RETURN
-	END FUNC method1
-		LW t8, A
-		LW GP[23], t8
+		LW GP[8], t2
+		MULT t0, GP[0], 9
+		MULT t1, GP[4], 7
+		MULT t3, t0, t1
+		LW GP[12], t3
 	Main.main
-		CALL GP[23].GP[0], 0
-		LW t0, RET
-		LW GP[0], t0
-		LW t1, B
-		LW SP[4], t1
-		CALL SP[4].getVar, 0
-		LW t1, RET
-		LW GP[0], True
 		RETURN
 	END FUNC main
 EOC
