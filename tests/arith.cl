@@ -26,7 +26,7 @@ class A {
    method3(num : Int) : A {  -- negate
       (let x : Int in
 	 {
-            x <- ~num;
+            x <- (~num);
 	    (new A).set_var(x);
 	 }
       )

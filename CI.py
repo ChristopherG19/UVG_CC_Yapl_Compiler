@@ -197,8 +197,7 @@ class CodigoIntermedio(YAPLVisitor):
 
         id_f = ctx.ID().getText()
         pos_, _ = self.getRegister(id_f)
-        retText += f"\t\tPARAM {pos_}, P{self.param_num}\n"
-
+        retText += f"\t\tLW {pos_}, P{self.param_num}\n"
 
         return retText
     

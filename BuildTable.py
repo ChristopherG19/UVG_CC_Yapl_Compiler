@@ -1441,7 +1441,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         #     return "Self"
 
 def main():
-    file_name = "./tests/exampleUser.cl"
+    file_name = "./tests/arith.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
@@ -1452,10 +1452,10 @@ def main():
     try:
         res = YV.visit(tree)
         if(str(res) == "Error" or len(YV.customErrors) > 0):
-            print("----------------------------------")
-            print("  Errores semánticos encontrados")
-            print("----------------------------------\n")
-            clean_errors(YV.customErrors)
+            # print("----------------------------------")
+            # print("  Errores semánticos encontrados")
+            # print("----------------------------------\n")
+            # clean_errors(YV.customErrors)
             print()
         else:
             print("\nResultado Lectura: Todo está semánticamente correcto\n")
