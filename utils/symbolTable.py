@@ -200,3 +200,20 @@ class Table():
             if (not addType or row[1] == addType) and (not addParent or row[4] == addParent) and (not addFunctionP or row[5] == addFunctionP) and (not Value or row[-1] == Value):
                 return row
         return None
+    
+    
+    def class_size(self, classname):
+        ret = 0
+        for row in self.columns:
+            if row[4] == classname and row[2] != "Class":
+                ret += row[9]
+
+        return ret
+    
+    def fun_size(self, id, classname):
+        res = 0
+        for row in self.columns:
+            if row[5] == id and row[4] == classname:
+                res += row[9]
+
+        return res

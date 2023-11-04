@@ -76,7 +76,11 @@ class CodigoIntermedio(YAPLVisitor):
 
         # self.position[0] = ctx.TYPE(0).getText()
         self.position.append(ctx.TYPE(0).getText())
-        retText += f"CLASS {self.position[0]}\n"
+
+        # obtener tamaño de la clase
+        size = self.symbolTable.class_size(self.position[0])
+
+        retText += f"CLASS {self.position[0]}, {str(size)}\n"
 
         # iniciar diccionarios de diccioanrios
         self.functions[self.position[0]] = {}
@@ -121,7 +125,10 @@ class CodigoIntermedio(YAPLVisitor):
         id = ctx.ID().getText()
         # self.currentFun = id
         #print("id ", id)
-        retText += f"\t{self.position[0]}.{id}\n"
+        # obtenr tamaño
+        size = self.symbolTable.fun_size(id, self.position[0])
+
+        retText += f"\t{self.position[0]}.{id}, {size}\n"
         self.position.append(id) 
         self.let_counter = 1 # reiniciar el conteo de lets por función
 
@@ -164,6 +171,7 @@ class CodigoIntermedio(YAPLVisitor):
 
             # obtener expresión
             value = ""
+            ins = "LW"
             if ctx.expr().getChildCount() > 1:
                 # visitar hijos
                 retText += self.visit(ctx.expr())
@@ -180,10 +188,12 @@ class CodigoIntermedio(YAPLVisitor):
                 text_ = ctx.expr().getText()
                 # print("text ", text_)
                 value, _ = self.getRegister(text_)
-                # print("text ret ", text_)
+                #print("text ret ", text_)
                 retText += self.visit(ctx.expr())
+                if(value == text_):
+                    ins = "LI"
 
-            retText += f"\t\tLW {var}, {value}\n"
+            retText += f"\t\t{ins} {var}, {value}\n"
             self.lastStatement = var
 
             # regresar variables temporales
@@ -1254,21 +1264,21 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitId(self, ctx:YAPLParser.IdContext):
-        # print("#id") 
+        print("#id") 
         retText = ""
         pos_, _ = self.getRegister(ctx.getText())
         self.lastStatement = pos_
         return retText
     
     def visitInt(self, ctx:YAPLParser.IntContext):
-        # print("#int")
+        print("#int")
         retText = ""
         self.lastStatement = ctx.getText()
 
         return retText
 
     def visitString(self, ctx:YAPLParser.StringContext):
-        # print("#string")
+        print("#string")
         retText = ""
         self.lastStatement = ctx.getText()
 
@@ -1362,7 +1372,10 @@ class CodigoIntermedio(YAPLVisitor):
             pos = 0
             for i, t in enumerate(self.available_temps_stack):
                 # print(int(temp[1:]) , int(t[1:]))
-                if int(temp[1:]) < int(t[1:]):
-                    pos = i + 1
+                try:
+                    if int(temp[1:]) < int(t[1:]):
+                        pos = i + 1
+                except:
+                    continue
 
             self.available_temps_stack.insert(pos, temp)
