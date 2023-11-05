@@ -12,11 +12,6 @@ class Main inherits IO {
           let y: Int <- 11 in out_int(y);
         };
         a <- 10;
-        let x: Int <- 9 in {
-          let x: Int <- 10 in out_int(x);
-          out_int(x);
-          let y: Int <- 11 in out_int(y);
-        };
       }
     };
 

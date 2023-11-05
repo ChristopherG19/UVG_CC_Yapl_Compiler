@@ -1,19 +1,35 @@
 .data
 .text
+.globl Main_main
 Main:
-    lw 0, 0($gp)
-    lw 2, 4($gp)
-    add $t0, GP[0], GP[4]
-    lw $t0, 8($gp)
+	sub $sp, $sp, 20
+	sw $ra, 0($sp)
+	la $s0, 0($sp)
+	la $s1, 4($sp)
+
+    li $t0, 10
+    sw $t0, 0($s0)
+
+    li $t0, 2
+    sw $t0, 4($s0)
+
+    lw $t0, 0($s0)
+    lw $t1, 4($s0)
+
+    add $t2, $t0, $t1
+
+    sw $t2, 8($s0)
 
 Main_main:
-    lw $a0, 12($gp)
-    jal IO_out_string
-    j exit
+    lw 5, 0($s1)
+    lw $t0, 0($s0)
+    lw $t1, 0($s1)
 
-IO_out_string:
-    li $v0, 4
-    syscall
-    jr $ra
+    add $t2, $t0, $t1
+
+    lw $t0, 8($s0)
+	j exit
 
 exit:
+	li $v0, 10
+	syscall

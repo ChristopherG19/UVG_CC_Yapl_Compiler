@@ -34,7 +34,7 @@ class MIPS():
             
         if(input_code != None):
             mips_code = ""
-            mips_code += ".data\n.text"
+            mips_code += ".data\n.text\n.globl Main_main"
 
             # Divide el código intermedio en líneas
             lines = input_code.split('\n')
@@ -62,6 +62,10 @@ class MIPS():
                         Act_class = words[1]
                         self.etiquetas.append(Act_class)
                         mips_code += f"\n{Act_class}:\n"
+                        mips_code += f"\tsub $sp, $sp, {words[2]}\n"
+                        mips_code += f"\tsw $ra, 0($sp)\n"
+                        mips_code += f"\tla $s0, 0($sp)\n"
+                        mips_code += f"\tla $s1, 4($sp)\n\n"
                         
                     elif (Act_class+".") in words[0]:
                         call_func = words[0].replace('.', '_')
@@ -75,11 +79,30 @@ class MIPS():
                         if match:
                             env = match.group(1)
                             disp = match.group(2)
-                            mips_code += f"    lw {words[2]}, {disp}(${env.lower()})\n"
+                            if env == "GP":
+                                mips_code += f"    lw {words[2]}, {disp}($s0)\n"
+                            elif env == "SP":
+                                mips_code += f"    lw {words[2]}, {disp}($s1)\n"
+                                
                         else:
                             if words[2] == "R":
                                 mips_code += f"    lw {words[1]}, $v0\n"
-                                
+                    
+                    elif words[0] == "LI":
+                        match = re.match(r'(\w+)\[(\d+)\]', words[1])
+
+                        if match:
+                            env = match.group(1)
+                            disp = match.group(2)
+                            if env == "GP":
+                                mips_code += f"    li $t0, {words[2]}\n"
+                                mips_code += f"    sw $t0, {disp}($s0)\n\n"
+                            elif env == "SP":
+                                mips_code += f"    li $t0, {words[2]}\n"
+                                mips_code += f"    sw $t0, {disp}($s1)\n\n"  
+                        else:
+                            if words[2] == "R":
+                                mips_code += f"    li {words[1]}, $v0\n"         
                             
                     elif words[0] == "SW":
                         match = re.match(r'(\w+)\[(\d+)\]', words[1])
@@ -103,31 +126,57 @@ class MIPS():
                         func = words[1].replace('.', '_')
                         if(func not in self.etiquetas):
                             mips_code += f"    jal {func}\n"
+                            #TODO arreglar instrucción li y hacer un move $a0, <temporal con info> antes del syscall
                             self.tempBlock += f"{func}:\n    li $v0, 4\n    syscall\n    jr $ra\n"
                         else:    
                             mips_code += f"    jal {func}\n"
                     
                     elif words[0] == "ADD":
-                        mips_code += f"    add {words[1]}, {words[2]}, {words[3]}\n"
+                        
+                        matchA = re.match(r'(\w+)\[(\d+)\]', words[2])
+
+                        if matchA:
+                            envA = matchA.group(1)
+                            dispA = matchA.group(2)
+                            if envA == "GP":
+                                mips_code += f"    lw {words[1]}, {dispA}($s0)\n"
+                            elif envA == "SP":
+                                mips_code += f"    lw {words[1]}, {dispA}($s1)\n"
+                            
+                        matchB = re.match(r'(\w+)\[(\d+)\]', words[3])
+
+                        if matchB:
+                            envB = matchB.group(1)
+                            dispB = matchB.group(2)
+                            if envB == "GP":
+                                #TODO si se arreglan los temporales, este arreglo se eliminaria
+                                mips_code += f"    lw {words[1][:-1]+str(int(words[1][-1])+1)}, {dispB}($s0)\n"
+                            elif envB == "SP":
+                                mips_code += f"    lw {words[1][:-1]+str(int(words[1][-1])+1)}, {dispB}($s1)\n"
+                                
+                        mips_code += f"\n    add {words[1][:-1]+str(int(words[1][-1])+2)}, {words[1]}, {words[1][:-1]+str(int(words[1][-1])+1)}\n\n"
                         
                     elif words[0] == "RETURN":
                         if len(words) == 1:
-                            if Act_class == "Main" and Act_func == "main":
-                                mips_code += "    j exit\n"
-                            else:
-                                mips_code += "    move $t0, $v0\n    jr $ra\n"
+                            mips_code += "    move $t0, $v0\n    jr $ra\n"
+                        else:
+                            if Act_class != "Main" and Act_func != "main":
+                                mips_code += f"    move $v0, {words[1]}\n    jr $ra\n"
                         
                     elif words[0] == "EOC":
                         mips_code += ""
                         
                     elif words[0] == "END":
+                        if(words[2] == "main"):
+                            mips_code += "\tj exit\n"
+                            
                         if self.tempBlock != "":
                             mips_code += "\n"+self.tempBlock
                         mips_code += ""
                         self.tempBlock = ""
                    
                     elif words[0] == "EOF":
-                        mips_code += "\nexit:"
+                        mips_code += "\nexit:\n\tli $v0, 10\n\tsyscall"
                         return mips_code
 
             return mips_code

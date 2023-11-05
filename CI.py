@@ -76,7 +76,7 @@ class CodigoIntermedio(YAPLVisitor):
 
         # self.position[0] = ctx.TYPE(0).getText()
         self.position.append(ctx.TYPE(0).getText())
-        retText += f"CLASS {self.position[0]}\n"
+        retText += f"CLASS {self.position[0]}, 20\n"
 
         # iniciar diccionarios de diccioanrios
         self.functions[self.position[0]] = {}
@@ -164,6 +164,7 @@ class CodigoIntermedio(YAPLVisitor):
 
             # obtener expresión
             value = ""
+            ins = "LW"
             if ctx.expr().getChildCount() > 1:
                 # visitar hijos
                 retText += self.visit(ctx.expr())
@@ -180,10 +181,12 @@ class CodigoIntermedio(YAPLVisitor):
                 text_ = ctx.expr().getText()
                 # print("text ", text_)
                 value, _ = self.getRegister(text_)
-                # print("text ret ", text_)
+                #print("text ret ", text_)
                 retText += self.visit(ctx.expr())
+                if(value == text_):
+                    ins = "LI"
 
-            retText += f"\t\tLW {var}, {value}\n"
+            retText += f"\t\t{ins} {var}, {value}\n"
             self.lastStatement = var
 
             # regresar variables temporales

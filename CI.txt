@@ -1,97 +1,15 @@
-CLASS A
-		LW GP[0], 5
-		LW GP[4], 5
-	A.returnA
-		RETURN GP[0]
-	END FUNC returnA
-	A.returnVar
-		PARAM SP[0], P0
-		ADD t0, GP[4], 5
-		LW GP[4], t0
-		RETURN GP[4]
-	END FUNC returnVar
-EOC
-CLASS Main
-		LW GP[0], 0
-		LW GP[4], 8
-		MULT t0, GP[4], 6
-		ADD t1, t0, GP[0]
-		SUB t0, GP[0], t1
-		MULT t1, GP[4], 7
-		MULT t2, t0, t1
+CLASS Main, 20
+		LI GP[0], 10
+		LI GP[4], 2
+		LW t0, GP[0]
+		LW t1, GP[4]
+		ADD t2, t0, t1
 		LW GP[8], t2
-		MULT t0, GP[0], 9
-		MULT t1, GP[4], 7
-		MULT t2, t0, t1
-		LW GP[12], t2
-		SLT t0, GP[0], GP[4]
-		SEQ t1, GP[8], GP[12]
-		AND t2, t0, t1
-		SGE t0, GP[0], GP[12]
-		OR t1, t2, t0
-		LW GP[16], t1
-		LW t0, A
-		LW GP[18], t0
-	Main.retV
-		RETURN True
-	END FUNC retV
 	Main.main
-		SGT t0, GP[0], GP[4]
-		SLE t1, GP[0], GP[12]
-		AND t2, t0, t1
-		LW GP[17], t2
-		SEQ t0, GP[17], True
-		IF t0 > 0 GOTO L_TRUE_0
-		GOTO L_FALSE_0
-L_TRUE_0:
-		ADD t0, GP[4], 4
-		LW GP[0], t0
-		MULT t0, 7, GP[12]
-		LW GP[4], t0
-		GOTO L_IF_END_0
-L_FALSE_0:
-		SUB t0, GP[0], 4
-		LW GP[4], t0
-		GOTO L_IF_END_0
-L_IF_END_0:
-		GOTO L_LOOP_0
-L_LOOP_0:
-		SEQ t0, GP[0], GP[4]
-		IF t0 = 0 GOTO L_LOOP_END_0
-		GOTO L_LOOP_1
-L_LOOP_1:
-		SLT t0, GP[0], GP[8]
-		IF t0 = 0 GOTO L_LOOP_END_1
-		MULT t0, 8, 5
-		ADD t1, GP[4], t0
-		LW GP[0], t1
-		GOTO L_LOOP_1
-L_LOOP_END_1:
-		GOTO L_LOOP_0
-L_LOOP_END_0:
-		ADD t0, 8, 5
-		LW SP[17], t0
-		SLT t0, SP[17], SP[21]
-		SGT t1, GP[8], GP[12]
-		OR t2, t0, t1
-		LW SP[21], t2
-		MULT t0, 4, 5
-		LW SP[22], t0
-		LW GP[17], SP[21]
-		LW SP[26], "hello"
-		LW GP[16], SP[21]
-		PARAM SP[17]
-		CALL IO.out_int, 1
-		CALL GP[18].GP[4], 0
-		LW t0, RET
-		PARAM t0
-		CALL IO.out_int, 1
-		CALL GP[18].returnA, 0
-		LW t0, RET
-		PARAM t0
-		CALL GP[18].returnVar, 1
-		LW t0, RET
-		RETURN
+		LW SP[0], 5
+		ADD t0, GP[0], SP[0]
+		LW GP[8], t0
+		RETURN GP[8]
 	END FUNC main
 EOC
 EOF
