@@ -40,7 +40,7 @@ CLASS B, 37
 		RETURN GP[13]
 	END FUNC setVar1
 EOC
-CLASS Main, 241
+CLASS Main, 223
 		LI GP[4], "dis"
 		LI GP[18], True
 		LI GP[19], False
@@ -61,7 +61,7 @@ CLASS Main, 241
 		SW GP[4], t0
 		RETURN "Hola"
 	END FUNC meth2
-	Main.main, 151
+	Main.main, 109
 		NEG t0, 5
 		SW GP[0], t0
 		LW t0, GP[0]
@@ -88,9 +88,9 @@ L_FALSE_1:
 L_IF_END_1:
 		GOTO L_IF_END_0
 L_IF_END_0:
-		LW 10, GP[0]
-		SEQ t0, 10, 0
-		IF t0 > 0 GOTO L_TRUE_2
+		LW t0, GP[0]
+		SEQ t2, t0, 0
+		IF t2 > 0 GOTO L_TRUE_2
 		GOTO L_FALSE_2
 L_TRUE_2:
 		PARAM "igual"
@@ -103,26 +103,26 @@ L_FALSE_2:
 L_IF_END_2:
 		GOTO L_LOOP_0
 L_LOOP_0:
-		LW 10, GP[0]
-		SEQ t0, 10, 0
-		NOT 10, t0
-		IF 10 = 0 GOTO L_LOOP_END_0
 		LW t0, GP[0]
-		MULT 10, 4, 5
-		ADD t2, 1, 10
-		SUB 10, t0, t2
-		SW GP[0], 10
+		SEQ t2, t0, 0
+		NOT t0, t2
+		IF t0 = 0 GOTO L_LOOP_END_0
+		LW t0, GP[0]
+		MULT t2, 4, 5
+		ADD t3, 1, t2
+		SUB t2, t0, t3
+		SW GP[0], t2
 		GOTO L_LOOP_0
 L_LOOP_END_0:
 		LW SP[34], "hehe,"
 		MULT t0, 5, 8
 		LW SP[36], t0
 		LW SP[40], 5
-		LW 10, SP[36]
-		SW SP[44], 10
+		LW t0, SP[36]
+		SW SP[44], t0
 		LW t0, SP[44]
-		SEQ 10, t0, 5
-		IF 10 > 0 GOTO L_TRUE_3
+		SEQ t2, t0, 5
+		IF t2 > 0 GOTO L_TRUE_3
 		GOTO L_FALSE_3
 L_TRUE_3:
 		SW SP[48], False
@@ -134,12 +134,12 @@ L_IF_END_3:
 		LW t0, SP[34]
 		PARAM t0
 		CALL IO.out_string, 0
-		LW 10, GP[0]
-		SUB t0, 10, 5
+		LW t0, GP[0]
+		SUB t2, t0, 5
+		LW t0, GP[0]
+		MULT t3, t0, 5
+		ADD t0, t2, t3
 		SW GP[10], t0
-		LW 10, GP[0]
-		MULT t0, 10, 5
-		ADD 10, True, t0
 		LW t0, GP[4]
 		PARAM t0
 		CALL IO.out_string, 0
@@ -165,10 +165,10 @@ L_IF_END_3:
 		CALL IO.out_int, 0
 		PARAM "hola"
 		CALL IO.out_string, 0
-		LW 10, GP[18]
-		LW t0, GP[19]
-		OR t3, 10, t0
-		SW GP[20], t3
+		LW t0, GP[18]
+		LW t3, GP[19]
+		OR t4, t0, t3
+		SW GP[20], t4
 		RETURN
 	END FUNC main
 EOC

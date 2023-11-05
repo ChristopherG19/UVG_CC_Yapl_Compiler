@@ -29,9 +29,9 @@
 |    var1    |    Int     |   Instance  |   None   |     B     |    None    |      13      |        B.var1       |   4   |   0   |
 |     h      |    Int     |    Param    |   None   |     B     |  setVar1   |      0       |     B.setVar1.h     |   4   |  None |
 |  setVar1   |    Int     |    Method   |   None   |     B     |    None    |     None     |        Global       |   12  |  None |
-| out_string | SELF_TYPE  |    Method   |   None   |     IO    |    None    |     None     |        Global       |   14  |  None |
+| out_string | SELF_TYPE  |    Method   |   None   |     IO    |    None    |     None     |        Global       |   0   |  None |
 |   xParS    |   String   |    Param    |   None   |     IO    | out_string |     None     |        Local        |   0   |  None |
-|  out_int   | SELF_TYPE  |    Method   |   None   |     IO    |    None    |     None     |        Global       |   10  |  None |
+|  out_int   | SELF_TYPE  |    Method   |   None   |     IO    |    None    |     None     |        Global       |   0   |  None |
 |   xParI    |    Int     |    Param    |   None   |     IO    |  out_int   |     None     |        Local        |   0   |  None |
 | in_string  |   String   |    Method   |   None   |     IO    |    None    |     None     |        Global       |   0   |  None |
 |  int_int   |    Int     |    Method   |   None   |     IO    |    None    |     None     |        Global       |   0   |  None |
@@ -41,11 +41,11 @@
 |   substr   |   String   |    Method   |   None   |   String  |    None    |     None     |        Global       |   0   |  None |
 |    iPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     |        Local        |   0   |  None |
 |    lPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     |        Local        |   0   |  None |
-|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     |        Global       |  220  |  None |
-| out_string | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     |        Global       |   0   |  None |
-|   xParS    |   String   |    Param    |   None   |    Main   | out_string |      4       |        Local        |   0   |  None |
-|  out_int   | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     |        Global       |   0   |  None |
-|   xParI    |    Int     |    Param    |   None   |    Main   |  out_int   |      91      |        Local        |   0   |  None |
+|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     |        Global       |  178  |  None |
+| out_string | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     |        Global       |   8   |  None |
+|   xParS    |   String   |    Param    |   None   |    Main   | out_string |      4       |        Local        |   8   |  hola |
+|  out_int   | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     |        Global       |   4   |  None |
+|   xParI    |    Int     |    Param    |   None   |    Main   |  out_int   |      91      |        Local        |   4   |  None |
 | in_string  |   String   |    Method   |   None   |    Main   |    None    |     None     |        Global       |   0   |  None |
 |  int_int   |    Int     |    Method   |   None   |    Main   |    None    |     None     |        Global       |   0   |  None |
 |     x      |    Int     |   Instance  |   None   |    Main   |    None    |      0       |        Main.x       |   4   |   0   |
@@ -63,7 +63,7 @@
 |    nnn     |    Bool    |   Instance  |   None   |    Main   |    None    |      46      |       Main.nnn      |   1   | False |
 |    ppp     |   String   |    Param    |   None   |    Main   |   meth2    |      0       |    Main.meth2.ppp   |   2   |  None |
 |   meth2    |   String   |    Method   |   None   |    Main   |    None    |     None     |        Global       |   14  |  None |
-|    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     |        Global       |  151  |  None |
+|    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     |        Global       |  109  |  None |
 |    str2    |   String   |   Variable  |   None   |    Main   |    main    |      34      | Main.main.Let1.str2 |   2   |  None |
 |    jjj     |    Int     |   Variable  |   None   |    Main   |    main    |      36      |  Main.main.Let1.jjj |   4   |  None |
 |    lll     |    Int     |   Variable  |   None   |    Main   |    main    |      40      |  Main.main.Let1.lll |   4   |  None |

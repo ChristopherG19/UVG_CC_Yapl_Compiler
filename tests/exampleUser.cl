@@ -88,7 +88,7 @@ class Main inherits IO {
             out_string(str2);
          };
 
-         y <- (x - 5) + x * 5;
+         y <- ((x - 5) + x * 5);
 
          out_string(str);
          out_string("hola");

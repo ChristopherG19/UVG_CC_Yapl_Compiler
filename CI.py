@@ -125,7 +125,6 @@ class CodigoIntermedio(YAPLVisitor):
 
         id = ctx.ID().getText()
         # obtenr tamaño
-        print("pos, ", self.position)
         # size = self.symbolTable.fun_size(id, self.position[0])
         row = self.symbolTable.get_cell(id, addParent = self.position[0], addScope = "Global")
         size = row[9]
@@ -1119,7 +1118,7 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitId(self, ctx:YAPLParser.IdContext):
-        print("#id") 
+        # print("#id") 
         retText = ""
         pos_, scope = self.getRegister(ctx.getText())
         
@@ -1132,7 +1131,7 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
     
     def visitInt(self, ctx:YAPLParser.IntContext):
-        print("#int")
+        # print("#int")
         retText = ""
         self.lastStatement = ctx.getText()
         self.temp_stack.append(self.lastStatement)
@@ -1140,7 +1139,7 @@ class CodigoIntermedio(YAPLVisitor):
         return retText
 
     def visitString(self, ctx:YAPLParser.StringContext):
-        print("#string")
+        # print("#string")
         retText = ""
         self.lastStatement = ctx.getText()
         self.temp_stack.append(self.lastStatement)
@@ -1151,8 +1150,6 @@ class CodigoIntermedio(YAPLVisitor):
         # print("#boolean")
         retText = ""
         self.lastStatement = ctx.getText()
-
-        self.temp_stack.append(ctx.getText())
         self.temp_stack.append(self.lastStatement)
         
         return retText
@@ -1232,14 +1229,20 @@ class CodigoIntermedio(YAPLVisitor):
             return name_, None
         
     def returnTemps(self, usedTemps:list):
+        validTemps = [
+            "t8", "t7", "t6",
+            "t5", "t4", "t3",
+            "t2", "t1", "t0",
+            ]
+        
         for temp in usedTemps:
             pos = 0
-            for i, t in enumerate(self.available_temps_stack):
-                # print(int(temp[1:]) , int(t[1:]))
-                try:
+            if temp in validTemps:
+                for i, t in enumerate(self.available_temps_stack):
+                    # print(int(temp[1:]) , int(t[1:]))
                     if int(temp[1:]) < int(t[1:]):
                         pos = i + 1
-                except:
-                    continue
 
-            self.available_temps_stack.insert(pos, temp)
+                self.available_temps_stack.insert(pos, temp)
+
+

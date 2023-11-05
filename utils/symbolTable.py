@@ -135,31 +135,19 @@ class Table():
         # Iterate through the symbol table to find the appropriate cell
         for row in self.columns:
             if row[0] == name:
-                if row[5] == func and row[4] == classF:
-                    # Check if the column name exists in the headers
-                    if column_name in self.headers:
-                        index = self.headers.index(column_name)
-                        if index < len(row):
-                            # Update the cell with the new value
-                            row[index] = value
-                            self.build_Table()
-                            return True
-                    else:
-                        print(f"Column '{column_name}' does not exist in the table.")
-                        return False
-                elif row[5] != func and row[4] != classF:
-                    continue
-                else:
-                    if column_name in self.headers:
-                        index = self.headers.index(column_name)
-                        if index < len(row):
-                            row[index] = value
-                            print("RR2", row)
-                            self.build_Table()
-                            return True
-                    else:
-                        print(f"Column '{column_name}' does not exist in the table.")
-                        return False
+                for row in self.columns:
+                    if row[0] == name:
+                        if (row[5] == func or func is None) and (row[4] == classF or classF is None):
+                            if column_name in self.headers:
+                                index = self.headers.index(column_name)
+                                if index < len(row):
+                                    row[index] = value
+                                    self.build_Table()
+                                    return True
+                            else:
+                                print(f"Column '{column_name}' does not exist in the table.")
+                                return False
+
         print(f"Row with name '{name}' does not exist in the table.")
         return False
     
