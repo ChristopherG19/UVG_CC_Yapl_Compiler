@@ -1,114 +1,52 @@
 .data
+    newline: .asciiz "\n"
 .text
-A:
-    add $t0, 452, 9
-    lw $t0, 0($gp)
-    lw $t2, 4($gp)
-    lw $t0, 8($gp)
-    lw 5, 9($gp)
-
-A_returnVar:
-    add $t1, $t0, 7
-
-B:
-    add $t0, 452, 9
-    lw $t0, 0($gp)
-    lw $t2, 4($gp)
-    lw $t0, 8($gp)
-    lw 5, 9($gp)
-
-B_returnVar:
-    add $t1, $t0, 7
-
-B_setVar1:
-    lw P0, 0($sp)
-    lw $t0, 13($gp)
-
+.globl Main_main
 Main:
-    lw $t0, 21($gp)
-    add $t0, 5, 4
-    lw $t0, 42($gp)
+    sub $sp, $sp, 40
+    sw $ra, 0($sp)
+    la $s0, 0($sp)
+    la $s1, 4($sp)
 
-Main_meth1:
-    lw P0, 0($sp)
-    lw $t0, 38($gp)
+    li $t0, 10
+    sw $t0, 0($s0)
 
-Main_meth2:
-    lw P0, 0($sp)
-    lw $t0, 4($gp)
+    li $t0, 2
+    sw $t0, 4($s0)
+
+    lw $t0, 0($s0)
+    lw $t1, 4($s0)
+    add $t2, $t0, $t1
+
+    sw $t2, 8($s0)
+    lw $t0, 0($s0)
+    lw $t1, 4($s0)
+    add $t2, $t0, $t1
+
+    sw $t2, 12($s0)
 
 Main_main:
-    lw $t0, 0($gp)
-    lw "igual", 4($gp)
-    lw "mayor", 4($gp)
-    lw "menor", 4($gp)
-    jal IO_out_string
-    jal IO_out_string
-    add $t3, 1, $t2
-    lw $t2, 0($gp)
-    lw "hehe", 34($sp)
-    lw $t0, 36($sp)
-    lw 5, 40($sp)
-    lw $t0, 44($sp)
-    lw False, 48($sp)
-    lw True, 48($sp)
-    jal IO_out_string
-    add $t0, $t2, $t3
-    lw $t0, 10($gp)
-    jal IO_out_string
-    jal IO_out_string
-    add $t0, 5, 6
-    jal Main_meth1
-    jal $t0_abort
-    jal $t0_returnVar
-    lw $t0, 14($gp)
-    jal $t0_GP[4]
-    lw $t3, 14($gp)
-    add $t3, 10, $t0
+    li $t0, 5
+    sw $t0, 0($s1)
+
+    lw $t0, 0($s0)
+    lw $t1, 0($s1)
+    add $t2, $t0, $t1
+
+    sw $t2, 8($s0)
+    lw $t0, 8($s0)
     jal IO_out_int
-    jal IO_out_string
-    lw $t4, 20($gp)
     j exit
 
-IO_out_string:
-    li $v0, 4
-    syscall
-    jr $ra
-IO_out_string:
-    li $v0, 4
-    syscall
-    jr $ra
-IO_out_string:
-    li $v0, 4
-    syscall
-    jr $ra
-IO_out_string:
-    li $v0, 4
-    syscall
-    jr $ra
-IO_out_string:
-    li $v0, 4
-    syscall
-    jr $ra
-$t0_abort:
-    li $v0, 4
-    syscall
-    jr $ra
-$t0_returnVar:
-    li $v0, 4
-    syscall
-    jr $ra
-$t0_GP[4]:
-    li $v0, 4
-    syscall
-    jr $ra
 IO_out_int:
-    li $v0, 4
+    move $a0, $t0
+    li $v0, 1
     syscall
-    jr $ra
-IO_out_string:
+    la $a0, newline
     li $v0, 4
     syscall
     jr $ra
 
 exit:
+    li $v0, 10
+    syscall
