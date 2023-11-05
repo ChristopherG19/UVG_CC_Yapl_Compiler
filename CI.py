@@ -10,7 +10,7 @@ class CodigoIntermedio(YAPLVisitor):
 
     def __init__(self, fileName:str, symbolTable:Table()) -> None:
         self.filename = fileName
-        self.symbolTable = symbolTable
+        self.symbolTable:Table() = symbolTable
         # counters
         self.tag_counter = 0
         self.temp_counter = 0 
@@ -33,6 +33,7 @@ class CodigoIntermedio(YAPLVisitor):
         # 1: current function
         # 2: let
         self.let_counter = 1
+        self.paramlist_size = 0
 
         # self.functions = {}
         self.registers = {}
@@ -76,7 +77,11 @@ class CodigoIntermedio(YAPLVisitor):
 
         # self.position[0] = ctx.TYPE(0).getText()
         self.position.append(ctx.TYPE(0).getText())
-        retText += f"CLASS {self.position[0]}\n"
+
+        # obtener tamaño de la clase
+        size = self.symbolTable.class_size(self.position[0])
+
+        retText += f"CLASS {self.position[0]}, {str(size)}\n"
 
         # iniciar diccionarios de diccioanrios
         self.functions[self.position[0]] = {}
@@ -119,9 +124,11 @@ class CodigoIntermedio(YAPLVisitor):
         retText = ""
 
         id = ctx.ID().getText()
-        # self.currentFun = id
-        #print("id ", id)
-        retText += f"\t{self.position[0]}.{id}\n"
+        # obtenr tamaño
+        # size = self.symbolTable.fun_size(id, self.position[0])
+        row = self.symbolTable.get_cell(id, addParent = self.position[0], addScope = "Global")
+        size = row[9]
+        retText += f"\t{self.position[0]}.{id}, {size}\n"
         self.position.append(id) 
         self.let_counter = 1 # reiniciar el conteo de lets por función
 
@@ -164,6 +171,7 @@ class CodigoIntermedio(YAPLVisitor):
 
             # obtener expresión
             value = ""
+            ins = "LW"
             if ctx.expr().getChildCount() > 1:
                 # visitar hijos
                 retText += self.visit(ctx.expr())
@@ -180,10 +188,20 @@ class CodigoIntermedio(YAPLVisitor):
                 text_ = ctx.expr().getText()
                 # print("text ", text_)
                 value, _ = self.getRegister(text_)
-                # print("text ret ", text_)
-                retText += self.visit(ctx.expr())
+                if(value == text_):
+                    ins = "LI"
 
-            retText += f"\t\tLW {var}, {value}\n"
+                # visitar hijos
+                retText += self.visit(ctx.expr())
+                # print("deffasin retTExt ", retText)
+                if len(self.temp_stack) > 0:
+                    value = self.temp_stack.pop()
+                    usedTemps.append(value)
+    
+                else:
+                    value = "tt"
+
+            retText += f"\t\t{ins} {var}, {value}\n"
             self.lastStatement = var
 
             # regresar variables temporales
@@ -209,29 +227,17 @@ class CodigoIntermedio(YAPLVisitor):
 
         # parte izquierda (primera expr)
         p_iz = ""
-        if ctx.expr(0).getChildCount() > 1:
-            # print(">> 1")
-            retText += self.visit(ctx.expr(0))
-            if len(self.temp_stack) > 0: 
-                p_iz = self.temp_stack.pop()
-                usedTemps.append(p_iz)
 
-            else:
-                p_iz = "tt"
-        else: 
-            # print("== 1")
-            p_iz_t = ctx.expr(0).getText()
-            p_iz, found = self.getRegister(p_iz_t)
+        # visitar hijos
+        retText += self.visit(ctx.expr(0))
+        if len(self.temp_stack) > 0: 
+            p_iz = self.temp_stack.pop()
+            usedTemps.append(p_iz)
 
-            # print("found ", found)
-
-            # TODO 
-            # if not found:
-            #     temp_ = self.available_temps_stack.pop()
-            #     retText += f"\t\tLW {temp_}, {p_iz}\n"
-            #     p_iz = temp_
-            #     usedTemps.append(temp_)
-            # 
+        else:
+            # ocurrió un error
+            p_iz = "tt"
+        
 
         # regresar temporales
         self.returnTemps(usedTemps)
@@ -244,20 +250,16 @@ class CodigoIntermedio(YAPLVisitor):
             usedTemps = []
 
             par = ""
-            if expr.getChildCount() > 1: 
-                # visitar hijos
-                retText += self.visit(expr)
-                if len(self.temp_stack)> 0:
-                    par = self.temp_stack.pop()
-                    usedTemps.append(par)
-    
-                else: 
-                    par = "tt"
+            # visitar hijos
+            retText += self.visit(expr)
+            if len(self.temp_stack)> 0:
+                par = self.temp_stack.pop()
+                usedTemps.append(par)
+
             else: 
-                # obtener valor individual
-                exprText = expr.getText()
-                par, _ = self.getRegister(exprText)
-            
+                # a ocurrido un error
+                par = "tt"
+
             paramlist.append(par) 
 
             # regresar temporales
@@ -268,10 +270,12 @@ class CodigoIntermedio(YAPLVisitor):
 
         id = ctx.ID().getText()
         row1 = self.symbolTable.get_cell(id= ctx.ID().getText())
-        # print("id ", id)
-        # print("row1 ", row1)
 
-        retText += f"\t\tCALL {p_iz}.{id}, {len(paramlist)}\n"
+
+        # obtener tamaño
+        size = self.symbolTable.params_size(id, p_iz)
+
+        retText += f"\t\tCALL {p_iz}.{id}, {size}\n"
 
         name = self.lastStatement
         self.temp_stack.append(name)
@@ -300,23 +304,20 @@ class CodigoIntermedio(YAPLVisitor):
         usedTemps = []
 
         paramlist = []
+        self.paramlist_size = 0
 
         for expr in ctx.expr():
             par = ""
             # print("par")
-            if expr.getChildCount() > 1: 
-                # visitar hijos
-                retText += self.visit(expr)
-                if len(self.temp_stack)> 0:
-                    par = self.temp_stack.pop()
-                    usedTemps.append(par)
-    
-                else: 
-                    par = "tt"
+            # visitar hijos
+            retText += self.visit(expr)
+            if len(self.temp_stack)> 0:
+                par = self.temp_stack.pop()
+                usedTemps.append(par)
+
             else: 
-                # obtener valor individual
-                exprText = expr.getText()
-                par, _ = self.getRegister(exprText)
+                par = "tt"
+
             paramlist.append(par)  
 
         # print("paramlist ", paramlist)
@@ -325,7 +326,11 @@ class CodigoIntermedio(YAPLVisitor):
             retText += f"\t\tPARAM {p}\n"
 
         row1 = self.symbolTable.get_cell(id= ctx.ID().getText())
-        retText += f"\t\tCALL {row1[4]}.{id}, {len(paramlist)}\n"
+
+        # obtener tamaño
+        size = self.symbolTable.params_size(id, row1[4])
+
+        retText += f"\t\tCALL {row1[4]}.{id}, {self.paramlist_size}\n"
 
         if (not (
             row1[1].upper() == "SELF_TYPE" or 
@@ -362,8 +367,17 @@ class CodigoIntermedio(YAPLVisitor):
                 p_iz = "tt"
         else: 
             # obtener valor individual
-            p_iz_t = ctx.expr().getText()
-            p_iz, direction = self.getRegister(p_iz_t)
+            retText += self.visit(ctx.expr())
+            if len(self.temp_stack) > 0: 
+                p_iz_t = ctx.expr().getText()
+                _, direction = self.getRegister(p_iz_t)
+                # obtener del stack
+                p_iz = self.temp_stack.pop()
+                usedTemps.append(p_iz)
+                
+            else:
+                p_iz = "tt"
+
 
         id = ctx.ID().getText()
         if direction:
@@ -375,12 +389,9 @@ class CodigoIntermedio(YAPLVisitor):
         else:
             # print("id_expr ", ctx.expr().getText())
             row = self.symbolTable.get_cell(id= ctx.expr().getText(), addParent = self.position[0])
-        # print("row, ", row)
-        # print("id ", id)
-        # print("direccion ", direction)
+
         if row:
             id, _ = self.getRegister(id, [row[1]])
-        # print("id ", id)
 
         retText += f"\t\tCALL {p_iz}.{id}, 0\n"
 
@@ -418,23 +429,18 @@ class CodigoIntermedio(YAPLVisitor):
         # obtener expresión
         value = ""
         exprText = ctx.expr().getText()
-        if ctx.expr().getChildCount() > 1:
-            # visitar hijos
-            retText += self.visit(ctx.expr())
-            if len(self.temp_stack) > 0:
-                value = self.temp_stack.pop()
-                usedTemps.append(value)
 
-            else:
-                value = "tt"
+        # visitar hijos
+        retText += self.visit(ctx.expr())
+        if len(self.temp_stack) > 0:
+            value = self.temp_stack.pop()
+            usedTemps.append(value)
 
         else:
-            # obtener valor único
-            text_ = ctx.expr().getText()
-            value, _ = self.getRegister(text_)
-            retText += self.visit(ctx.expr())
+            # Un error ha ocurrido
+            value = "tt"
 
-        retText += f"\t\tLW {var}, {value}\n"
+        retText += f"\t\tSW {var}, {value}\n"
         self.lastStatement = var
 
         # regresar temporales
@@ -456,6 +462,7 @@ class CodigoIntermedio(YAPLVisitor):
             temp_ = self.temp_stack.pop()
             usedTemps.append(temp_)
         else:
+            # ha ocurrido un error
             temp_ = "tt"
 
         # obtener contadores
@@ -503,20 +510,14 @@ class CodigoIntermedio(YAPLVisitor):
         # evaluar la expresión de la condición
         # parte 
         condition = ""
-        if ctx.expr(0).getChildCount() > 1:
-            retText += self.visit(ctx.expr(0))
-            if len(self.temp_stack) > 0: 
-                condition = self.temp_stack.pop()
-                usedTemps.append(condition)
 
-            else:
-                condition = "tt"
-        else: 
-            condition_t = ctx.expr(0).getText()
-            print("condition ", condition, " ", ctx.getText())
-            # revisar si está en el diccionario de registros
-            condition, _ = self.getRegister(condition_t)
-        
+        retText += self.visit(ctx.expr(0))
+        if len(self.temp_stack) > 0: 
+            condition = self.temp_stack.pop()
+            usedTemps.append(condition)
+
+        else:
+            condition = "tt"
 
         retText += f"\t\tIF {condition} = 0 GOTO {end_}\n"
 
@@ -578,22 +579,16 @@ class CodigoIntermedio(YAPLVisitor):
                 # se le ha asignado algo 
                 expr = t[4]
                 value = ""
-                if expr.getChildCount() > 1:
-                    retText += self.visit(expr)
-                    # visitar hijos
-                    if len(self.temp_stack) > 0:
-                        value = self.temp_stack.pop()
-                        usedTemps.append(value)
-        
-                    else:
-                        value = "tt"
-
+                retText += self.visit(expr)
+                # visitar hijos
+                if len(self.temp_stack) > 0:
+                    value = self.temp_stack.pop()
+                    usedTemps.append(value)
+    
                 else:
-                    # visitar objeto solo
-                    text_ = expr.getText()
-                    value, _ = self.getRegister(text_)
-                    retText += self.visit(expr)
-
+                    # ha ocurrido un error
+                    value = "tt"
+              
                 retText += f"\t\tLW {var}, {value}\n"
                 # self.lastStatement = var
 
@@ -627,20 +622,15 @@ class CodigoIntermedio(YAPLVisitor):
 
         # parte 
         p_iz = ""
-        if ctx.expr().getChildCount() > 1:
-            # visitar hijos
-            retText += self.visit(ctx.expr())
-            if len(self.temp_stack) > 0: 
-                p_iz = self.temp_stack.pop()
-                usedTemps.append(p_iz)
+        # visitar hijos
+        retText += self.visit(ctx.expr())
+        if len(self.temp_stack) > 0: 
+            p_iz = self.temp_stack.pop()
+            usedTemps.append(p_iz)
 
-            else:
-                p_iz = "tt"
-        else: 
-            # obtener valor individual
-            p_iz_t = ctx.expr().getText()
-            p_iz, _ = self.getRegister(p_iz_t)
-        
+        else:
+            p_iz = "tt"
+
         temp_ = self.available_temps_stack.pop()
         self.temp_stack.append(temp_)
 
@@ -666,35 +656,24 @@ class CodigoIntermedio(YAPLVisitor):
 
         # parte izquierda
         p_iz = ""
-        if ctx.expr(0).getChildCount() > 1:
-            # visitar a los hijos
-            retText += self.visit(ctx.expr(0))
-            if len(self.temp_stack) > 0: 
-                p_iz = self.temp_stack.pop()
-                usedTemps.append(p_iz)
+        # visitar a los hijos
+        retText += self.visit(ctx.expr(0))
+        if len(self.temp_stack) > 0: 
+            p_iz = self.temp_stack.pop()
+            usedTemps.append(p_iz)
+        else:
+            p_iz = "tt" # hubo un error
 
-            else:
-                p_iz = "tt" # hubo un error
-        else: 
-            # obtener valor individual
-            p_iz_t = ctx.expr(0).getText()
-            p_iz, _ = self.getRegister(p_iz_t)
-        
         # parte derecha
         p_der = ""
-        if ctx.expr(1).getChildCount() > 1:
-            # visitar a los hijos
-            retText += self.visit(ctx.expr(1))
-            if len(self.temp_stack) > 0:
-                p_der = self.temp_stack.pop()
-                usedTemps.append(p_der)
+        # visitar a los hijos
+        retText += self.visit(ctx.expr(1))
+        if len(self.temp_stack) > 0:
+            p_der = self.temp_stack.pop()
+            usedTemps.append(p_der)
 
-            else: 
-                p_der = "tt" # hubo un error
         else: 
-            # obtener valor individual
-            p_der_t = ctx.expr(1).getText()
-            p_der, _ = self.getRegister(p_der_t)
+            p_der = "tt" # hubo un error
 
         temp_ = self.available_temps_stack.pop()
         self.temp_stack.append(temp_)
@@ -715,35 +694,24 @@ class CodigoIntermedio(YAPLVisitor):
 
         # parte izquierda
         p_iz = ""
-        if ctx.expr(0).getChildCount() > 1:
-            # visitar a los hijos
-            retText += self.visit(ctx.expr(0))
-            if len(self.temp_stack) > 0: 
-                p_iz = self.temp_stack.pop()
-                usedTemps.append(p_iz)
+        # visitar a los hijos
+        retText += self.visit(ctx.expr(0))
+        if len(self.temp_stack) > 0: 
+            p_iz = self.temp_stack.pop()
+            usedTemps.append(p_iz)
+        else:
+            p_iz = "tt" # hubo un error
 
-            else:
-                p_iz = "tt" # hubo un error
-        else: 
-            # obtener valor individual
-            p_iz_t = ctx.expr(0).getText()
-            p_iz, _ = self.getRegister(p_iz_t)
-        
         # parte derecha
         p_der = ""
-        if ctx.expr(1).getChildCount() > 1:
-            # visitar a los hijos
-            retText += self.visit(ctx.expr(1))
-            if len(self.temp_stack) > 0:
-                p_der = self.temp_stack.pop()
-                usedTemps.append(p_der)
+        # visitar a los hijos
+        retText += self.visit(ctx.expr(1))
+        if len(self.temp_stack) > 0:
+            p_der = self.temp_stack.pop()
+            usedTemps.append(p_der)
 
-            else: 
-                p_der = "tt" # hubo un error
         else: 
-            # obtener valor individual
-            p_der_t = ctx.expr(1).getText()
-            p_der, _ = self.getRegister(p_der_t)
+            p_der = "tt" # hubo un error
 
         temp_ = self.available_temps_stack.pop()
         self.temp_stack.append(temp_)
@@ -764,35 +732,24 @@ class CodigoIntermedio(YAPLVisitor):
 
         # parte izquierda
         p_iz = ""
-        if ctx.expr(0).getChildCount() > 1:
-            # visitar a los hijos
-            retText += self.visit(ctx.expr(0))
-            if len(self.temp_stack) > 0: 
-                p_iz = self.temp_stack.pop()
-                usedTemps.append(p_iz)
+        # visitar a los hijos
+        retText += self.visit(ctx.expr(0))
+        if len(self.temp_stack) > 0: 
+            p_iz = self.temp_stack.pop()
+            usedTemps.append(p_iz)
+        else:
+            p_iz = "tt" # hubo un error
 
-            else:
-                p_iz = "tt" # hubo un error
-        else: 
-            # obtener valor individual
-            p_iz_t = ctx.expr(0).getText()
-            p_iz, _ = self.getRegister(p_iz_t)
-        
         # parte derecha
         p_der = ""
-        if ctx.expr(1).getChildCount() > 1:
-            # visitar a los hijos
-            retText += self.visit(ctx.expr(1))
-            if len(self.temp_stack) > 0:
-                p_der = self.temp_stack.pop()
-                usedTemps.append(p_der)
+        # visitar a los hijos
+        retText += self.visit(ctx.expr(1))
+        if len(self.temp_stack) > 0:
+            p_der = self.temp_stack.pop()
+            usedTemps.append(p_der)
 
-            else: 
-                p_der = "tt" # hubo un error
         else: 
-            # obtener valor individual
-            p_der_t = ctx.expr(1).getText()
-            p_der, _ = self.getRegister(p_der_t)
+            p_der = "tt" # hubo un error
 
         temp_ = self.available_temps_stack.pop()
         self.temp_stack.append(temp_)
@@ -813,35 +770,24 @@ class CodigoIntermedio(YAPLVisitor):
 
         # parte izquierda
         p_iz = ""
-        if ctx.expr(0).getChildCount() > 1:
-            # visitar a los hijos
-            retText += self.visit(ctx.expr(0))
-            if len(self.temp_stack) > 0: 
-                p_iz = self.temp_stack.pop()
-                usedTemps.append(p_iz)
+        # visitar a los hijos
+        retText += self.visit(ctx.expr(0))
+        if len(self.temp_stack) > 0: 
+            p_iz = self.temp_stack.pop()
+            usedTemps.append(p_iz)
+        else:
+            p_iz = "tt" # hubo un error
 
-            else:
-                p_iz = "tt" # hubo un error
-        else: 
-            # obtener valor individual
-            p_iz_t = ctx.expr(0).getText()
-            p_iz, _ = self.getRegister(p_iz_t)
-        
         # parte derecha
         p_der = ""
-        if ctx.expr(1).getChildCount() > 1:
-            # visitar a los hijos
-            retText += self.visit(ctx.expr(1))
-            if len(self.temp_stack) > 0:
-                p_der = self.temp_stack.pop()
-                usedTemps.append(p_der)
+        # visitar a los hijos
+        retText += self.visit(ctx.expr(1))
+        if len(self.temp_stack) > 0:
+            p_der = self.temp_stack.pop()
+            usedTemps.append(p_der)
 
-            else: 
-                p_der = "tt" # hubo un error
         else: 
-            # obtener valor individual
-            p_der_t = ctx.expr(1).getText()
-            p_der, _ = self.getRegister(p_der_t)
+            p_der = "tt" # hubo un error
 
         temp_ = self.available_temps_stack.pop()
         self.temp_stack.append(temp_)
@@ -862,35 +808,24 @@ class CodigoIntermedio(YAPLVisitor):
 
         # parte izquierda
         p_iz = ""
-        if ctx.expr(0).getChildCount() > 1:
-            # visitar a los hijos
-            retText += self.visit(ctx.expr(0))
-            if len(self.temp_stack) > 0: 
-                p_iz = self.temp_stack.pop()
-                usedTemps.append(p_iz)
+        # visitar a los hijos
+        retText += self.visit(ctx.expr(0))
+        if len(self.temp_stack) > 0: 
+            p_iz = self.temp_stack.pop()
+            usedTemps.append(p_iz)
+        else:
+            p_iz = "tt" # hubo un error
 
-            else:
-                p_iz = "tt" # hubo un error
-        else: 
-            # obtener valor individual
-            p_iz_t = ctx.expr(0).getText()
-            p_iz, _ = self.getRegister(p_iz_t)
-        
         # parte derecha
         p_der = ""
-        if ctx.expr(1).getChildCount() > 1:
-            # visitar a los hijos
-            retText += self.visit(ctx.expr(1))
-            if len(self.temp_stack) > 0:
-                p_der = self.temp_stack.pop()
-                usedTemps.append(p_der)
+        # visitar a los hijos
+        retText += self.visit(ctx.expr(1))
+        if len(self.temp_stack) > 0:
+            p_der = self.temp_stack.pop()
+            usedTemps.append(p_der)
 
-            else: 
-                p_der = "tt" # hubo un error
         else: 
-            # obtener valor individual
-            p_der_t = ctx.expr(1).getText()
-            p_der, _ = self.getRegister(p_der_t)
+            p_der = "tt" # hubo un error
 
         temp_ = self.available_temps_stack.pop()
         self.temp_stack.append(temp_)
@@ -911,35 +846,24 @@ class CodigoIntermedio(YAPLVisitor):
 
         # parte izquierda
         p_iz = ""
-        if ctx.expr(0).getChildCount() > 1:
-            # visitar a los hijos
-            retText += self.visit(ctx.expr(0))
-            if len(self.temp_stack) > 0: 
-                p_iz = self.temp_stack.pop()
-                usedTemps.append(p_iz)
+        # visitar a los hijos
+        retText += self.visit(ctx.expr(0))
+        if len(self.temp_stack) > 0: 
+            p_iz = self.temp_stack.pop()
+            usedTemps.append(p_iz)
+        else:
+            p_iz = "tt" # hubo un error
 
-            else:
-                p_iz = "tt" # hubo un error
-        else: 
-            # obtener valor individual
-            p_iz_t = ctx.expr(0).getText()
-            p_iz, _ = self.getRegister(p_iz_t)
-        
         # parte derecha
         p_der = ""
-        if ctx.expr(1).getChildCount() > 1:
-            # visitar a los hijos
-            retText += self.visit(ctx.expr(1))
-            if len(self.temp_stack) > 0:
-                p_der = self.temp_stack.pop()
-                usedTemps.append(p_der)
+        # visitar a los hijos
+        retText += self.visit(ctx.expr(1))
+        if len(self.temp_stack) > 0:
+            p_der = self.temp_stack.pop()
+            usedTemps.append(p_der)
 
-            else: 
-                p_der = "tt" # hubo un error
         else: 
-            # obtener valor individual
-            p_der_t = ctx.expr(1).getText()
-            p_der, _ = self.getRegister(p_der_t)
+            p_der = "tt" # hubo un error
 
         temp_ = self.available_temps_stack.pop()
         self.temp_stack.append(temp_)
@@ -960,35 +884,24 @@ class CodigoIntermedio(YAPLVisitor):
 
         # parte izquierda
         p_iz = ""
-        if ctx.expr(0).getChildCount() > 1:
-            # visitar a los hijos
-            retText += self.visit(ctx.expr(0))
-            if len(self.temp_stack) > 0: 
-                p_iz = self.temp_stack.pop()
-                usedTemps.append(p_iz)
+        # visitar a los hijos
+        retText += self.visit(ctx.expr(0))
+        if len(self.temp_stack) > 0: 
+            p_iz = self.temp_stack.pop()
+            usedTemps.append(p_iz)
+        else:
+            p_iz = "tt" # hubo un error
 
-            else:
-                p_iz = "tt" # hubo un error
-        else: 
-            # obtener valor individual
-            p_iz_t = ctx.expr(0).getText()
-            p_iz, _ = self.getRegister(p_iz_t)
-        
         # parte derecha
         p_der = ""
-        if ctx.expr(1).getChildCount() > 1:
-            # visitar a los hijos
-            retText += self.visit(ctx.expr(1))
-            if len(self.temp_stack) > 0:
-                p_der = self.temp_stack.pop()
-                usedTemps.append(p_der)
+        # visitar a los hijos
+        retText += self.visit(ctx.expr(1))
+        if len(self.temp_stack) > 0:
+            p_der = self.temp_stack.pop()
+            usedTemps.append(p_der)
 
-            else: 
-                p_der = "tt" # hubo un error
         else: 
-            # obtener valor individual
-            p_der_t = ctx.expr(1).getText()
-            p_der, _ = self.getRegister(p_der_t)
+            p_der = "tt" # hubo un error
 
         temp_ = self.available_temps_stack.pop()
         self.temp_stack.append(temp_)
@@ -1009,35 +922,24 @@ class CodigoIntermedio(YAPLVisitor):
 
         # parte izquierda
         p_iz = ""
-        if ctx.expr(0).getChildCount() > 1:
-            # visitar a los hijos
-            retText += self.visit(ctx.expr(0))
-            if len(self.temp_stack) > 0: 
-                p_iz = self.temp_stack.pop()
-                usedTemps.append(p_iz)
+        # visitar a los hijos
+        retText += self.visit(ctx.expr(0))
+        if len(self.temp_stack) > 0: 
+            p_iz = self.temp_stack.pop()
+            usedTemps.append(p_iz)
+        else:
+            p_iz = "tt" # hubo un error
 
-            else:
-                p_iz = "tt" # hubo un error
-        else: 
-            # obtener valor individual
-            p_iz_t = ctx.expr(0).getText()
-            p_iz, _ = self.getRegister(p_iz_t)
-        
         # parte derecha
         p_der = ""
-        if ctx.expr(1).getChildCount() > 1:
-            # visitar a los hijos
-            retText += self.visit(ctx.expr(1))
-            if len(self.temp_stack) > 0:
-                p_der = self.temp_stack.pop()
-                usedTemps.append(p_der)
+        # visitar a los hijos
+        retText += self.visit(ctx.expr(1))
+        if len(self.temp_stack) > 0:
+            p_der = self.temp_stack.pop()
+            usedTemps.append(p_der)
 
-            else: 
-                p_der = "tt" # hubo un error
         else: 
-            # obtener valor individual
-            p_der_t = ctx.expr(1).getText()
-            p_der, _ = self.getRegister(p_der_t)
+            p_der = "tt" # hubo un error
 
         temp_ = self.available_temps_stack.pop()
         self.temp_stack.append(temp_)
@@ -1058,35 +960,24 @@ class CodigoIntermedio(YAPLVisitor):
 
         # parte izquierda
         p_iz = ""
-        if ctx.expr(0).getChildCount() > 1:
-            # visitar a los hijos
-            retText += self.visit(ctx.expr(0))
-            if len(self.temp_stack) > 0: 
-                p_iz = self.temp_stack.pop()
-                usedTemps.append(p_iz)
+        # visitar a los hijos
+        retText += self.visit(ctx.expr(0))
+        if len(self.temp_stack) > 0: 
+            p_iz = self.temp_stack.pop()
+            usedTemps.append(p_iz)
+        else:
+            p_iz = "tt" # hubo un error
 
-            else:
-                p_iz = "tt" # hubo un error
-        else: 
-            # obtener valor individual
-            p_iz_t = ctx.expr(0).getText()
-            p_iz, _ = self.getRegister(p_iz_t)
-        
         # parte derecha
         p_der = ""
-        if ctx.expr(1).getChildCount() > 1:
-            # visitar a los hijos
-            retText += self.visit(ctx.expr(1))
-            if len(self.temp_stack) > 0:
-                p_der = self.temp_stack.pop()
-                usedTemps.append(p_der)
+        # visitar a los hijos
+        retText += self.visit(ctx.expr(1))
+        if len(self.temp_stack) > 0:
+            p_der = self.temp_stack.pop()
+            usedTemps.append(p_der)
 
-            else: 
-                p_der = "tt" # hubo un error
         else: 
-            # obtener valor individual
-            p_der_t = ctx.expr(1).getText()
-            p_der, _ = self.getRegister(p_der_t)
+            p_der = "tt" # hubo un error
 
         temp_ = self.available_temps_stack.pop()
         self.temp_stack.append(temp_)
@@ -1107,35 +998,24 @@ class CodigoIntermedio(YAPLVisitor):
 
         # parte izquierda
         p_iz = ""
-        if ctx.expr(0).getChildCount() > 1:
-            # visitar a los hijos
-            retText += self.visit(ctx.expr(0))
-            if len(self.temp_stack) > 0: 
-                p_iz = self.temp_stack.pop()
-                usedTemps.append(p_iz)
+        # visitar a los hijos
+        retText += self.visit(ctx.expr(0))
+        if len(self.temp_stack) > 0: 
+            p_iz = self.temp_stack.pop()
+            usedTemps.append(p_iz)
+        else:
+            p_iz = "tt" # hubo un error
 
-            else:
-                p_iz = "tt" # hubo un error
-        else: 
-            # obtener valor individual
-            p_iz_t = ctx.expr(0).getText()
-            p_iz, _ = self.getRegister(p_iz_t)
-        
         # parte derecha
         p_der = ""
-        if ctx.expr(1).getChildCount() > 1:
-            # visitar a los hijos
-            retText += self.visit(ctx.expr(1))
-            if len(self.temp_stack) > 0:
-                p_der = self.temp_stack.pop()
-                usedTemps.append(p_der)
+        # visitar a los hijos
+        retText += self.visit(ctx.expr(1))
+        if len(self.temp_stack) > 0:
+            p_der = self.temp_stack.pop()
+            usedTemps.append(p_der)
 
-            else: 
-                p_der = "tt" # hubo un error
         else: 
-            # obtener valor individual
-            p_der_t = ctx.expr(1).getText()
-            p_der, _ = self.getRegister(p_der_t)
+            p_der = "tt" # hubo un error
 
         temp_ = self.available_temps_stack.pop()
         self.temp_stack.append(temp_)
@@ -1156,35 +1036,24 @@ class CodigoIntermedio(YAPLVisitor):
 
         # parte izquierda
         p_iz = ""
-        if ctx.expr(0).getChildCount() > 1:
-            # visitar a los hijos
-            retText += self.visit(ctx.expr(0))
-            if len(self.temp_stack) > 0: 
-                p_iz = self.temp_stack.pop()
-                usedTemps.append(p_iz)
+        # visitar a los hijos
+        retText += self.visit(ctx.expr(0))
+        if len(self.temp_stack) > 0: 
+            p_iz = self.temp_stack.pop()
+            usedTemps.append(p_iz)
+        else:
+            p_iz = "tt" # hubo un error
 
-            else:
-                p_iz = "tt" # hubo un error
-        else: 
-            # obtener valor individual
-            p_iz_t = ctx.expr(0).getText()
-            p_iz, _ = self.getRegister(p_iz_t)
-        
         # parte derecha
         p_der = ""
-        if ctx.expr(1).getChildCount() > 1:
-            # visitar a los hijos
-            retText += self.visit(ctx.expr(1))
-            if len(self.temp_stack) > 0:
-                p_der = self.temp_stack.pop()
-                usedTemps.append(p_der)
+        # visitar a los hijos
+        retText += self.visit(ctx.expr(1))
+        if len(self.temp_stack) > 0:
+            p_der = self.temp_stack.pop()
+            usedTemps.append(p_der)
 
-            else: 
-                p_der = "tt" # hubo un error
         else: 
-            # obtener valor individual
-            p_der_t = ctx.expr(1).getText()
-            p_der, _ = self.getRegister(p_der_t)
+            p_der = "tt" # hubo un error
 
         temp_ = self.available_temps_stack.pop()
         self.temp_stack.append(temp_)
@@ -1205,20 +1074,15 @@ class CodigoIntermedio(YAPLVisitor):
 
         # parte 
         p_iz = ""
-        if ctx.expr().getChildCount() > 1:
-            # visitar hijos
-            retText += self.visit(ctx.expr())
-            if len(self.temp_stack) > 0: 
-                p_iz = self.temp_stack.pop()
-                usedTemps.append(p_iz)
+        # visitar hijos
+        retText += self.visit(ctx.expr())
+        if len(self.temp_stack) > 0: 
+            p_iz = self.temp_stack.pop()
+            usedTemps.append(p_iz)
 
-            else:
-                p_iz = "tt"
-        else: 
-            # obtener valor individual
-            p_iz_t = ctx.expr().getText()
-            p_iz, _ = self.getRegister(p_iz_t)
-        
+        else:
+            p_iz = "tt"
+
         temp_ = self.available_temps_stack.pop()
         self.temp_stack.append(temp_)
 
@@ -1256,14 +1120,21 @@ class CodigoIntermedio(YAPLVisitor):
     def visitId(self, ctx:YAPLParser.IdContext):
         # print("#id") 
         retText = ""
-        pos_, _ = self.getRegister(ctx.getText())
-        self.lastStatement = pos_
+        pos_, scope = self.getRegister(ctx.getText())
+        
+        temp_ = self.available_temps_stack.pop()
+        self.temp_stack.append(temp_)
+
+        retText += f"\t\tLW {temp_}, {pos_}\n"
+        self.lastStatement = temp_
+
         return retText
     
     def visitInt(self, ctx:YAPLParser.IntContext):
         # print("#int")
         retText = ""
         self.lastStatement = ctx.getText()
+        self.temp_stack.append(self.lastStatement)
 
         return retText
 
@@ -1271,6 +1142,7 @@ class CodigoIntermedio(YAPLVisitor):
         # print("#string")
         retText = ""
         self.lastStatement = ctx.getText()
+        self.temp_stack.append(self.lastStatement)
 
         return retText
     
@@ -1278,8 +1150,7 @@ class CodigoIntermedio(YAPLVisitor):
         # print("#boolean")
         retText = ""
         self.lastStatement = ctx.getText()
-
-        self.temp_stack.append(ctx.getText())
+        self.temp_stack.append(self.lastStatement)
         
         return retText
     
@@ -1358,11 +1229,20 @@ class CodigoIntermedio(YAPLVisitor):
             return name_, None
         
     def returnTemps(self, usedTemps:list):
+        validTemps = [
+            "t8", "t7", "t6",
+            "t5", "t4", "t3",
+            "t2", "t1", "t0",
+            ]
+        
         for temp in usedTemps:
             pos = 0
-            for i, t in enumerate(self.available_temps_stack):
-                # print(int(temp[1:]) , int(t[1:]))
-                if int(temp[1:]) < int(t[1:]):
-                    pos = i + 1
+            if temp in validTemps:
+                for i, t in enumerate(self.available_temps_stack):
+                    # print(int(temp[1:]) , int(t[1:]))
+                    if int(temp[1:]) < int(t[1:]):
+                        pos = i + 1
 
-            self.available_temps_stack.insert(pos, temp)
+                self.available_temps_stack.insert(pos, temp)
+
+

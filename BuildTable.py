@@ -653,15 +653,26 @@ class YAPLVisitorImpl(YAPLVisitor):
 
             if (type(vis) == tuple):
                 # print("tupla ex")
-                if (vis[0] != params_def[par][1]):
-                    self.customErrors.append(f"En {method_name} el parámetro {params_def[par][0]} require ser {params_def[par][1]} pero se encontró {vis[0]}")
-                    # print("print")
-                    return "Error"
+                if(type(vis[0]) == str and type(params_def[par][1]) == str):
+                    if (vis[0].lower() != params_def[par][1].lower()):
+                        self.customErrors.append(f"En {method_name} el parámetro {params_def[par][0]} require ser {params_def[par][1]} pero se encontró {vis[0]}")
+                        # print("print")
+                        return "Error"
+                else:
+                    if (vis[0] != params_def[par][1]):
+                        self.customErrors.append(f"En {method_name} el parámetro {params_def[par][0]} require ser {params_def[par][1]} pero se encontró {vis[0]}")
+                        # print("print")
+                        return "Error"
 
             else:
-                if (vis != params_def[par][1]):
-                    self.customErrors.append(f"En {method_name} el parámetro {params_def[par][0]} require ser {params_def[par][1]} pero se encontró {vis}")
-                    return "Error"  
+                if(type(vis) == str and type(params_def[par][1]) == str):
+                    if (vis.lower() != params_def[par][1].lower()):
+                        self.customErrors.append(f"En {method_name} el parámetro {params_def[par][0]} require ser {params_def[par][1]} pero se encontró {vis}")
+                        return "Error"  
+                    else:
+                        if (vis.lower() != params_def[par][1].lower()):
+                            self.customErrors.append(f"En {method_name} el parámetro {params_def[par][0]} require ser {params_def[par][1]} pero se encontró {vis}")
+                            return "Error"  
                 
         if (ctx.TYPE()):
             if ctx.TYPE().getText() != type__:
@@ -731,9 +742,14 @@ class YAPLVisitorImpl(YAPLVisitor):
             vis_val = None
 
             if (type(vis) == tuple):
-                if (vis[0] != params_def[par][1]):
-                    self.customErrors.append(f"En {method_name} el parámetro {params_def[par][0]} require ser {params_def[par][1]} pero se encontró {vis[0]}")
-                    return "Error"
+                if(type(vis) == str and type(params_def[par][1]) == str):
+                    if (vis[0].lower() != params_def[par][1].lower()):
+                        self.customErrors.append(f"En {method_name} el parámetro {params_def[par][0]} require ser {params_def[par][1]} pero se encontró {vis[0]}")
+                        return "Error"
+                else:
+                    if (vis[0] != params_def[par][1]):
+                        self.customErrors.append(f"En {method_name} el parámetro {params_def[par][0]} require ser {params_def[par][1]} pero se encontró {vis[0]}")
+                        return "Error"
                 
                 vis_val = vis[1]
                 
@@ -751,14 +767,19 @@ class YAPLVisitorImpl(YAPLVisitor):
                     self.displacement_cbclass += newSpace
                     
                 param_space += newSpace
-                self.symbolTable.add_info_to_cell(params_def[par][0], "Space", newSpace)
-                self.symbolTable.add_info_to_cell(params_def[par][0], "Value", vis[1])
+                self.symbolTable.add_info_to_cell(params_def[par][0], "Space", newSpace, classF=self.current_class,  func=method_name)
+                self.symbolTable.add_info_to_cell(params_def[par][0], "Value", vis[1], classF=self.current_class, func=method_name)
                 self.symbolTable.add_info_to_cell(self.current_function, "Space", self.count_bytes_func)
 
             else:
-                if (vis != params_def[par][1]):
-                    self.customErrors.append(f"En {method_name} el parámetro {params_def[par][0]} require ser {params_def[par][1]} pero se encontró {vis}")
-                    return "Error"
+                if(type(vis) == str and type(params_def[par][1]) == str):
+                    if (vis.lower() != params_def[par][1].lower()):
+                        self.customErrors.append(f"En {method_name} el parámetro {params_def[par][0]} require ser {params_def[par][1]} pero se encontró {vis}")
+                        return "Error"
+                else:
+                    if (vis != params_def[par][1]):
+                        self.customErrors.append(f"En {method_name} el parámetro {params_def[par][0]} require ser {params_def[par][1]} pero se encontró {vis}")
+                        return "Error"
                 newSpace = get_space_vars(params_def[par][1])
                 if(not newSpace):
                     newSpace = 0
@@ -773,12 +794,12 @@ class YAPLVisitorImpl(YAPLVisitor):
                     self.displacement_cbclass += newSpace
                     
                 param_space += newSpace
-                self.symbolTable.add_info_to_cell(params_def[par][0], "Space", newSpace)
+                self.symbolTable.add_info_to_cell(params_def[par][0], "Space", newSpace, classF=self.current_class, func=method_name)
             
             row_change = self.symbolTable.get_cell_Value(addParent=self.current_class, Value=vis_val)
             if(row_change):
                 if(row_change[2] == "Instance"):
-                    self.symbolTable.add_info_to_cell(params_def[par][0], "Name", row_change[0])
+                    self.symbolTable.add_info_to_cell(params_def[par][0], "Name", row_change[0], classF=self.current_class, func=method_name)
 
             tempValDis = None
             rowT = self.symbolTable.get_cell(params_def[par][0], addParent=self.current_class)
@@ -787,21 +808,21 @@ class YAPLVisitorImpl(YAPLVisitor):
                     if(self.current_function):
                         if(tempSpaceId):
                             tempValDis = self.displacement_cbfunc - tempSpaceId
-                            self.symbolTable.add_info_to_cell(params_def[par][0], "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
+                            self.symbolTable.add_info_to_cell(params_def[par][0], "Displacement", tempValDis, func=method_name, classF=self.current_class)
                     else:
                         if(self.current_class):
                             if(tempSpaceId):
                                 tempValDis = self.displacement_cbclass - tempSpaceId            
-                                self.symbolTable.add_info_to_cell(params_def[par][0], "Displacement", tempValDis, func=self.current_function, classF=self.current_class)
+                                self.symbolTable.add_info_to_cell(params_def[par][0], "Displacement", tempValDis, func=method_name, classF=self.current_class)
 
-            self.symbolTable.add_info_to_cell(method_name, "Space", param_space)
+            self.symbolTable.add_info_to_cell(method_name, "Space", param_space, classF=self.current_class)
             return_method_space = self.symbolTable.get_cell(met[1])[-2]
             
-            if(not return_method_space):
+            if(not return_method_space or return_method_space == 6):
                 return_method_space = 0
                 
             temp_space_sum = return_method_space + param_space
-            self.symbolTable.add_info_to_cell(method_name, "Space", temp_space_sum)
+            self.symbolTable.add_info_to_cell(method_name, "Space", temp_space_sum, classF=self.current_class)
             
             if(self.current_function):
                 self.count_bytes_func += return_method_space
@@ -1072,7 +1093,7 @@ class YAPLVisitorImpl(YAPLVisitor):
             return "Error"
     
     def visitPlus(self, ctx: YAPLParser.PlusContext):
-        #print("visitPlus")
+        print("----->>>>>>> visitPlus")
         left_type = self.visit(ctx.expr(0))
         right_type = self.visit(ctx.expr(1))
         
@@ -1441,7 +1462,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         #     return "Self"
 
 def main():
-    file_name = "./tests/arith.cl"
+    file_name = "./tests/exampleUser.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
@@ -1452,10 +1473,10 @@ def main():
     try:
         res = YV.visit(tree)
         if(str(res) == "Error" or len(YV.customErrors) > 0):
-            # print("----------------------------------")
-            # print("  Errores semánticos encontrados")
-            # print("----------------------------------\n")
-            # clean_errors(YV.customErrors)
+            print("----------------------------------")
+            print("  Errores semánticos encontrados")
+            print("----------------------------------\n")
+            clean_errors(YV.customErrors)
             print()
         else:
             print("\nResultado Lectura: Todo está semánticamente correcto\n")
@@ -1468,8 +1489,8 @@ def main():
     CI = CodigoIntermedio("CI.txt", YV.symbolTable)
     resCI = CI.visit(tree)
     
-    # MIPS_ = MIPS("CI.txt")
-    # MIPS_.get_MIPS_Code()
+    MIPS_ = MIPS("CI.txt")
+    MIPS_.get_MIPS_Code()
 
     with open("SymbolTable.txt", "w", encoding="utf-8") as f:
         f.write(treeF.get_string())

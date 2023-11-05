@@ -135,31 +135,19 @@ class Table():
         # Iterate through the symbol table to find the appropriate cell
         for row in self.columns:
             if row[0] == name:
-                if row[5] == func and row[4] == classF:
-                    # Check if the column name exists in the headers
-                    if column_name in self.headers:
-                        index = self.headers.index(column_name)
-                        if index < len(row):
-                            # Update the cell with the new value
-                            row[index] = value
-                            self.build_Table()
-                            return True
-                    else:
-                        print(f"Column '{column_name}' does not exist in the table.")
-                        return False
-                elif row[5] != func and row[4] != classF:
-                    continue
-                else:
-                    if column_name in self.headers:
-                        index = self.headers.index(column_name)
-                        if index < len(row):
-                            row[index] = value
-                            print("RR2", row)
-                            self.build_Table()
-                            return True
-                    else:
-                        print(f"Column '{column_name}' does not exist in the table.")
-                        return False
+                for row in self.columns:
+                    if row[0] == name:
+                        if (row[5] == func or func is None) and (row[4] == classF or classF is None):
+                            if column_name in self.headers:
+                                index = self.headers.index(column_name)
+                                if index < len(row):
+                                    row[index] = value
+                                    self.build_Table()
+                                    return True
+                            else:
+                                print(f"Column '{column_name}' does not exist in the table.")
+                                return False
+
         print(f"Row with name '{name}' does not exist in the table.")
         return False
     
@@ -200,3 +188,28 @@ class Table():
             if (not addType or row[1] == addType) and (not addParent or row[4] == addParent) and (not addFunctionP or row[5] == addFunctionP) and (not Value or row[-1] == Value):
                 return row
         return None
+    
+    
+    def class_size(self, classname):
+        ret = 0
+        for row in self.columns:
+            if row[4] == classname and row[2] != "Class":
+                ret += row[9]
+
+        return ret
+    
+    def fun_size(self, id, classname):
+        res = 0
+        for row in self.columns:
+            if row[5] == id and row[4] == classname:
+                res += row[9]
+
+        return res
+    
+    def params_size(self, id, classname):
+        res = 0
+        for row in self.columns:
+            if row[5] == id and row[4] == classname and row[2] == "Param":
+                res += row[9]
+
+        return res
