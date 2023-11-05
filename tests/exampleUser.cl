@@ -20,9 +20,12 @@ class B inherits A {
 class Main inherits IO {
     
    x: Int;
-   str: String;
+   str: String <- "dis";
    y: Int;
    z: Int;
+   kj: Bool <- True;
+   kd: Bool <- False;
+   res: Bool;
 
    a: A <- (new A);
 
@@ -38,6 +41,7 @@ class Main inherits IO {
    meth2(ppp: String): String {
       {
          {
+            str <- ppp;
             "Hola";
          };
       }
@@ -96,6 +100,11 @@ class Main inherits IO {
          z <- a.returnVar();
          z <- a.var;
 
+         out_int(10 + x);
+
+         out_string("hola");
+
+         res <- (kj | kd);
 
 
       }

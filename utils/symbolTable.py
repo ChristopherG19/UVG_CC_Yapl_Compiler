@@ -217,3 +217,11 @@ class Table():
                 res += row[9]
 
         return res
+    
+    def params_size(self, id, classname):
+        res = 0
+        for row in self.columns:
+            if row[5] == id and row[4] == classname and row[2] == "Param":
+                res += row[9]
+
+        return res
