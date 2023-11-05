@@ -194,7 +194,8 @@ class Table():
         ret = 0
         for row in self.columns:
             if row[4] == classname and row[2] != "Class":
-                ret += row[9]
+                if row[9]:
+                    ret += row[9]
 
         return ret
     
