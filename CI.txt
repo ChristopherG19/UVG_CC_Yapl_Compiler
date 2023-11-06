@@ -1,24 +1,37 @@
-CLASS Main, 40
-		LI GP[0], 10
-		LI GP[4], 2
+CLASS Main, 62
+		LI t0, 10
+		SW GP[0], t0
+		LI t0, 2
+		SW GP[4], t0
 		LW t0, GP[0]
 		LW t1, GP[4]
 		ADD t2, t0, t1
 		SW GP[8], t2
-		LW t0, GP[0]
-		LW t1, GP[4]
+		LI t0, 4
+		SW GP[12], t0
+		LI t0, 5
+		SW GP[16], t0
+	Main.main, 30
+		LI t0, 5
+        SW SP[0], t0
+		LW t0, GP[12]
+		PARAM t0
+		CALL IO.out_int, 0
+		LW t0, SP[0]
+		LI t1, 2
 		ADD t2, t0, t1
-		SW GP[12], t2
-	Main.main, 12
-        LI SP[0], 5
-		LW t0, GP[0]
-		LW t1, SP[0]
-		ADD t2, t0, t1
-		SW GP[8], t2
+		MULT t0, t2, 5
+		SW GP[8], t0
+		LW t0, GP[16]
+		PARAM t0
+		CALL IO.out_int, 0
 		LW t0, GP[8]
 		PARAM t0
 		CALL IO.out_int, 0
-		RETURN t0
+		LW t0, GP[4]
+		PARAM t0
+		CALL IO.out_int, 0
+		RETURN
 	END FUNC main
 EOC
 EOF

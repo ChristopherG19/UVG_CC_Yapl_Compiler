@@ -3,38 +3,42 @@
 .text
 .globl Main_main
 Main:
-    sub $sp, $sp, 40
+    sub $sp, $sp, 62
     sw $ra, 0($sp)
     la $s0, 0($sp)
     la $s1, 4($sp)
 
     li $t0, 10
     sw $t0, 0($s0)
-
     li $t0, 2
     sw $t0, 4($s0)
-
     lw $t0, 0($s0)
     lw $t1, 4($s0)
     add $t2, $t0, $t1
 
     sw $t2, 8($s0)
-    lw $t0, 0($s0)
-    lw $t1, 4($s0)
-    add $t2, $t0, $t1
-
-    sw $t2, 12($s0)
+    li $t0, 4
+    sw $t0, 12($s0)
+    li $t0, 5
+    sw $t0, 16($s0)
 
 Main_main:
     li $t0, 5
     sw $t0, 0($s1)
-
-    lw $t0, 0($s0)
-    lw $t1, 0($s1)
+    lw $t0, 12($s0)
+    jal IO_out_int
+    lw $t0, 0($s1)
+    li $t1, 2
     add $t2, $t0, $t1
 
-    sw $t2, 8($s0)
+    mul $t0, $t2, 5
+
+    sw $t0, 8($s0)
+    lw $t0, 16($s0)
+    jal IO_out_int
     lw $t0, 8($s0)
+    jal IO_out_int
+    lw $t0, 4($s0)
     jal IO_out_int
     j exit
 

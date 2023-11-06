@@ -172,34 +172,17 @@ class CodigoIntermedio(YAPLVisitor):
             # obtener expresión
             value = ""
             ins = "SW"
-            if ctx.expr().getChildCount() > 1:
-                # visitar hijos
-                retText += self.visit(ctx.expr())
-                # print("deffasin retTExt ", retText)
-                if len(self.temp_stack) > 0:
-                    value = self.temp_stack.pop()
-                    usedTemps.append(value)
-    
-                else:
-                    value = "tt"
+            # if ctx.expr().getChildCount() > 1:
+            # visitar hijos
+            retText += self.visit(ctx.expr())
+            # print("deffasin retTExt ", retText)
+            if len(self.temp_stack) > 0:
+                value = self.temp_stack.pop()
+                usedTemps.append(value)
 
             else:
-                # print("1")
-                text_ = ctx.expr().getText()
-                # print("text ", text_)
-                value, _ = self.getRegister(text_)
-                if(value == text_):
-                    ins = "LI"
+                value = "tt"
 
-                # visitar hijos
-                retText += self.visit(ctx.expr())
-                # print("deffasin retTExt ", retText)
-                if len(self.temp_stack) > 0:
-                    value = self.temp_stack.pop()
-                    usedTemps.append(value)
-    
-                else:
-                    value = "tt"
 
             retText += f"\t\t{ins} {var}, {value}\n"
             self.lastStatement = var
@@ -1140,8 +1123,12 @@ class CodigoIntermedio(YAPLVisitor):
     def visitInt(self, ctx:YAPLParser.IntContext):
         # print("#int")
         retText = ""
-        self.lastStatement = ctx.getText()
-        self.temp_stack.append(self.lastStatement)
+        
+        temp_ = self.available_temps_stack.pop()
+        self.temp_stack.append(temp_)
+
+        retText += f"\t\tLI {temp_}, {ctx.getText()}\n"
+        self.lastStatement = temp_
 
         return retText
 

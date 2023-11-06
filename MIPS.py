@@ -102,7 +102,10 @@ class MIPS():
                                 mips_code += f"    sw $t0, {disp}($s1)\n\n"  
                         else:
                             if words[2] == "R":
-                                mips_code += f"    li {words[1]}, $v0\n"         
+                                mips_code += f"    li {words[1]}, $v0\n"
+
+                            else:
+                                mips_code += f"    li {words[1]}, {words[2]}\n"          
                             
                     elif words[0] == "SW":
                         match = re.match(r'(\w+)\[(\d+)\]', words[1])
@@ -134,6 +137,58 @@ class MIPS():
                                 self.tempBlock += f"{func}:\n    move $a0, $t0\n    li $v0, 1\n    syscall\n    la $a0, newline\n    li $v0, 4\n    syscall\n    jr $ra\n"
                         else:    
                             mips_code += f"    jal {func}\n"
+
+                    elif words[0] == "DIV":
+
+                        # div $t1, $t2  # Divide $t1 por $t2, almacenando el cociente en $LO y el residuo en $HI
+                        if matchA:
+                            envA = matchA.group(1)
+                            dispA = matchA.group(2)
+                            if envA == "GP":
+                                mips_code += f"    lw {words[2]}, {dispA}($s0)\n"
+                            elif envA == "SP":
+                                mips_code += f"    lw {words[2]}, {dispA}($s1)\n"
+
+                        else:
+                            print("no match")
+                            
+                        matchB = re.match(r'(\w+)\[(\d+)\]', words[3])
+
+                        if matchB:
+                            envB = matchB.group(1)
+                            dispB = matchB.group(2)
+                            if envB == "GP":
+                                #TODO si se arreglan los temporales, este arreglo se eliminaria
+                                mips_code += f"    lw {words[3]}, {dispB}($s0)\n"
+                            elif envB == "SP":
+                                mips_code += f"    lw {words[3]}, {dispB}($s1)\n"
+                                
+                        mips_code += f"    div {words[1]}, {words[2]}, {words[3]}\n"
+                        mips_code += f"    mfhi $s1\n\n"
+
+                    elif words[0] == "MULT":
+                        matchA = re.match(r'(\w+)\[(\d+)\]', words[2])
+
+                        if matchA:
+                            envA = matchA.group(1)
+                            dispA = matchA.group(2)
+                            if envA == "GP":
+                                mips_code += f"    lw {words[2]}, {dispA}($s0)\n"
+                            elif envA == "SP":
+                                mips_code += f"    lw {words[2]}, {dispA}($s1)\n"
+                            
+                        matchB = re.match(r'(\w+)\[(\d+)\]', words[3])
+
+                        if matchB:
+                            envB = matchB.group(1)
+                            dispB = matchB.group(2)
+                            if envB == "GP":
+                                mips_code += f"    lw {words[3]}, {dispB}($s0)\n"
+                            elif envB == "SP":
+                                mips_code += f"    lw {words[3]}, {dispB}($s1)\n"
+                                
+                        mips_code += f"    mul {words[1]}, {words[2]}, {words[3]}\n\n"
+
                     
                     elif words[0] == "ADD":
                         
@@ -186,11 +241,11 @@ class MIPS():
                         mips_code += f"    sub {words[1]}, {words[2]}, {words[3]}\n\n"
                         
                     elif words[0] == "RETURN":
-                        if len(words) == 1:
-                            mips_code += "    move $t0, $v0\n    jr $ra\n"
-                        else:
-                            if Act_class != "Main" and Act_func != "main":
-                                mips_code += f"    move $v0, {words[1]}\n    jr $ra\n"
+                        if Act_class != "Main" and Act_func != "main":
+                            mips_code += f"    move $v0, {words[1]}\n    jr $ra\n"
+                        # else:
+                        #     if len(words) > 1:
+                        #         mips_code += "    move $t0, $v0\n    jr $ra\n"
                         
                     elif words[0] == "EOC":
                         mips_code += ""

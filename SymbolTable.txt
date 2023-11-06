@@ -26,17 +26,18 @@
 |   substr   |   String   |    Method   |   None   |   String  |    None    |     None     |      Global      |   0   |  None |
 |    iPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     |      Local       |   0   |  None |
 |    lPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     |      Local       |   0   |  None |
-|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     |      Global      |  None |  None |
+|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     |      Global      |   50  |  None |
 | out_string | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     |      Global      |   0   |  None |
 |   xParS    |   String   |    Param    |   None   |    Main   | out_string |     None     |      Local       |   0   |  None |
 |  out_int   | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     |      Global      |   4   |  None |
-|   xParI    |    Int     |    Param    |   None   |    Main   |  out_int   |      8       |      Local       |   4   |   0   |
+|   xParI    |    Int     |    Param    |   None   |    Main   |  out_int   |      4       |      Local       |   4   |   0   |
 | in_string  |   String   |    Method   |   None   |    Main   |    None    |     None     |      Global      |   0   |  None |
 |  int_int   |    Int     |    Method   |   None   |    Main   |    None    |     None     |      Global      |   0   |  None |
 |     a      |    Int     |   Instance  |   None   |    Main   |    None    |      0       |      Main.a      |   4   |   0   |
 |     b      |    Int     |   Instance  |   None   |    Main   |    None    |      4       |      Main.b      |   4   |   0   |
 |     d      |    Int     |   Instance  |   None   |    Main   |    None    |      8       |      Main.d      |   4   |   0   |
 |     f      |    Int     |   Instance  |   None   |    Main   |    None    |      12      |      Main.f      |   4   |   0   |
-|    main    |    Int     |    Method   |   None   |    Main   |    None    |     None     |      Global      |   12  |  None |
+|     g      |    Int     |   Instance  |   None   |    Main   |    None    |      16      |      Main.g      |   4   |   0   |
+|    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     |      Global      |   30  |  None |
 |     c      |    Int     |   Variable  |   None   |    Main   |    main    |      0       | Main.main.Let1.c |   4   |  None |
 +------------+------------+-------------+----------+-----------+------------+--------------+------------------+-------+-------+
