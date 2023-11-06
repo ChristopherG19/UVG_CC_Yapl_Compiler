@@ -171,7 +171,7 @@ class CodigoIntermedio(YAPLVisitor):
 
             # obtener expresión
             value = ""
-            ins = "LW"
+            ins = "SW"
             if ctx.expr().getChildCount() > 1:
                 # visitar hijos
                 retText += self.visit(ctx.expr())
@@ -589,7 +589,13 @@ class CodigoIntermedio(YAPLVisitor):
                     # ha ocurrido un error
                     value = "tt"
               
-                retText += f"\t\tLW {var}, {value}\n"
+                ins = "SW"
+                try:
+                    n = int(value)
+                    ins = "LI"
+                    retText += f"        {ins} {var}, {value}\n"
+                except:
+                    retText += f"        {ins} {var}, {value}\n"
                 # self.lastStatement = var
 
             # regresar temporal
