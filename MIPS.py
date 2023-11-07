@@ -27,6 +27,8 @@ class MIPS():
     def translate(self):
         input_code = None
         self.tempBlock = ""
+        self.dataBlock = ".data\n"
+        self.etis = 0
         # Abre el archivo de entrada en modo lectura
         with open(self.CI, 'r') as file:
             # Lee el contenido del archivo
@@ -34,7 +36,8 @@ class MIPS():
             
         if(input_code != None):
             mips_code = ""
-            mips_code += '.data\n    newline: .asciiz "\\n"\n.text\n.globl Main_main'
+            self.dataBlock += '    newline: .asciiz "\\n"\n'
+            mips_code += '    \n.text\n.globl Main_main'
 
             # Divide el código intermedio en líneas
             lines = input_code.split('\n')
@@ -44,8 +47,14 @@ class MIPS():
             Count_Param = 0
             for line in lines:
                 # Divide cada línea en palabras (instrucciones y argumentos)
-                words = line.split()
-                words = [("$" + word.replace(",", "")) if re.match(r't\d', word) else word.replace(",", "") for word in words]
+                words = line.split(None, 1)
+                
+                if(len(words) > 1):
+                    if(words[1].startswith('"')):
+                        pass
+                    else:
+                        words = line.split()
+                        words = [("$" + word.replace(",", "")) if re.match(r't\d', word) else word.replace(",", "") for word in words]
 
                 if words:    
                     try:
@@ -72,6 +81,10 @@ class MIPS():
                         self.etiquetas.append(call_func)
                         Count_Param = 0
                         mips_code += f"\n{call_func}:\n"
+                        # mips_code += f"    sub $sp, $sp, {words[1]}\n"
+                        # mips_code += f"    sw $ra, 0($sp)\n"
+                        # mips_code += f"    la $s0, 0($sp)\n"
+                        # mips_code += f"    la $s1, 4($sp)\n\n"
                     
                     elif words[0] == "LW":
                         match = re.match(r'(\w+)\[(\d+)\]', words[2])
@@ -128,15 +141,26 @@ class MIPS():
                             mips_code += f"    lw $a{Count_Param}, {disp}(${env.lower()})\n"
                             Count_Param += 1
                             
+                        elif(type(words[1]) == str and "$" not in words[1]):
+                            
+                            eti = f"str_{self.etis}"
+                            self.dataBlock += f"    {eti}: .asciiz {words[1]}\n"
+                            mips_code += f"    la $t0, {eti}\n"
+                            self.etis += 1
+                            
                     elif words[0] == "CALL":
                         func = words[1].replace('.', '_')
                         self.tempBlock = ""
                         if(func not in self.etiquetas):
                             mips_code += f"    jal {func}\n"
-                            if("out_int" in func or "out_string" in func):
+                            if("out_int" in func):
                                 self.tempBlock += f"{func}:\n    move $a0, $t0\n    li $v0, 1\n    syscall\n    la $a0, newline\n    li $v0, 4\n    syscall\n    jr $ra\n"
+                            elif("out_string" in func):
+                                self.tempBlock += f"{func}:\n    move $a0, $t0\n    li $v0, 4\n    syscall\n    la $a0, newline\n    li $v0, 4\n    syscall\n    jr $ra\n"
+                                
                         else:    
                             mips_code += f"    jal {func}\n"
+                        #self.etiquetas.append(func)
 
                     elif words[0] == "DIV":
 
@@ -158,7 +182,6 @@ class MIPS():
                             envB = matchB.group(1)
                             dispB = matchB.group(2)
                             if envB == "GP":
-                                #TODO si se arreglan los temporales, este arreglo se eliminaria
                                 mips_code += f"    lw {words[3]}, {dispB}($s0)\n"
                             elif envB == "SP":
                                 mips_code += f"    lw {words[3]}, {dispB}($s1)\n"
@@ -208,7 +231,6 @@ class MIPS():
                             envB = matchB.group(1)
                             dispB = matchB.group(2)
                             if envB == "GP":
-                                #TODO si se arreglan los temporales, este arreglo se eliminaria
                                 mips_code += f"    lw {words[3]}, {dispB}($s0)\n"
                             elif envB == "SP":
                                 mips_code += f"    lw {words[3]}, {dispB}($s1)\n"
@@ -233,7 +255,6 @@ class MIPS():
                             envB = matchB.group(1)
                             dispB = matchB.group(2)
                             if envB == "GP":
-                                #TODO si se arreglan los temporales, este arreglo se eliminaria
                                 mips_code += f"    lw {words[3]}, {dispB}($s0)\n"
                             elif envB == "SP":
                                 mips_code += f"    lw {words[3]}, {dispB}($s1)\n"
@@ -261,10 +282,11 @@ class MIPS():
                    
                     elif words[0] == "EOF":
                         mips_code += "\nexit:\n    li $v0, 10\n    syscall"
+                        mips_code = self.dataBlock + mips_code
                         return mips_code
-
+                    
+            mips_code = self.dataBlock + mips_code
             return mips_code
         else:
             print("Ocurrio un error leyendo el archivo del CI")
-            return None            
-            
+            return None 

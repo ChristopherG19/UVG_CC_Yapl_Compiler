@@ -81,6 +81,10 @@ class CodigoIntermedio(YAPLVisitor):
         # obtener tamaño de la clase
         size = self.symbolTable.class_size(self.position[0])
 
+        # verificación de si es múltiplo de 4
+        while size % 4 == 0:
+            size += 1
+
         retText += f"CLASS {self.position[0]}, {str(size)}\n"
 
         # iniciar diccionarios de diccioanrios
