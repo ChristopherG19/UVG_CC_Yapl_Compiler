@@ -1,20 +1,22 @@
-CLASS Main, 42
+CLASS Main, 64
 		LI t0, 10
 		SW GP[0], t0
 		LI t0, 2
-		SW GP[20], t0
+		SW GP[4], t0
 		LW t0, GP[0]
-		LW t1, GP[20]
+		LW t1, GP[4]
 		ADD t2, t0, t1
 		SW GP[8], t2
-		LI t0, 4
+		LI t0, 5
 		SW GP[12], t0
 		LI t0, 5
 		SW GP[16], t0
-	Main.main, 12
+		LI t0, 1
+		SW GP[20], t0
+	Main.main, 25
 		LW t0, GP[12]
 		LI t1, 4
-		SLT t2, t0, t1
+		SEQ t2, t0, t1
 		IF t2 > 0 GOTO L_TRUE_0
 		GOTO L_FALSE_0
 L_TRUE_0:
@@ -28,13 +30,31 @@ L_FALSE_0:
 		CALL IO.out_int, 0
 		GOTO L_IF_END_0
 L_IF_END_0:
-		LW t0, GP[0]
+		LI t0, 1
+		SW GP[20], t0
+		LI t0, 0
+		SW GP[24], t0
+		LW t0, GP[20]
+		LW t1, GP[24]
+		AND t2, t0, t1
+		SW j, t2
+		LW t0, GP[24]
+		LI t1, 1
+		SEQ t2, t0, t1
+		IF t2 > 0 GOTO L_TRUE_1
+		GOTO L_FALSE_1
+L_TRUE_1:
+		LI t0, 1
+		PARAM t0
+		CALL IO.out_int, 0
+		GOTO L_IF_END_1
+L_FALSE_1:
+		LI t0, 0
+		PARAM t0
+		CALL IO.out_int, 0
+		GOTO L_IF_END_1
+L_IF_END_1:
 		RETURN
 	END FUNC main
-		SW GP[20], False
-		LW t1, GP[0]
-		LW t2, GP[20]
-		AND t3, t1, t2
-		SW GP[21], t3
 EOC
 EOF

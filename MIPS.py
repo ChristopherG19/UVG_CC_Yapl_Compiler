@@ -130,7 +130,7 @@ class MIPS():
                                 mips_code += f"    sw {words[2]}, {disp}($s0)\n"
                             elif env == "SP":
                                 mips_code += f"    sw {words[2]}, {disp}($s1)\n"
-                    
+
                     elif words[0] == "PARAM":
                         match = re.match(r'(\w+)\[(\d+)\]', words[1])
 
@@ -260,6 +260,75 @@ class MIPS():
                                 mips_code += f"    lw {words[3]}, {dispB}($s1)\n"
                                 
                         mips_code += f"    sub {words[1]}, {words[2]}, {words[3]}\n\n"
+
+                    elif words[0] == "AND":
+
+                        matchA = re.match(r'(\w+)\[(\d+)\]', words[2])
+
+                        if matchA:
+                            envA = matchA.group(1)
+                            dispA = matchA.group(2)
+                            if envA == "GP":
+                                mips_code += f"    lw {words[2]}, {dispA}($s0)\n"
+                            elif envA == "SP":
+                                mips_code += f"    lw {words[2]}, {dispA}($s1)\n"
+                            
+                        matchB = re.match(r'(\w+)\[(\d+)\]', words[3])
+
+                        if matchB:
+                            envB = matchB.group(1)
+                            dispB = matchB.group(2)
+                            if envB == "GP":
+                                #TODO si se arreglan los temporales, este arreglo se eliminaria
+                                mips_code += f"    lw {words[3]}, {dispB}($s0)\n"
+                            elif envB == "SP":
+                                mips_code += f"    lw {words[3]}, {dispB}($s1)\n"
+                                
+                        
+                        mips_code += f"    and {words[1]}, {words[2]}, {words[3]}\n\n"
+
+                    elif (words[0] == "SLT" or words[0] == "SEQ" or words[0] == "SLE" or
+                          words[0] == "SGT" or words[0] == "SGE"):
+
+                        matchA = re.match(r'(\w+)\[(\d+)\]', words[2])
+
+                        if matchA:
+                            envA = matchA.group(1)
+                            dispA = matchA.group(2)
+                            if envA == "GP":
+                                mips_code += f"    lw {words[2]}, {dispA}($s0)\n"
+                            elif envA == "SP":
+                                mips_code += f"    lw {words[2]}, {dispA}($s1)\n"
+                            
+                        matchB = re.match(r'(\w+)\[(\d+)\]', words[3])
+
+                        if matchB:
+                            envB = matchB.group(1)
+                            dispB = matchB.group(2)
+                            if envB == "GP":
+                                #TODO si se arreglan los temporales, este arreglo se eliminaria
+                                mips_code += f"    lw {words[3]}, {dispB}($s0)\n"
+                            elif envB == "SP":
+                                mips_code += f"    lw {words[3]}, {dispB}($s1)\n"
+                        
+                        mips_code += f"    {words[0].lower()} {words[1]}, {words[2]}, {words[3]}\n"
+
+                    
+                    elif words[0] == "GOTO":
+                        mips_code += f"    j {words[1]}\n"
+
+                    elif words[0][:7] == "L_LOOP_":
+                        mips_code += f"{words[0]}\n"
+
+                    elif words[0] == "IF":
+                        print("if")
+                        mips_code += f"    bnez {words[1]}, {words[5]}\n"
+
+                    elif words[0][:6] == "L_TRUE" or words[0][:7] == "L_FALSE":
+                        mips_code += f"{words[0]}\n"
+
+                    elif words[0][:5] == "L_IF_":
+                        mips_code += f"{words[0]}\n"
                         
                     elif words[0] == "RETURN":
                         if Act_class != "Main" and Act_func != "main":
@@ -284,6 +353,9 @@ class MIPS():
                         mips_code += "\nexit:\n    li $v0, 10\n    syscall"
                         mips_code = self.dataBlock + mips_code
                         return mips_code
+                    
+                    else:
+                        print(words)
                     
             mips_code = self.dataBlock + mips_code
             return mips_code

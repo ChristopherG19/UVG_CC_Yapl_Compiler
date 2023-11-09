@@ -82,7 +82,7 @@ class CodigoIntermedio(YAPLVisitor):
         size = self.symbolTable.class_size(self.position[0])
 
         # verificación de si es múltiplo de 4
-        while size % 4 == 0:
+        while size % 4 != 0:
             size += 1
 
         retText += f"CLASS {self.position[0]}, {str(size)}\n"
@@ -1147,8 +1147,18 @@ class CodigoIntermedio(YAPLVisitor):
     def visitBoolean(self, ctx:YAPLParser.BooleanContext):
         # print("#boolean")
         retText = ""
-        self.lastStatement = ctx.getText()
-        self.temp_stack.append(self.lastStatement)
+        value = ctx.getText()
+
+        temp_ = self.available_temps_stack.pop()
+        self.temp_stack.append(temp_)
+
+        if value.lower() == "true":
+            value = 1
+        else:
+            value = 0
+
+        retText += f"\t\tLI {temp_}, {value}\n"
+        self.temp_stack.append(temp_)
         
         return retText
     

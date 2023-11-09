@@ -26,7 +26,7 @@
 |   substr   |   String   |    Method   |   None   |   String  |    None    |     None     | Global |   0   |  None |
 |    iPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     | Local  |   0   |  None |
 |    lPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     | Local  |   0   |  None |
-|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     | Global |   34  |  None |
+|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     | Global |   53  |  None |
 | out_string | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
 |   xParS    |   String   |    Param    |   None   |    Main   | out_string |     None     | Local  |   0   |  None |
 |  out_int   | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   4   |  None |
@@ -38,7 +38,7 @@
 |     d      |    Int     |   Instance  |   None   |    Main   |    None    |      8       | Main.d |   4   |   0   |
 |     f      |    Int     |   Instance  |   None   |    Main   |    None    |      12      | Main.f |   4   |   0   |
 |     g      |    Int     |   Instance  |   None   |    Main   |    None    |      16      | Main.g |   4   |   0   |
-|    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   12  |  None |
-|     b      |    Bool    |   Instance  |   None   |    Main   |    None    |      20      | Main.b |   1   | False |
-|     c      |    Bool    |   Instance  |   None   |    Main   |    None    |      21      | Main.c |   1   | False |
+|     h      |    Bool    |   Instance  |   None   |    Main   |    None    |      20      | Main.h |   4   | False |
+|     i      |    Bool    |   Instance  |   None   |    Main   |    None    |      24      | Main.i |   4   | False |
+|    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   25  |  None |
 +------------+------------+-------------+----------+-----------+------------+--------------+--------+-------+-------+

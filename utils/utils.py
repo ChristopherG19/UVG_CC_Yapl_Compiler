@@ -52,13 +52,13 @@ def get_space_vars(type, val=None):
     
     if(type == 'string'):
         if (val and val != "''"):
-            space = len(val) * 2
+            space = len(val) * 4
         else:
-            space = 2
+            space = 4
     elif(type == 'int'):
         space = 4
     elif(type == 'bool'):
-        space = 1
+        space = 4
     
     return space
 
