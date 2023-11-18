@@ -1,114 +1,115 @@
 .data
+    newline: .asciiz "\n"    
 .text
-A:
-    add $t0, 452, 9
-    lw $t0, 0($gp)
-    lw $t2, 4($gp)
-    lw $t0, 8($gp)
-    lw 5, 9($gp)
+Factorial:
+    li $a0, 4
+    li $v0, 9
+    syscall
+    move $s0, $v0
 
-A_returnVar:
-    add $t1, $t0, 7
+    li $t0, 0
+    sw $t0, 0($s0)
 
-B:
-    add $t0, 452, 9
-    lw $t0, 0($gp)
-    lw $t2, 4($gp)
-    lw $t0, 8($gp)
-    lw 5, 9($gp)
+Factorial_factorial:
+    sub $sp, $sp, 32
+    sw $ra, 0($sp)
+    lw $t0, 0($sp)
+    li $t1, 0
+    li $t0, 0
+    sw $t0, 4($sp)
+    lw $t0, 0($sp)
+    li $t1, 1
+    li $t0, 1
+    sw $t0, 4($sp)
+    lw $t0, 0($sp)
+    lw $t1, 0($sp)
+    li $t2, 1
+    sub $t3, $t1, $t2
 
-B_returnVar:
-    add $t1, $t0, 7
+    jal Factorial_factorial
 
-B_setVar1:
-    lw P0, 0($sp)
-    lw $t0, 13($gp)
+    mul $t2, $t0, $t1
+
+    sw $t2, 4($sp)
+    lw $ra, 0($sp)
+    add $sp, $sp, 32
+    move $v0, SP[4]
+    jr $ra
+
+Fibonacci:
+
+Fibonacci_fibonacci:
+    sub $sp, $sp, 48
+    sw $ra, 0($sp)
+    lw $t0, 0($sp)
+    li $t1, 1
+    li $t0, 1
+    sw $t0, 4($sp)
+    lw $t0, 0($sp)
+    li $t1, 2
+    li $t0, 1
+    sw $t0, 4($sp)
+    lw $t0, 0($sp)
+    li $t1, 1
+    sub $t2, $t0, $t1
+
+    jal Fibonacci_fibonacci
+
+    lw $t1, 0($sp)
+    li $t2, 2
+    sub $t3, $t1, $t2
+
+    jal Fibonacci_fibonacci
+
+    add $t2, $t0, $t1
+
+    lw $t0, 0($sp)
+    li $t1, 3
+    sub $t3, $t0, $t1
+
+    jal Fibonacci_fibonacci
+
+    add $t1, $t2, $t0
+
+    sw $t1, 4($sp)
+    lw $ra, 0($sp)
+    add $sp, $sp, 48
+    move $v0, SP[4]
+    jr $ra
 
 Main:
-    lw $t0, 21($gp)
-    add $t0, 5, 4
-    lw $t0, 42($gp)
+    li $a0, 8
+    li $v0, 9
+    syscall
+    move $s0, $v0
 
-Main_meth1:
-    lw P0, 0($sp)
-    lw $t0, 38($gp)
-
-Main_meth2:
-    lw P0, 0($sp)
-    lw $t0, 4($gp)
+    li $t0, 10
+    sw $t0, 0($s0)
 
 Main_main:
-    lw $t0, 0($gp)
-    lw "igual", 4($gp)
-    lw "mayor", 4($gp)
-    lw "menor", 4($gp)
-    jal IO_out_string
-    jal IO_out_string
-    add $t3, 1, $t2
-    lw $t2, 0($gp)
-    lw "hehe", 34($sp)
-    lw $t0, 36($sp)
-    lw 5, 40($sp)
-    lw $t0, 44($sp)
-    lw False, 48($sp)
-    lw True, 48($sp)
-    jal IO_out_string
-    add $t0, $t2, $t3
-    lw $t0, 10($gp)
-    jal IO_out_string
-    jal IO_out_string
-    add $t0, 5, 6
-    jal Main_meth1
-    jal $t0_abort
-    jal $t0_returnVar
-    lw $t0, 14($gp)
-    jal $t0_GP[4]
-    lw $t3, 14($gp)
-    add $t3, 10, $t0
+    sub $sp, $sp, 8
+    sw $ra, 0($sp)
+    sw $t0, 4($s0)
+    sw $t0, 8($s0)
+    lw $t0, 8($s0)
+    lw $t0, 0($s0)
+    jal $t0_fibonacci
+
     jal IO_out_int
-    jal IO_out_string
-    lw $t4, 20($gp)
+
+    lw $ra, 0($sp)
+    add $sp, $sp, 8
     j exit
 
-IO_out_string:
-    li $v0, 4
-    syscall
-    jr $ra
-IO_out_string:
-    li $v0, 4
-    syscall
-    jr $ra
-IO_out_string:
-    li $v0, 4
-    syscall
-    jr $ra
-IO_out_string:
-    li $v0, 4
-    syscall
-    jr $ra
-IO_out_string:
-    li $v0, 4
-    syscall
-    jr $ra
-$t0_abort:
-    li $v0, 4
-    syscall
-    jr $ra
-$t0_returnVar:
-    li $v0, 4
-    syscall
-    jr $ra
-$t0_GP[4]:
-    li $v0, 4
-    syscall
-    jr $ra
 IO_out_int:
-    li $v0, 4
+    move $a0, $t0
+    li $v0, 1
     syscall
-    jr $ra
-IO_out_string:
+    la $a0, newline
     li $v0, 4
     syscall
     jr $ra
 
 exit:
+    li $v0, 10
+    syscall

@@ -79,7 +79,14 @@ class CodigoIntermedio(YAPLVisitor):
         self.position.append(ctx.TYPE(0).getText())
 
         # obtener tamaño de la clase
+        # print(self.symbolTable.get_cell(self.position[0])[-2])
         size = self.symbolTable.class_size(self.position[0])
+        # size = self.symbolTable.get_cell(self.position[0])[-2]
+        # if size == None:
+        #     size = self.symbolTable.class_size(self.position[0])
+        # verificación de si es múltiplo de 4
+        while size % 4 != 0:
+            size += 1
 
         retText += f"CLASS {self.position[0]}, {str(size)}\n"
 
@@ -127,7 +134,16 @@ class CodigoIntermedio(YAPLVisitor):
         # obtenr tamaño
         # size = self.symbolTable.fun_size(id, self.position[0])
         row = self.symbolTable.get_cell(id, addParent = self.position[0], addScope = "Global")
-        size = row[9]
+        if(row):
+            size = row[9]
+            if size == None:
+                size = self.symbolTable.fun_size(id, self.position[0])
+        # else:
+        #     size = self.symbolTable.fun_size(id, self.position[0])
+        
+        # verificación de si es múltiplo de 4
+        while size % 4 != 0:
+            size += 1
         retText += f"\t{self.position[0]}.{id}, {size}\n"
         self.position.append(id) 
         self.let_counter = 1 # reiniciar el conteo de lets por función
@@ -172,34 +188,17 @@ class CodigoIntermedio(YAPLVisitor):
             # obtener expresión
             value = ""
             ins = "SW"
-            if ctx.expr().getChildCount() > 1:
-                # visitar hijos
-                retText += self.visit(ctx.expr())
-                # print("deffasin retTExt ", retText)
-                if len(self.temp_stack) > 0:
-                    value = self.temp_stack.pop()
-                    usedTemps.append(value)
-    
-                else:
-                    value = "tt"
+            # if ctx.expr().getChildCount() > 1:
+            # visitar hijos
+            retText += self.visit(ctx.expr())
+            # print("deffasin retTExt ", retText)
+            if len(self.temp_stack) > 0:
+                value = self.temp_stack.pop()
+                usedTemps.append(value)
 
             else:
-                # print("1")
-                text_ = ctx.expr().getText()
-                # print("text ", text_)
-                value, _ = self.getRegister(text_)
-                if(value == text_):
-                    ins = "LI"
+                value = "tt"
 
-                # visitar hijos
-                retText += self.visit(ctx.expr())
-                # print("deffasin retTExt ", retText)
-                if len(self.temp_stack) > 0:
-                    value = self.temp_stack.pop()
-                    usedTemps.append(value)
-    
-                else:
-                    value = "tt"
 
             retText += f"\t\t{ins} {var}, {value}\n"
             self.lastStatement = var
@@ -589,6 +588,7 @@ class CodigoIntermedio(YAPLVisitor):
                     # ha ocurrido un error
                     value = "tt"
               
+                # retText += f"\t\tLW {var}, {value}\n"
                 ins = "SW"
                 try:
                     n = int(value)
@@ -1139,8 +1139,12 @@ class CodigoIntermedio(YAPLVisitor):
     def visitInt(self, ctx:YAPLParser.IntContext):
         # print("#int")
         retText = ""
-        self.lastStatement = ctx.getText()
-        self.temp_stack.append(self.lastStatement)
+        
+        temp_ = self.available_temps_stack.pop()
+        self.temp_stack.append(temp_)
+
+        retText += f"\t\tLI {temp_}, {ctx.getText()}\n"
+        self.lastStatement = temp_
 
         return retText
 

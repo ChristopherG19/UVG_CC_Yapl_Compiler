@@ -5,7 +5,7 @@ class Factorial {
       {( let f : Int in
       	 if n=0 then f<-0 else
          if n=1 then f<-1 else
-        	 f<-n*factorial(n-1)
+        	 f<-(n*factorial(n-1))
          fi fi
        );}
     };

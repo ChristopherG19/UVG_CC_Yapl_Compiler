@@ -1,174 +1,110 @@
-CLASS A, 17
-		ADD t0, 452, 9
-		LW GP[0], t0
-		LW t0, GP[0]
-		MULT t1, 5, t0
-		MULT t0, 4, GP[0]
-		MULT t2, t1, t0
-		LW GP[4], t2
-		NOT t0, False
-		LW GP[8], t0
-		LW GP[9], 5
-	A.returnVar, 4
-		LW t0, GP[4]
-		ADD t1, t0, 7
-		RETURN t1
-	END FUNC returnVar
-EOC
-CLASS B, 37
-		ADD t0, 452, 9
-		LW GP[0], t0
-		LW t0, GP[0]
-		MULT t1, 5, t0
-		MULT t0, 4, GP[0]
-		MULT t2, t1, t0
-		LW GP[4], t2
-		NOT t0, False
-		LW GP[8], t0
-		LW GP[9], 5
-	B.returnVar, 4
-		LW t0, GP[4]
-		ADD t1, t0, 7
-		RETURN t1
-	END FUNC returnVar
-
-		LI GP[13], 5
-	B.setVar1, 12
-		LW SP[0], P0
-		LW t0, SP[0]
-		SW GP[13], t0
-		RETURN GP[13]
-	END FUNC setVar1
-EOC
-CLASS Main, 223
-		LI GP[4], "dis"
-		LI GP[18], True
-		LI GP[19], False
-		LW t0, A
-		LW GP[21], t0
-		ADD t0, 5, 4
-		LW GP[42], t0
-	Main.meth1, 8
-		LW SP[0], P0
-		LW t0, SP[0]
-		SW GP[38], t0
-		RETURN GP[38]
-	END FUNC meth1
-		LI GP[46], True
-	Main.meth2, 14
-		LW SP[0], P0
-		LW t0, SP[0]
-		SW GP[4], t0
-		RETURN "Hola"
-	END FUNC meth2
-	Main.main, 109
-		NEG t0, 5
+CLASS Factorial, 4
+		LI t0, 0
 		SW GP[0], t0
-		LW t0, GP[0]
-		SEQ t2, t0, 5
+	Factorial.factorial, 32
+		LW SP[0], P0
+		LW t0, SP[0]
+		LI t1, 0
+		SEQ t2, t0, t1
 		IF t2 > 0 GOTO L_TRUE_0
 		GOTO L_FALSE_0
 L_TRUE_0:
-		SW GP[4], "igual"
+		LI t0, 0
+		SW SP[4], t0
 		GOTO L_IF_END_0
 L_FALSE_0:
-		LW t0, GP[0]
-		SGE t2, t0, 0
-		LW t0, GP[0]
-		SLT t3, t0, 10
-		AND t0, t2, t3
-		IF t0 > 0 GOTO L_TRUE_1
+		LW t0, SP[0]
+		LI t1, 1
+		SEQ t2, t0, t1
+		IF t2 > 0 GOTO L_TRUE_1
 		GOTO L_FALSE_1
 L_TRUE_1:
-		SW GP[4], "mayor"
+		LI t0, 1
+		SW SP[4], t0
 		GOTO L_IF_END_1
 L_FALSE_1:
-		SW GP[4], "menor"
+		LW t0, SP[0]
+		LW t1, SP[0]
+		LI t2, 1
+		SUB t3, t1, t2
+		PARAM t3
+		CALL Factorial.factorial, 0
+		LW t1, RET
+		MULT t2, t0, t1
+		SW SP[4], t2
 		GOTO L_IF_END_1
 L_IF_END_1:
 		GOTO L_IF_END_0
 L_IF_END_0:
-		LW t0, GP[0]
-		SEQ t2, t0, 0
+		RETURN SP[4]
+	END FUNC factorial
+EOC
+CLASS Fibonacci, 0
+	Fibonacci.fibonacci, 48
+		LW SP[0], P0
+		LW t0, SP[0]
+		LI t1, 1
+		SEQ t2, t0, t1
 		IF t2 > 0 GOTO L_TRUE_2
 		GOTO L_FALSE_2
 L_TRUE_2:
-		PARAM "igual"
-		CALL IO.out_string, 0
+		LI t0, 1
+		SW SP[4], t0
 		GOTO L_IF_END_2
 L_FALSE_2:
-		PARAM "desigual"
-		CALL IO.out_string, 0
-		GOTO L_IF_END_2
-L_IF_END_2:
-		GOTO L_LOOP_0
-L_LOOP_0:
-		LW t0, GP[0]
-		SEQ t2, t0, 0
-		NOT t0, t2
-		IF t0 = 0 GOTO L_LOOP_END_0
-		LW t0, GP[0]
-		MULT t2, 4, 5
-		ADD t3, 1, t2
-		SUB t2, t0, t3
-		SW GP[0], t2
-		GOTO L_LOOP_0
-L_LOOP_END_0:
-		LW SP[34], "hehe,"
-		MULT t0, 5, 8
-		LW SP[36], t0
-		LW SP[40], 5
-		LW t0, SP[36]
-		SW SP[44], t0
-		LW t0, SP[44]
-		SEQ t2, t0, 5
+		LW t0, SP[0]
+		LI t1, 2
+		SEQ t2, t0, t1
 		IF t2 > 0 GOTO L_TRUE_3
 		GOTO L_FALSE_3
 L_TRUE_3:
-		SW SP[48], False
+		LI t0, 1
+		SW SP[4], t0
 		GOTO L_IF_END_3
 L_FALSE_3:
-		SW SP[48], True
+		LW t0, SP[0]
+		LI t1, 1
+		SUB t2, t0, t1
+		PARAM t2
+		CALL Fibonacci.fibonacci, 0
+		LW t0, RET
+		LW t1, SP[0]
+		LI t2, 2
+		SUB t3, t1, t2
+		PARAM t3
+		CALL Fibonacci.fibonacci, 0
+		LW t1, RET
+		ADD t2, t0, t1
+		LW t0, SP[0]
+		LI t1, 3
+		SUB t3, t0, t1
+		PARAM t3
+		CALL Fibonacci.fibonacci, 0
+		LW t0, RET
+		ADD t1, t2, t0
+		SW SP[4], t1
 		GOTO L_IF_END_3
 L_IF_END_3:
-		LW t0, SP[34]
-		PARAM t0
-		CALL IO.out_string, 0
+		GOTO L_IF_END_2
+L_IF_END_2:
+		RETURN SP[4]
+	END FUNC fibonacci
+EOC
+CLASS Main, 8
+		LI t0, 10
+		SW GP[0], t0
+	Main.main, 8
+		LW t0, Factorial
+		SW GP[4], t0
+		LW t0, Fibonacci
+		SW GP[8], t0
+		LW t0, GP[8]
 		LW t0, GP[0]
-		SUB t2, t0, 5
-		LW t0, GP[0]
-		MULT t3, t0, 5
-		ADD t0, t2, t3
-		SW GP[10], t0
-		LW t0, GP[4]
 		PARAM t0
-		CALL IO.out_string, 0
-		PARAM "hola"
-		CALL IO.out_string, 0
-		ADD t0, 5, 6
-		PARAM t0
-		CALL Main.meth1, 0
-		LW t2, RET
-		LW t0, GP[4]
-		CALL t0.abort, 0
-		LW t0, GP[21]
-		CALL t0.returnVar, 0
+		CALL t0.fibonacci, 0
 		LW t0, RET
-		SW GP[14], t0
-		LW t0, GP[21]
-		CALL t0.GP[4], 0
-		LW t3, RET
-		SW GP[14], t3
-		LW t0, GP[0]
-		ADD t3, 10, t0
-		PARAM t3
+		PARAM t0
 		CALL IO.out_int, 0
-		PARAM "hola"
-		CALL IO.out_string, 0
-		LW t0, GP[18]
-		LW t3, GP[19]
-		OR t4, t0, t3
-		SW GP[20], t4
 		RETURN
 	END FUNC main
 EOC
