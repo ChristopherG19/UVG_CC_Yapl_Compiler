@@ -39,7 +39,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.symbolTable.add_column([False, "Bool", "Declaration", None, "Bool", None, None, None, "Global", 1, 0])
         self.symbolTable.add_column([True, "Bool", "Declaration", None, "Bool", None, None, None, "Global", 1, 1])
         self.symbolTable.add_column(["Void", "Void", "Class", None, "Void", None, None, None, "Global", 1, None])
-        self.symbolTable.add_column(["SELF_TYPE", "SELF_TYPE", "Type", None, "SELF_TYPE", None, None, None, "Global", 6, None])
+        self.symbolTable.add_column(["SELF_TYPE", "SELF_TYPE", "Type", None, "SELF_TYPE", None, None, None, "Global", 0, None])
         self.symbolTable.add_column(["Object", "Object", "Class", None, "Object", None, ["abort", "type_name", "copy"], None, "Global", None, None])
         self.symbolTable.add_column(["String", "String", "Class", None, "String", None, ["lenght", "concat", "substr"], None, "Global", 2, "''"])
         self.symbolTable.add_column(["Int", "Int", "Class", None, "Int", None, None, None, "Global", 4, 0])

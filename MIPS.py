@@ -131,18 +131,17 @@ class MIPS():
                                 temp = get_temp.group()
                                 get_type = re.search(r'\((.*?)\)', words[1])
                                 type_T = get_type.group(1)
-                                
-                                print(words, temp, type_T)
 
-                                #TODO revisar creación de strings repetidos
                                 eti = f"str_{self.etis}"
                                 mips_code += f"    la $t0, {eti}\n"
                                 
-                                if(words[1] not in self.strings_creados):
+                                n_type_T = ' '.join(words[2:])
+                                if(n_type_T not in self.strings_creados):
                                     eti = f"str_{self.etis}"
-                                    self.dataBlock += f"\n    {eti}: .asciiz {' '.join(words[2:])}"
-                                    self.strings_creados.append(words[1])
-                                    self.etis += 1    
+                                    self.dataBlock += f"\n    {eti}: .asciiz {n_type_T}"
+                                    self.strings_creados.append(n_type_T)
+                                    self.etis += 1  
+                                    self.last_Result = ("Str",eti)
                             
                             else:
                                 match = re.match(r'(\w+)\[(\d+)\]', words[1])
@@ -252,6 +251,13 @@ class MIPS():
                                 self.last_Result = ""
                                 mips_code += "    jal String_substr\n    move $t0, $v0\n"
 
+                            elif (temp_exist[1] == 'abort'):
+                                
+                                mips_code += f"    jal abort\n\n"
+                                self.tempBlock += "abort:\n    li $v0, 10\n    syscall\n"
+                                
+                                self.etiquetas.append("abort")
+
                         elif('"' in temp_exist[0]):
                             get_f = [x.strip() for x in temp_exist[1].split(',')]
                             if(get_f[0] == 'abort'):
@@ -265,18 +271,21 @@ class MIPS():
                         else:        
                             if func == self.current_eti:
                                 self.recursive = True
+                            
+                            print("\nfunc ", func)
 
                             if(func not in self.etiquetas):
+                                print("in func", func)
                                 mips_code += f"    jal {func}\n\n"
                                 if("out_int" in func):
                                     self.tempBlock += f"{func}:\n    li $v0, 1\n    syscall\n    la $a0, newline\n    li $v0, 4\n    syscall\n    jr $ra\n\n"
                                 elif("out_string" in func):
                                     self.tempBlock += f"{func}:\n    li $v0, 4\n    syscall\n    la $a0, newline\n    li $v0, 4\n    syscall\n    jr $ra\n\n"
-                                elif("abort" in func):
-                                    self.tempBlock += f"{func}:\n    li $v0, 10\n    syscall"
+
                                 self.etiquetas.append(func)
                                     
                             else:    
+                                print("in func else")
                                 mips_code += f"    jal {func}\n\n"
                         
 
