@@ -30,6 +30,10 @@ class MIPS():
         self.dataBlock = ".data\n"
         self.etis = 0
         self.end_B = ""
+        self.current_eti = ""
+        self.objects = []
+        self.recursive = False
+        self.strings_creados = []
         
         # Abre el archivo de entrada en modo lectura
         with open(self.CI, 'r') as file:
@@ -77,19 +81,20 @@ class MIPS():
                             mips_code += f"    li $a0, {words[2]}\n"
                             mips_code += f"    li $v0, 9\n"
                             mips_code += f"    syscall\n"
-                            mips_code += f"    move $s0, $v0\n\n"
+                            mips_code += f"    move $s0, $v0\n"
                         
-                    elif (Act_class+".") in words[0]:
+                    elif (Act_class+".") in words[0]:                    
                         if(self.end_B != ""):
                             mips_code += self.end_B
                             
                         call_func = words[0].replace('.', '_')
                         self.etiquetas.append(call_func)
+                        self.current_eti = call_func
                         Count_Param = 0
                         
                         mips_code += f"\n{call_func}:\n"
                         mips_code += f"    sub $sp, $sp, {words[1]}\n"
-                        mips_code += f"    sw $ra, 0($sp)\n"
+                        mips_code += f"    sw $ra, 0($sp)\n\n"
 
                         self.end_B = f"    lw $ra, 0($sp)\n    add $sp, $sp, {words[1]}\n"
                     
@@ -107,6 +112,16 @@ class MIPS():
                         else:
                             if words[2] == "R":
                                 mips_code += f"    lw {words[1]}, $v0\n"
+                            elif words[2] in self.etiquetas:
+                                self.objects.append((words[1].replace('$', ''), words[2]))
+                            else:
+                                match = re.match(r'(\w+)\[(\d+)\]', words[1])
+                                match2 = re.match(r'P\d+', words[2])
+                                if match and match2:
+                                    0#print(words)
+                    
+                    elif words[0] == "LA":
+                        mips_code += f"    la {words[1]}, {words[2]}\n"              
                     
                     elif words[0] == "LI":
                         match = re.match(r'(\w+)\[(\d+)\]', words[1])
@@ -145,20 +160,32 @@ class MIPS():
                             env = match.group(1)
                             disp = match.group(2)
 
-                            mips_code += f"    lw $a{Count_Param}, {disp}(${env.lower()})\n"
+                            mips_code += f"    lw $a{Count_Param}, {disp}(${env.lower()})\n    move $a0, $t0\n"
                             Count_Param += 1
                             
                         elif(type(words[1]) == str and "$" not in words[1]):
                             
+                            #TODO revisar creación de strings repetidos
                             eti = f"str_{self.etis}"
-                            self.dataBlock += f"\n    {eti}: .asciiz {words[1]}\n"
-                            mips_code += f"    la $t0, {eti}\n"
-                            self.etis += 1
+                            mips_code += f"    la $t0, {eti}\n    move $a0, $t0\n"
+                            
+                            if(words[1] not in self.strings_creados):
+                                self.dataBlock += f"\n    {eti}: .asciiz {words[1]}"
+                                self.strings_creados.append(words[1])
+                                self.etis += 1
+                            
+                        else:
+                            match = re.match(r'\$t\d+', words[1])
+                            if match:
+                                mips_code += f"    move $a0, $t0\n"
+                                
                             
                     elif words[0] == "CALL":
                             
                         func = words[1].replace('.', '_')
                         temp_exist = func.split('_', 1)
+                        # print(words, temp_exist)
+                        self.tempBlock = ""
                         
                         #TODO
                         if('$t' in temp_exist[0]):
@@ -167,23 +194,40 @@ class MIPS():
                                 0
                             elif(temp_exist[1] == 'substr'):
                                 0
+                            # else:
+                            #     print(self.objects.pop(), temp_exist)
+                            #     mips_code += f"    la $a0, {temp_exist[0]}\n"
+                            #     mips_code += f"    lw $t0, 0($a0)\n"
+                            #     mips_code += f"    jalr $t0\n\n"
+                        elif('"' in temp_exist[0]):
+                            get_f = [x.strip() for x in temp_exist[1].split(',')]
+                            if(get_f[0] == 'abort'):
+                                0
+                            elif(get_f[0] == 'concat'):
+                                0
+                            elif(get_f[0] == 'substr'):
+                                0
+                            elif(get_f[0] == 'length'):
+                                0
+                        else:        
+                            if func == self.current_eti:
+                                self.recursive = True
+
+                            if(func not in self.etiquetas):
+                                mips_code += f"    jal {func}\n\n"
+                                if("out_int" in func):
+                                    self.tempBlock += f"{func}:\n    li $v0, 1\n    syscall\n    la $a0, newline\n    li $v0, 4\n    syscall\n    jr $ra\n"
+                                elif("out_string" in func):
+                                    self.tempBlock += f"{func}:\n    li $v0, 4\n    syscall\n    la $a0, newline\n    li $v0, 4\n    syscall\n    jr $ra\n"
                                 
-                        print(func, words)
-                        self.tempBlock = ""
-                        if(func not in self.etiquetas):
-                            mips_code += f"    jal {func}\n\n"
-                            if("out_int" in func):
-                                self.tempBlock += f"{func}:\n    move $a0, $t0\n    li $v0, 1\n    syscall\n    la $a0, newline\n    li $v0, 4\n    syscall\n    jr $ra\n"
-                            elif("out_string" in func):
-                                self.tempBlock += f"{func}:\n    move $a0, $t0\n    li $v0, 4\n    syscall\n    la $a0, newline\n    li $v0, 4\n    syscall\n    jr $ra\n"
-                                
-                        else:    
-                            mips_code += f"    jal {func}\n\n"
-                        #self.etiquetas.append(func)
+                                self.etiquetas.append(func)
+                                    
+                            else:    
+                                mips_code += f"    jal {func}\n\n"
                         
 
                     elif words[0] == "DIV":
-
+                        matchA = re.match(r'(\w+)\[(\d+)\]', words[2])
                         # div $t1, $t2  # Divide $t1 por $t2, almacenando el cociente en $LO y el residuo en $HI
                         if matchA:
                             envA = matchA.group(1)
@@ -192,9 +236,6 @@ class MIPS():
                                 mips_code += f"    lw {words[2]}, {dispA}($s0)\n"
                             elif envA == "SP":
                                 mips_code += f"    lw {words[2]}, {dispA}($s1)\n"
-
-                        else:
-                            print("no match")
                             
                         matchB = re.match(r'(\w+)\[(\d+)\]', words[3])
 
@@ -281,17 +322,90 @@ class MIPS():
                                 
                         mips_code += f"    sub {words[1]}, {words[2]}, {words[3]}\n\n"
                         
+                    elif words[0] == "AND":
+
+                        matchA = re.match(r'(\w+)\[(\d+)\]', words[2])
+
+                        if matchA:
+                            envA = matchA.group(1)
+                            dispA = matchA.group(2)
+                            if envA == "GP":
+                                mips_code += f"    lw {words[2]}, {dispA}($s0)\n"
+                            elif envA == "SP":
+                                mips_code += f"    lw {words[2]}, {dispA}($s1)\n"
+                            
+                        matchB = re.match(r'(\w+)\[(\d+)\]', words[3])
+
+                        if matchB:
+                            envB = matchB.group(1)
+                            dispB = matchB.group(2)
+                            if envB == "GP":
+                                mips_code += f"    lw {words[3]}, {dispB}($s0)\n"
+                            elif envB == "SP":
+                                mips_code += f"    lw {words[3]}, {dispB}($s1)\n"
+                                
+                        
+                        mips_code += f"    and {words[1]}, {words[2]}, {words[3]}\n\n"
+
+                    elif (words[0] == "SLT" or words[0] == "SEQ" or words[0] == "SLE" or
+                          words[0] == "SGT" or words[0] == "SGE"):
+
+                        matchA = re.match(r'(\w+)\[(\d+)\]', words[2])
+
+                        if matchA:
+                            envA = matchA.group(1)
+                            dispA = matchA.group(2)
+                            if envA == "GP":
+                                mips_code += f"    lw {words[2]}, {dispA}($s0)\n"
+                            elif envA == "SP":
+                                mips_code += f"    lw {words[2]}, {dispA}($s1)\n"
+                            
+                        matchB = re.match(r'(\w+)\[(\d+)\]', words[3])
+
+                        if matchB:
+                            envB = matchB.group(1)
+                            dispB = matchB.group(2)
+                            if envB == "GP":
+                                mips_code += f"    lw {words[3]}, {dispB}($s0)\n"
+                            elif envB == "SP":
+                                mips_code += f"    lw {words[3]}, {dispB}($s1)\n"
+                        
+                        mips_code += f"    {words[0].lower()} {words[1]}, {words[2]}, {words[3]}\n"
+
+                    
+                    elif words[0] == "GOTO":
+                        mips_code += f"    j {words[1]}\n"
+
+                    elif words[0][:7] == "L_LOOP_":
+                        mips_code += f"\n{words[0]}\n"
+
+                    elif words[0] == "IF":
+                        # print("if")
+                        mips_code += f"    bnez {words[1]}, {words[5]}\n"
+
+                    elif words[0][:6] == "L_TRUE" or words[0][:7] == "L_FALSE":
+                        mips_code += f"\n{words[0]}\n"
+
+                    elif words[0][:5] == "L_IF_":
+                        mips_code += f"\n{words[0]}\n"
+                        
                     elif words[0] == "RETURN":
                         if(self.end_B != ""):
                             mips_code += self.end_B
                             self.end_B = ""
                             
-                        if Act_class != "Main" and Act_func != "main":
-                            mips_code += f"    move $v0, {words[1]}\n    jr $ra\n"
-                        # else:
-                        #     if len(words) > 1:
-                        #         mips_code += "    move $t0, $v0\n    jr $ra\n"
+                        if(len(words) == 1):
+                            continue
+                            
+                        match = re.match(r'(\w+)\[(\d+)\]', words[1])
                         
+                        if match:
+                            env = match.group(1)
+                            disp = match.group(2)
+
+                            if Act_class != "Main" and Act_func != "main":
+                                mips_code += f"    lw $v0, {disp}(${env.lower()})\n    jr $ra\n"
+
                     elif words[0] == "EOC":
                         mips_code += ""
                         

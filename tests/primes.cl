@@ -15,21 +15,21 @@ class Main inherits IO {
       while true loop 
       {
 
-        testee <- testee + 1;
+        testee <- (testee + 1);
         divisor <- 2;
 
         while 
-          if testee < divisor * divisor 
+          if testee < (divisor * divisor) 
             then false 		-- can stop if divisor > sqrt(testee).
 	  else if testee - divisor*(testee/divisor) = 0 
             then false 		-- can stop if divisor divides testee. 
             else true
           fi fi     
         loop 
-          divisor <- divisor + 1
+          divisor <- (divisor + 1)
         pool;        
 
-        if testee < divisor * divisor	-- which reason did we stop for?
+        if testee < (divisor * divisor)	-- which reason did we stop for?
         then 	-- testee has no factors less than sqrt(testee).
           {
             out <- testee;	-- we could think of out itself as the output.

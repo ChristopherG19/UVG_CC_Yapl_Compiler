@@ -1,111 +1,93 @@
-CLASS Factorial, 4
-		LI t0, 0
-		SW GP[0], t0
-	Factorial.factorial, 32
-		LW SP[0], P0
-		LW t0, SP[0]
-		LI t1, 0
-		SEQ t2, t0, t1
-		IF t2 > 0 GOTO L_TRUE_0
+CLASS Main, 184
+		PARAM "2 is trivially prime.\n"
+		CALL IO.out_string, 0
+		LI t0, 2
+		SW GP[92], t0
+		LW t0, GP[92]
+		SW GP[96], t0
+		LI t0, 500
+		SW GP[104], t0
+	Main.main, 64
+		GOTO L_LOOP_0
+L_LOOP_0:
+		IF true = 0 GOTO L_LOOP_END_0
+		LW t0, GP[96]
+		LI t1, 1
+		ADD t2, t0, t1
+		SW GP[96], t2
+		LI t0, 2
+		SW GP[100], t0
+		GOTO L_LOOP_1
+L_LOOP_1:
+		LW t0, GP[96]
+		LW t1, GP[100]
+		LW t2, GP[100]
+		MULT t3, t1, t2
+		SLT t1, t0, t3
+		IF t1 > 0 GOTO L_TRUE_0
 		GOTO L_FALSE_0
 L_TRUE_0:
-		LI t0, 0
-		SW SP[4], t0
 		GOTO L_IF_END_0
 L_FALSE_0:
-		LW t0, SP[0]
-		LI t1, 1
-		SEQ t2, t0, t1
+		LW t0, GP[96]
+		LW t1, GP[100]
+		LW t2, GP[96]
+		LW t3, GP[100]
+		DIV t4, t2, t3
+		MULT t2, t1, t4
+		SUB t1, t0, t2
+		LI t0, 0
+		SEQ t2, t1, t0
 		IF t2 > 0 GOTO L_TRUE_1
 		GOTO L_FALSE_1
 L_TRUE_1:
-		LI t0, 1
-		SW SP[4], t0
 		GOTO L_IF_END_1
 L_FALSE_1:
-		LW t0, SP[0]
-		LW t1, SP[0]
-		LI t2, 1
-		SUB t3, t1, t2
-		PARAM t3
-		CALL Factorial.factorial, 0
-		LW t1, RET
-		MULT t2, t0, t1
-		SW SP[4], t2
 		GOTO L_IF_END_1
 L_IF_END_1:
 		GOTO L_IF_END_0
 L_IF_END_0:
-		RETURN SP[4]
-	END FUNC factorial
-EOC
-CLASS Fibonacci, 0
-	Fibonacci.fibonacci, 48
-		LW SP[0], P0
-		LW t0, SP[0]
+		IF true = 0 GOTO L_LOOP_END_1
+		LW t0, GP[100]
 		LI t1, 1
-		SEQ t2, t0, t1
-		IF t2 > 0 GOTO L_TRUE_2
+		ADD t2, t0, t1
+		SW GP[100], t2
+		GOTO L_LOOP_1
+L_LOOP_END_1:
+		LW t0, GP[96]
+		LW t1, GP[100]
+		LW t2, GP[100]
+		MULT t3, t1, t2
+		SLT t1, t0, t3
+		IF t1 > 0 GOTO L_TRUE_2
 		GOTO L_FALSE_2
 L_TRUE_2:
-		LI t0, 1
-		SW SP[4], t0
-		GOTO L_IF_END_2
-L_FALSE_2:
-		LW t0, SP[0]
-		LI t1, 2
-		SEQ t2, t0, t1
-		IF t2 > 0 GOTO L_TRUE_3
-		GOTO L_FALSE_3
-L_TRUE_3:
-		LI t0, 1
-		SW SP[4], t0
-		GOTO L_IF_END_3
-L_FALSE_3:
-		LW t0, SP[0]
-		LI t1, 1
-		SUB t2, t0, t1
-		PARAM t2
-		CALL Fibonacci.fibonacci, 0
-		LW t0, RET
-		LW t1, SP[0]
-		LI t2, 2
-		SUB t3, t1, t2
-		PARAM t3
-		CALL Fibonacci.fibonacci, 0
-		LW t1, RET
-		ADD t2, t0, t1
-		LW t0, SP[0]
-		LI t1, 3
-		SUB t3, t0, t1
-		PARAM t3
-		CALL Fibonacci.fibonacci, 0
-		LW t0, RET
-		ADD t1, t2, t0
-		SW SP[4], t1
-		GOTO L_IF_END_3
-L_IF_END_3:
-		GOTO L_IF_END_2
-L_IF_END_2:
-		RETURN SP[4]
-	END FUNC fibonacci
-EOC
-CLASS Main, 8
-		LI t0, 10
-		SW GP[0], t0
-	Main.main, 8
-		LW t0, Factorial
-		SW GP[4], t0
-		LW t0, Fibonacci
-		SW GP[8], t0
-		LW t0, GP[8]
-		LW t0, GP[0]
-		PARAM t0
-		CALL t0.fibonacci, 0
-		LW t0, RET
+		LW t0, GP[96]
+		SW GP[92], t0
+		LW t0, GP[92]
 		PARAM t0
 		CALL IO.out_int, 0
-		RETURN
+		PARAM " is prime.\n"
+		CALL IO.out_string, 0
+		GOTO L_IF_END_2
+L_FALSE_2:
+		LI t0, 0
+		GOTO L_IF_END_2
+L_IF_END_2:
+		LW t1, GP[104]
+		LW t2, GP[96]
+		SLE t3, t1, t2
+		IF t3 > 0 GOTO L_TRUE_3
+		GOTO L_FALSE_3
+L_TRUE_3:
+		CALL "halt".abort, 0
+		GOTO L_IF_END_3
+L_FALSE_3:
+		GOTO L_IF_END_3
+L_IF_END_3:
+		GOTO L_LOOP_0
+L_LOOP_END_0:
+		RETURN "continue"
 	END FUNC main
 EOC
 EOF

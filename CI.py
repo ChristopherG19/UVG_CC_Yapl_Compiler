@@ -614,7 +614,7 @@ class CodigoIntermedio(YAPLVisitor):
 
         temp_ = self.available_temps_stack.pop()
         self.temp_stack.append(temp_)
-        retText += f"\t\tLW {temp_}, {ctx.TYPE().getText()}\n"
+        retText += f"\t\tLA {temp_}, {ctx.TYPE().getText()}\n"
 
         self.lastStatement = temp_
 

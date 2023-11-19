@@ -1462,7 +1462,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         #     return "Self"
 
 def main():
-    file_name = "./tests/recur.cl"
+    file_name = "./tests/primes.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)

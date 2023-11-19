@@ -1,22 +1,20 @@
+class Obj inherits IO{
+    a : Int <- 2;
+
+    print(): SELF_TYPE{
+        out_int(a);
+    };
+};
+
 class Main inherits IO {
     a : Int <- 4;
-    b : Int <- 2;
-    d : Int <- 1; 
-    e : Int <- ~1; 
-    f : Int <- 3; 
+    b : Obj;
 
-    sum(x: Int, y: Int): Int {
+    main() : SELF_TYPE {
         {
-            (x+y);
+            b <- new Obj;
+            b.print();
+            out_int(a);
         }
-    }
-
-    main() : Int {
-        let c : Int <- 5  in
-            {
-                out_int(sum(a,b));
-                5;
-            }
-        
     };
 };
