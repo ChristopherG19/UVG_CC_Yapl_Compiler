@@ -226,18 +226,16 @@ class CodigoIntermedio(YAPLVisitor):
             # ocurrió un error
             p_iz = "tt"
             type_ = "tt"
-        
 
         # regresar temporales
         self.returnTemps(usedTemps)
-
         
         paramlist = []
+        usedTemps = []
         for i, expr in enumerate(ctx.expr()):
             if i == 0:
                 continue # nos saltamos el primer expr
-            usedTemps = []
-
+            
             par = ""
             # visitar hijos
             retText += self.visit(expr)
@@ -252,8 +250,8 @@ class CodigoIntermedio(YAPLVisitor):
 
             paramlist.append([par, type_par]) 
 
-            # regresar temporales
-            self.returnTemps(usedTemps) 
+        # regresar temporales
+        self.returnTemps(usedTemps) 
 
         for p, type_p in paramlist:
             retText += f"\t\tPARAM {p}({type_p})\n"
@@ -1178,6 +1176,8 @@ class CodigoIntermedio(YAPLVisitor):
 
     def visitString(self, ctx:YAPLParser.StringContext):
         # print("#string")
+        retText = ""
+
         temp_ = self.available_temps_stack.pop()
         self.temp_stack.append([temp_, "String"])
 

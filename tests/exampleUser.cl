@@ -1,17 +1,9 @@
-class A inherits IO {
-   var: Int <- 5;
-};
-
 class Main inherits IO {
-   
-   a(): Int {
-      3
-   };
-
-   minia : A <- (new A);
-
-   main () : SELF_TYPE {{
-      out_int(a());
-      out_int(minia.var);
-   }};
+    main() : SELF_TYPE {
+	{
+	    out_string((new Object).type_name().substr(4,1)).
+	    out_string((isvoid self).type_name().substr(1,3));
+	    out_string("\n");
+	}
+    };
 };
