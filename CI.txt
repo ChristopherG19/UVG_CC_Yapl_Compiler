@@ -1,4 +1,4 @@
-CLASS Main, 16
+CLASS Main, 36
 		LI t0(Int), 10
 		SW GP[0], t0(Int)
 		LI t0(Int), 2
@@ -7,11 +7,9 @@ CLASS Main, 16
 		SW GP[8], t0(Bool)
 		LI t0(Bool), 0
 		SW GP[12], t0(Bool)
-	Main.main, None
-		LW t0(Bool), GP[12]
-		LW t1(Bool), GP[12]
-		OR t2(Bool), t0(Bool), t1(Bool)
-		IF t2 > 0 GOTO L_TRUE_0
+	Main.main, 12
+		LI t0(Bool), 0
+		IF t0 > 0 GOTO L_TRUE_0
 		GOTO L_FALSE_0
 L_TRUE_0:
 		LI t0(Int), 100

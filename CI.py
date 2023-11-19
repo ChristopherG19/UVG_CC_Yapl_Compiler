@@ -132,6 +132,11 @@ class CodigoIntermedio(YAPLVisitor):
         # size = self.symbolTable.fun_size(id, self.position[0])
         row = self.symbolTable.get_cell(id, addParent = self.position[0], addScope = "Global")
         size = row[9]
+
+        # verificación de si es múltiplo de 4
+        while size % 4 != 0:
+            size += 1
+
         retText += f"\t{self.position[0]}.{id}, {size}\n"
         self.position.append(id) 
         self.let_counter = 1 # reiniciar el conteo de lets por función

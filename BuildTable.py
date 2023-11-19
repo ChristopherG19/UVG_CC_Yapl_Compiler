@@ -874,7 +874,11 @@ class YAPLVisitorImpl(YAPLVisitor):
     def visitIf(self, ctx: YAPLParser.IfContext):
         print("visitIf")
         condition_expr = self.visit(ctx.expr(0))
-        if condition_expr[0] != 'Bool':
+
+        if type(condition_expr) == tuple:
+            condition_expr, val = condition_expr
+
+        if condition_expr.lower() != 'bool':
             # Handle the type mismatch error here
             self.customErrors.append("La condición dentro del if debe de retornar bool")
             return "Error"
@@ -896,7 +900,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         if type(condition_expr) == tuple:
             condition_expr, val = condition_expr
             
-        if condition_expr[0] != 'Bool':
+        if condition_expr.lower() != 'bool':
         # Handle the type mismatch error here
             self.customErrors.append(f"La condición dentro del while debe de retornar bool pero se encontró {condition_expr}")
             return "Error"

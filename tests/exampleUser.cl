@@ -7,7 +7,7 @@ class Main inherits IO {
    y : Bool <- False; 
 
    main(): SELF_TYPE {
-      if y | y
+      if False
       then 
          out_int(100)
       else 
