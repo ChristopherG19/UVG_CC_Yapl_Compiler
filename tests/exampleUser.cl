@@ -1,9 +1,18 @@
 class Main inherits IO {
-    main() : SELF_TYPE {
-	{
-	    out_string((new Object).type_name().substr(4,1)).
-	    out_string((isvoid self).type_name().substr(1,3));
-	    out_string("\n");
-	}
-    };
+
+   a : Int <- 10;
+   b : Int <- 2;
+
+   x : Bool <- True;
+   y : Bool <- False; 
+
+   main(): SELF_TYPE {
+      if y | y
+      then 
+         out_int(100)
+      else 
+         out_int(0)
+      fi;
+   };
+
 };

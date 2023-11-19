@@ -1,29 +1,29 @@
-CLASS Main, 8
+CLASS Main, 16
+		LI t0(Int), 10
+		SW GP[0], t0(Int)
+		LI t0(Int), 2
+		SW GP[4], t0(Int)
+		LI t0(Bool), 1
+		SW GP[8], t0(Bool)
+		LI t0(Bool), 0
+		SW GP[12], t0(Bool)
 	Main.main, None
-		LW t0(Object), Object
-		CALL t0(Object).type_name, 0
-		LW t0, RET
-		LI t0(Int), 4
-		LI t1(Int), 1
+		LW t0(Bool), GP[12]
+		LW t1(Bool), GP[12]
+		OR t2(Bool), t0(Bool), t1(Bool)
+		IF t2 > 0 GOTO L_TRUE_0
+		GOTO L_FALSE_0
+L_TRUE_0:
+		LI t0(Int), 100
 		PARAM t0(Int)
-		PARAM t1(Int)
-		CALL t0(Object).substr, 0
-		LW t0, RET
-		PARAM t0(Object)
-		CALL IO.out_string, 0
-		CALL t0(Object).type_name, 0
-		LW t0, RET
-		LI t0(Int), 1
-		LI t0(Int), 3
+		CALL IO.out_int, 0
+		GOTO L_IF_END_0
+L_FALSE_0:
+		LI t0(Int), 0
 		PARAM t0(Int)
-		PARAM t0(Int)
-		CALL t0(Object).substr, 0
-		LW t0, RET
-		PARAM t0(Object)
-		CALL t1(Object).out_string, 0
-		LI t0(String), "\n"
-		PARAM t0(String)
-		CALL IO.out_string, 0
+		CALL IO.out_int, 0
+		GOTO L_IF_END_0
+L_IF_END_0:
 		RETURN
 	END FUNC main
 EOC

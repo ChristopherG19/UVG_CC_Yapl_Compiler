@@ -164,6 +164,8 @@ class MIPS():
 
                     elif words[0] == "DIV":
 
+                        matchA = re.match(r'(\w+)\[(\d+)\]', words[2])
+
                         # div $t1, $t2  # Divide $t1 por $t2, almacenando el cociente en $LO y el residuo en $HI
                         if matchA:
                             envA = matchA.group(1)
@@ -174,7 +176,7 @@ class MIPS():
                                 mips_code += f"    lw {words[2]}, {dispA}($s1)\n"
 
                         else:
-                            print("no match")
+                            print("no match div A")
                             
                         matchB = re.match(r'(\w+)\[(\d+)\]', words[3])
 
@@ -185,6 +187,9 @@ class MIPS():
                                 mips_code += f"    lw {words[3]}, {dispB}($s0)\n"
                             elif envB == "SP":
                                 mips_code += f"    lw {words[3]}, {dispB}($s1)\n"
+                        
+                        else:
+                            print("no match div B")
                                 
                         mips_code += f"    div {words[1]}, {words[2]}, {words[3]}\n"
                         mips_code += f"    mfhi $s1\n\n"
@@ -261,7 +266,7 @@ class MIPS():
                                 
                         mips_code += f"    sub {words[1]}, {words[2]}, {words[3]}\n\n"
 
-                    elif words[0] == "AND":
+                    elif words[0] == "AND" or words[0] == "OR":
 
                         matchA = re.match(r'(\w+)\[(\d+)\]', words[2])
 
@@ -285,7 +290,7 @@ class MIPS():
                                 mips_code += f"    lw {words[3]}, {dispB}($s1)\n"
                                 
                         
-                        mips_code += f"    and {words[1]}, {words[2]}, {words[3]}\n\n"
+                        mips_code += f"    {words[0].lower()} {words[1]}, {words[2]}, {words[3]}\n\n"
 
                     elif (words[0] == "SLT" or words[0] == "SEQ" or words[0] == "SLE" or
                           words[0] == "SGT" or words[0] == "SGE"):
