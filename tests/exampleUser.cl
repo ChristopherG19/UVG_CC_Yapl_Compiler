@@ -13,7 +13,7 @@ class Main inherits IO {
       (*
       f <- 4;
       while f > 0 loop
-      f <- (f - 1);
+      f <- f - 1;
       pool;
       *)
       
@@ -27,7 +27,7 @@ class Main inherits IO {
       h <- True;
       i <- False;
       
-      j <- (h & i);
+      j <- h & i;
 
       if i = True then 
          out_int(1)
