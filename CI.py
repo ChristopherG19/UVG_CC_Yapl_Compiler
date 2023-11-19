@@ -265,7 +265,7 @@ class CodigoIntermedio(YAPLVisitor):
         # obtener tamaño
         size = self.symbolTable.params_size(id, p_iz)
 
-        retText += f"\t\tCALL {p_iz}.{id}, {size}\n"
+        retText += f"\t\tCALL {p_iz}({type_}).{id}, {size}\n"
 
         name = self.lastStatement
         self.temp_stack.append([name, type_])
@@ -295,6 +295,16 @@ class CodigoIntermedio(YAPLVisitor):
 
         paramlist = []
         self.paramlist_size = 0
+
+        # retText += self.visit(ctx.ID)
+
+        # if len(self.temp_stack) > 0:
+        #     temp_, type_ = self.temp_stack.pop()
+        #     usedTemps.append(temp_)
+        # else:
+        #     # ha ocurrido un error
+        #     temp_ = "tt"
+        #     type_ = "tt"
 
         for expr in ctx.expr():
             par = ""
@@ -386,7 +396,7 @@ class CodigoIntermedio(YAPLVisitor):
         if row:
             id, _ = self.getRegister(id, [row[1]])
 
-        retText += f"\t\tCALL {p_iz}.{id}, 0\n"
+        retText += f"\t\tCALL {p_iz}({type_}).{id}, 0\n"
 
         name = self.available_temps_stack.pop()
         self.temp_stack.append([name, type_])
