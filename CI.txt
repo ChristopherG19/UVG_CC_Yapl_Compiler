@@ -38,9 +38,9 @@ L_IF_END_0:
 		LW t1(Bool), GP[24]
 		AND t2(Bool), t0(Bool), t1(Bool)
 		SW j, t2(Bool)
-		LW t0(Bool), GP[24]
-		LI t1(Bool), 1
-		SEQ t2(Bool), t0(Bool), t1(Bool)
+		LW t0(Int), GP[12]
+		LI t1(Int), 4
+		SGE t2(Int), t0(Int), t1(Int)
 		IF t2 > 0 GOTO L_TRUE_1
 		GOTO L_FALSE_1
 L_TRUE_1:

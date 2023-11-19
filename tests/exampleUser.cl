@@ -29,7 +29,7 @@ class Main inherits IO {
       
       j <- h & i;
 
-      if f >= then 
+      if f >= 4 then 
          out_int(1)
       else
          out_int(0)

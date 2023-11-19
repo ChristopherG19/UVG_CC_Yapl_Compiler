@@ -48,9 +48,9 @@ L_IF_END_0:
     lw $t1(Bool), 24($s0)
     and $t2(Bool), $t0(Bool), $t1(Bool)
 
-    lw $t0(Bool), 24($s0)
-    li $t1(Bool), 1
-    seq $t2(Bool), $t0(Bool), $t1(Bool)
+    lw $t0(Int), 12($s0)
+    li $t1(Int), 4
+    sge $t2(Int), $t0(Int), $t1(Int)
     bnez $t2, L_TRUE_1
     j L_FALSE_1
 L_TRUE_1:
