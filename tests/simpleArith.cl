@@ -21,9 +21,6 @@ class Main inherits IO {
 
     out_int(100/5)
 
-    res <- retA * retB;
-    out_int(res);
-
   }};
 
 };

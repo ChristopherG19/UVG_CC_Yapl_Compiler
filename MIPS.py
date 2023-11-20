@@ -323,7 +323,7 @@ class MIPS():
                                 self.recursive = True
 
                             if(func not in self.etiquetas):
-                                mips_code += f"    jal {func}\n\n"
+                                # mips_code += f"    jal {func}\n\n"
                                 if("out_int" in func):
                                     self.tempBlock += f"{func}:\n    li $v0, 1\n    syscall\n    la $a0, newline\n    li $v0, 4\n    syscall\n    jr $ra\n\n"
                                 elif("out_string" in func):
@@ -618,23 +618,22 @@ class MIPS():
                         if matchA:
                             envA = matchA.group(1)
                             dispA = matchA.group(2)
-                            if envA == "GP":
-                                mips_code += f"    lw {words[2]}, {dispA}($s0)\n"
-                            elif envA == "SP":
-                                mips_code += f"    lw {words[2]}, {dispA}($s1)\n"
+                            if("(" in words[2]):
+                                get_temp = re.search(r'\$t\d+', words[2])
+                                temp = get_temp.group()
+                                get_type = re.search(r'\((.*?)\)', words[2])
+                                type_T = get_type.group(1)
+                                if envA == "GP":
+                                    mips_code += f"    lw {temp}, {dispA}($s0)\n"
+                                elif envA == "SP":
+                                    mips_code += f"    lw {temp}, {dispA}($s1)\n"
+                            else:
+                                if envA == "GP":
+                                    mips_code += f"    lw {words[2]}, {dispA}($s0)\n"
+                                elif envA == "SP":
+                                    mips_code += f"    lw {words[2]}, {dispA}($s1)\n"
                             
                         matchB = re.match(r'(\w+)\[(\d+)\]', words[3])
-
-                        if matchB:
-                            envB = matchB.group(1)
-                            dispB = matchB.group(2)
-                            if envB == "GP":
-                                mips_code += f"    lw {words[3]}, {dispB}($s0)\n"
-                            elif envB == "SP":
-                                mips_code += f"    lw {words[3]}, {dispB}($s1)\n"
-                                
-                        
-                        mips_code += f"    {words[0].lower()} {words[1]}, {words[2]}, {words[3]}\n\n"
 
                         if matchB:
                             envB = matchB.group(1)
@@ -678,7 +677,7 @@ class MIPS():
                             type_T = get_type.group(1)
                             w_3 = temp
                         
-                        mips_code += f"    and {w_1}, {w_2}, {w_3}\n\n"
+                        mips_code += f"    {words[0].lower()} {w_1}, {w_2}, {w_3}\n\n"
 
                     elif (words[0] == "SLT" or words[0] == "SEQ" or words[0] == "SLE" or
                           words[0] == "SGT" or words[0] == "SGE"):
@@ -758,7 +757,10 @@ class MIPS():
 
                     elif words[0] == "IF":
                         # print("if")
-                        mips_code += f"    bnez {words[1]}, {words[5]}\n"
+                        if "LOOP" in words[len(words) - 1]:
+                            mips_code += f"    beqz {words[1]}, {words[5]}\n"
+                        else:
+                            mips_code += f"    bnez {words[1]}, {words[5]}\n"
 
                     elif words[0][:6] == "L_TRUE" or words[0][:7] == "L_FALSE":
                         mips_code += f"\n{words[0]}\n"
