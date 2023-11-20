@@ -1,42 +1,41 @@
-+-------------------------------------------------------------------------------------------------------------------------------------------+
-|                                                               Symbols Table                                                               |
-+------------+------------+-------------+----------+-----------+------------+--------------+--------------+-------+-------------------------+
-|    Name    | Type_Value |     Type    | Inherits | Parent_Cl | Parent_Fun | Displacement |    Scope     | Space |          Value          |
-+------------+------------+-------------+----------+-----------+------------+--------------+--------------+-------+-------------------------+
-|    Int     |    Int     |    Class    |   None   |    Int    |    None    |     None     |    Global    |   4   |            0            |
-|    Bool    |    Bool    |    Class    |   None   |    Bool   |    None    |     None     |    Global    |   1   |          False          |
-|   False    |    Bool    | Declaration |   None   |    Bool   |    None    |     None     |    Global    |   1   |            0            |
-|    True    |    Bool    | Declaration |   None   |    Bool   |    None    |     None     |    Global    |   1   |            1            |
-|    Void    |    Void    |    Class    |   None   |    Void   |    None    |     None     |    Global    |   1   |           None          |
-| SELF_TYPE  | SELF_TYPE  |     Type    |   None   | SELF_TYPE |    None    |     None     |    Global    |   0   |           None          |
-|   Object   |   Object   |    Class    |   None   |   Object  |    None    |     None     |    Global    |  None |           None          |
-|   String   |   String   |    Class    |   None   |   String  |    None    |     None     |    Global    |   2   |            ''           |
-|   abort    |   Object   | Declaration |   None   |   Object  |    None    |     None     |    Global    |  None |          Error          |
-| type_name  |   String   | Declaration |   None   |   Object  |    None    |     None     |    Global    |  None |           None          |
-|    copy    | SELF_TYPE  | Declaration |   None   |   Object  |    None    |     None     |    Global    |  None |           None          |
-| out_string | SELF_TYPE  |    Method   |   None   |     IO    |    None    |     None     |    Global    |   0   |           None          |
-|   xParS    |   String   |    Param    |   None   |     IO    | out_string |     None     |    Local     |   0   |           None          |
-|  out_int   | SELF_TYPE  |    Method   |   None   |     IO    |    None    |     None     |    Global    |   0   |           None          |
-|   xParI    |    Int     |    Param    |   None   |     IO    |  out_int   |     None     |    Local     |   0   |           None          |
-| in_string  |   String   |    Method   |   None   |     IO    |    None    |     None     |    Global    |   0   |           None          |
-|  int_int   |    Int     |    Method   |   None   |     IO    |    None    |     None     |    Global    |   0   |           None          |
-|   lenght   |   String   |    Method   |   None   |   String  |    None    |     None     |    Global    |   0   |           None          |
-|   concat   |   String   |    Method   |   None   |   String  |    None    |     None     |    Global    |   0   |           None          |
-|    sPar    |   String   |    Param    |   None   |   String  |   concat   |     None     |    Local     |   0   |           None          |
-|   substr   |   String   |    Method   |   None   |   String  |    None    |     None     |    Global    |   0   |           None          |
-|    iPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     |    Local     |   0   |           None          |
-|    lPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     |    Local     |   0   |           None          |
-|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     |    Global    |  148  |           None          |
-| out_string | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     |    Global    |   92  |           None          |
-|   xParS    |   String   |    Param    |   None   |    Main   | out_string |      0       |    Local     |   92  | 2 is trivially prime.\n |
-|  out_int   | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     |    Global    |   4   |           None          |
-|   xParI    |    Int     |    Param    |   None   |    Main   |  out_int   |      0       |    Local     |   4   |           None          |
-| in_string  |   String   |    Method   |   None   |    Main   |    None    |     None     |    Global    |   0   |           None          |
-|  int_int   |    Int     |    Method   |   None   |    Main   |    None    |     None     |    Global    |   0   |           None          |
-|    out     |    Int     |   Instance  |   None   |    Main   |    None    |      92      |   Main.out   |   4   |            0            |
-|    err     |   String   |   Instance  |   None   |    Main   |    None    |      96      |   Main.err   |   36  |        halt mmmm        |
-|   testee   |    Int     |   Instance  |   None   |    Main   |    None    |     132      | Main.testee  |   4   |            0            |
-|  divisor   |    Int     |   Instance  |   None   |    Main   |    None    |     136      | Main.divisor |   4   |            0            |
-|    stop    |    Int     |   Instance  |   None   |    Main   |    None    |     140      |  Main.stop   |   4   |            0            |
-|    main    |   Object   |    Method   |   None   |    Main   |    None    |     None     |    Global    |   4   |           None          |
-+------------+------------+-------------+----------+-----------+------------+--------------+--------------+-------+-------------------------+
++-------------------------------------------------------------------------------------------------------------------+
+|                                                   Symbols Table                                                   |
++------------+------------+-------------+----------+-----------+------------+--------------+--------+-------+-------+
+|    Name    | Type_Value |     Type    | Inherits | Parent_Cl | Parent_Fun | Displacement | Scope  | Space | Value |
++------------+------------+-------------+----------+-----------+------------+--------------+--------+-------+-------+
+|    Int     |    Int     |    Class    |   None   |    Int    |    None    |     None     | Global |   4   |   0   |
+|    Bool    |    Bool    |    Class    |   None   |    Bool   |    None    |     None     | Global |   1   | False |
+|   False    |    Bool    | Declaration |   None   |    Bool   |    None    |     None     | Global |   1   |   0   |
+|    True    |    Bool    | Declaration |   None   |    Bool   |    None    |     None     | Global |   1   |   1   |
+|    Void    |    Void    |    Class    |   None   |    Void   |    None    |     None     | Global |   1   |  None |
+| SELF_TYPE  | SELF_TYPE  |     Type    |   None   | SELF_TYPE |    None    |     None     | Global |   0   |  None |
+|   Object   |   Object   |    Class    |   None   |   Object  |    None    |     None     | Global |  None |  None |
+|   String   |   String   |    Class    |   None   |   String  |    None    |     None     | Global |   2   |   ''  |
+|   abort    |   Object   | Declaration |   None   |   Object  |    None    |     None     | Global |  None | Error |
+| type_name  |   String   | Declaration |   None   |   Object  |    None    |     None     | Global |  None |  None |
+|    copy    | SELF_TYPE  | Declaration |   None   |   Object  |    None    |     None     | Global |  None |  None |
+| out_string | SELF_TYPE  |    Method   |   None   |     IO    |    None    |     None     | Global |   0   |  None |
+|   xParS    |   String   |    Param    |   None   |     IO    | out_string |     None     | Local  |   0   |  None |
+|  out_int   | SELF_TYPE  |    Method   |   None   |     IO    |    None    |     None     | Global |   0   |  None |
+|   xParI    |    Int     |    Param    |   None   |     IO    |  out_int   |     None     | Local  |   0   |  None |
+| in_string  |   String   |    Method   |   None   |     IO    |    None    |     None     | Global |   0   |  None |
+|  int_int   |    Int     |    Method   |   None   |     IO    |    None    |     None     | Global |   0   |  None |
+|   lenght   |   String   |    Method   |   None   |   String  |    None    |     None     | Global |   0   |  None |
+|   concat   |   String   |    Method   |   None   |   String  |    None    |     None     | Global |   0   |  None |
+|    sPar    |   String   |    Param    |   None   |   String  |   concat   |     None     | Local  |   0   |  None |
+|   substr   |   String   |    Method   |   None   |   String  |    None    |     None     | Global |   0   |  None |
+|    iPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     | Local  |   0   |  None |
+|    lPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     | Local  |   0   |  None |
+|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     | Global |   29  |  None |
+| out_string | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
+|   xParS    |   String   |    Param    |   None   |    Main   | out_string |     None     | Local  |   0   |  None |
+|  out_int   | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   4   |  None |
+|   xParI    |    Int     |    Param    |   None   |    Main   |  out_int   |      0       | Local  |   4   |   0   |
+| in_string  |   String   |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
+|  int_int   |    Int     |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
+|     a      |    Int     |   Instance  |   None   |    Main   |    None    |      0       | Main.a |   4   |   10  |
+|     b      |    Int     |   Instance  |   None   |    Main   |    None    |      4       | Main.b |   4   |   2   |
+|     x      |    Bool    |   Instance  |   None   |    Main   |    None    |      8       | Main.x |   4   |  True |
+|     y      |    Bool    |   Instance  |   None   |    Main   |    None    |      12      | Main.y |   4   | False |
+|    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   13  |  None |
++------------+------------+-------------+----------+-----------+------------+--------------+--------+-------+-------+

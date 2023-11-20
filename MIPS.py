@@ -18,6 +18,9 @@ class MIPS():
         if(mips_code != None):
             output_file = "MIPS.asm"
             # Abre el archivo de salida en modo escritura
+            mips_code = mips_code.replace("(Int)", "")
+            mips_code = mips_code.replace("(Bool)", "")
+            mips_code = mips_code.replace("(String)", "")
             with open(output_file, 'w') as file:
                 # Escribe el código MIPS traducido en el archivo de salida
                 file.write(mips_code)
@@ -392,7 +395,7 @@ class MIPS():
                                 
                         mips_code += f"    sub {words[1]}, {words[2]}, {words[3]}\n\n"
                         
-                    elif words[0] == "AND":
+                    elif words[0] == "AND" or words[0] == "OR":
 
                         matchA = re.match(r'(\w+)\[(\d+)\]', words[2])
 
@@ -415,7 +418,7 @@ class MIPS():
                                 mips_code += f"    lw {words[3]}, {dispB}($s1)\n"
                                 
                         
-                        mips_code += f"    and {words[1]}, {words[2]}, {words[3]}\n\n"
+                        mips_code += f"    {words[0].lower()} {words[1]}, {words[2]}, {words[3]}\n\n"
 
                     elif (words[0] == "SLT" or words[0] == "SEQ" or words[0] == "SLE" or
                           words[0] == "SGT" or words[0] == "SGE"):

@@ -132,6 +132,7 @@ class CodigoIntermedio(YAPLVisitor):
         # size = self.symbolTable.fun_size(id, self.position[0])
         row = self.symbolTable.get_cell(id, addParent = self.position[0], addScope = "Global")
         size = row[9]
+        print("size", size)
 
         # verificación de si es múltiplo de 4
         while size % 4 != 0:
@@ -467,7 +468,7 @@ class CodigoIntermedio(YAPLVisitor):
         temp_ = ""
         if len(self.temp_stack) > 0:
             temp_, type_ = self.temp_stack.pop()
-            usedTemps.append(temp_)
+            
         else:
             # ha ocurrido un error
             temp_ = "tt"
@@ -477,11 +478,12 @@ class CodigoIntermedio(YAPLVisitor):
         if_ = self.goto_if
         self.goto_if += 1
 
+        self.temp_stack.append([temp_, type_])
+
         retText += f"\t\tIF {temp_} > 0 GOTO L_TRUE_{if_}\n"
         retText += f"\t\tGOTO L_FALSE_{if_}\n"
 
-        # regresar temporal
-        self.returnTemps(usedTemps)
+        
 
         # caso real
         retText += f"L_TRUE_{if_}:\n"
@@ -496,6 +498,9 @@ class CodigoIntermedio(YAPLVisitor):
         # continuar con el resto del codigo
         retText += f"L_IF_END_{if_}:\n"
 
+        # regresar temporal
+        usedTemps.append(temp_)
+        self.returnTemps(usedTemps)
 
         return retText
     
@@ -549,6 +554,7 @@ class CodigoIntermedio(YAPLVisitor):
 
         for expr in ctx.expr():
             retText += self.visit(expr)
+            # print("lastStatment", self.lastStatement)
 
         return retText
     
