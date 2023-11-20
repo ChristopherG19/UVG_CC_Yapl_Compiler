@@ -1,6 +1,29 @@
-CLASS Main, 180
-	Main.main, 60
-		PARAM "Hello, World.\n"
+CLASS Main, 28
+	Main.main, 20
+		LW t0(Object), Object
+		CALL t0(Object).type_name, 0
+		LW t0, RET
+		LI t0(Int), 3
+		LI t1(Int), 2
+		PARAM t0(Int)
+		PARAM t1(Int)
+		CALL t0(Object).substr, 0
+		LW t0, RET
+		PARAM t0(Object)
+		CALL IO.out_string, 0
+		LW t0(Int), Int
+		CALL t0(Int).type_name, 0
+		LW t0, RET
+		LI t0(Int), 0
+		LI t1(Int), 3
+		PARAM t0(Int)
+		PARAM t1(Int)
+		CALL t0(Int).substr, 0
+		LW t0, RET
+		PARAM t0(Int)
+		CALL IO.out_string, 0
+		LW t0(String), "5"
+		PARAM t0(String)
 		CALL IO.out_string, 0
 		RETURN
 	END FUNC main

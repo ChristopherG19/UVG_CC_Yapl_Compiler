@@ -39,7 +39,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.symbolTable.add_column([False, "Bool", "Declaration", None, "Bool", None, None, None, "Global", 1, 0])
         self.symbolTable.add_column([True, "Bool", "Declaration", None, "Bool", None, None, None, "Global", 1, 1])
         self.symbolTable.add_column(["Void", "Void", "Class", None, "Void", None, None, None, "Global", 1, None])
-        self.symbolTable.add_column(["SELF_TYPE", "SELF_TYPE", "Type", None, "SELF_TYPE", None, None, None, "Global", 0, None])
+        self.symbolTable.add_column(["SELF_TYPE", "SELF_TYPE", "Type", None, "SELF_TYPE", None, None, None, "Global", 6, None])
         self.symbolTable.add_column(["Object", "Object", "Class", None, "Object", None, ["abort", "type_name", "copy"], None, "Global", None, None])
         self.symbolTable.add_column(["String", "String", "Class", None, "String", None, ["lenght", "concat", "substr"], None, "Global", 2, "''"])
         self.symbolTable.add_column(["Int", "Int", "Class", None, "Int", None, None, None, "Global", 4, 0])
@@ -326,7 +326,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.count_bytes_func += space_return
 
         self.symbolTable.add_info_to_cell(self.current_function, "Space", self.count_bytes_func)
-        #self.count_bytes_class += self.count_bytes_func
+        self.count_bytes_class += self.count_bytes_func
         self.current_function = None
         self.position.pop()
         return type_id_b
@@ -874,9 +874,8 @@ class YAPLVisitorImpl(YAPLVisitor):
     def visitIf(self, ctx: YAPLParser.IfContext):
         print("visitIf")
         condition_expr = self.visit(ctx.expr(0))
-        print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE", condition_expr)
-        if condition_expr != 'Bool':
-        # Handle the type mismatch error here
+        if condition_expr[0] != 'Bool':
+            # Handle the type mismatch error here
             self.customErrors.append("La condición dentro del if debe de retornar bool")
             return "Error"
         
@@ -897,7 +896,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         if type(condition_expr) == tuple:
             condition_expr, val = condition_expr
             
-        if condition_expr != 'Bool':
+        if condition_expr[0] != 'Bool':
         # Handle the type mismatch error here
             self.customErrors.append(f"La condición dentro del while debe de retornar bool pero se encontró {condition_expr}")
             return "Error"
@@ -1462,7 +1461,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         #     return "Self"
 
 def main():
-    file_name = "./tests/primes.cl"
+    file_name = "./tests/cool.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)

@@ -2,13 +2,6 @@ class Main inherits IO {
 
     ac: Int;
 
-    main(): SELF_TYPE {
-        {
-            ac <- ackermann(3, 5);
-            out_int(ac);
-        }
-    };
-
     ackermann(m : Int, n : Int) : Int {
         if m = 0 then
             (n + 1)
@@ -19,5 +12,12 @@ class Main inherits IO {
                 ackermann((m - 1), ackermann(m, (n - 1)))
             fi
         fi
+    };
+
+    main(): SELF_TYPE {
+        {
+            ac <- ackermann(3, 5);
+            out_int(ac);
+        }
     };
 };
