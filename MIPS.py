@@ -108,6 +108,7 @@ class MIPS():
                     
                     elif words[0] == "LW":
                         match = re.match(r'(\w+)\[(\d+)\]', words[2])
+                        print("LW words", words)
                         if match:
                             env = match.group(1)
                             disp = match.group(2)
@@ -129,6 +130,8 @@ class MIPS():
                                 self.objects.append((words[1].replace('$', ''), words[2]))
                             
                             elif('$' in words[1]):
+
+                                print("$ ", words)
                             
                                 get_temp = re.search(r'\$t\d+', words[1])
                                 temp = get_temp.group()
@@ -136,7 +139,7 @@ class MIPS():
                                 type_T = get_type.group(1)
 
                                 eti = f"str_{self.etis}"
-                                mips_code += f"    la $t0, {eti}\n"
+                                mips_code += f"    la {words[1]}, {eti}\n"
                                 
                                 if(not ' '.join(words[2:]).startswith('"') and not ' '.join(words[2:]).endswith('"')):
                                     n_type_T = '"'+' '.join(words[2:])+'"'
@@ -259,7 +262,7 @@ class MIPS():
                                 mips_code += "    jal String_substr\n    move $t0, $v0\n"
 
                             elif (temp_exist[1] == 'abort'):
-                                
+                                print("abort temp ", temp)
                                 mips_code += f"\n    la $a0, ({temp})\n"
                                 mips_code += f"    jal abort\n\n"
                                 self.tempBlock += "abort:\n    li $v0, 4\n    syscall\n    li $v0, 10\n    syscall\n"

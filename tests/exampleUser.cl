@@ -1,18 +1,18 @@
 class Main inherits IO {
 
-   a : Int <- 10;
-   b : Int <- 2;
-
-   x : Bool <- True;
-   y : Bool <- False; 
+   a : Int <- 0;
 
    main(): SELF_TYPE {
-      if x & y
-      then 
-         out_int(100)
-      else 
-         out_int(0)
-      fi;
+      while a < 100 loop {
+         out_int(a);
+         a <- a + 1;
+
+         if a = 15 then 
+            "stop".abort() -- parar el programa si a llega a 15
+         else 
+            0 -- no hacer nada
+         fi;
+      } pool
    };
 
 };

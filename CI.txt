@@ -1,29 +1,35 @@
-CLASS Main, 40
-		LI t0(Int), 10
+CLASS Main, 20
+		LI t0(Int), 0
 		SW GP[0], t0(Int)
-		LI t0(Int), 2
-		SW GP[4], t0(Int)
-		LI t0(Bool), 1
-		SW GP[8], t0(Bool)
-		LI t0(Bool), 0
-		SW GP[12], t0(Bool)
-	Main.main, 16
-		LW t0(Bool), GP[8]
-		LW t1(Bool), GP[12]
-		AND t2(Bool), t0(Bool), t1(Bool)
+	Main.main, 8
+		GOTO L_LOOP_0
+L_LOOP_0:
+		LW t0(Int), GP[0]
+		LI t1(Int), 100
+		SLT t2(Int), t0(Int), t1(Int)
+		IF t2(Int) = 0 GOTO L_LOOP_END_0
+		LW t0(Int), GP[0]
+		PARAM t0(Int)
+		CALL IO.out_int, 0
+		LW t0(Int), GP[0]
+		LI t1(Int), 1
+		ADD t2(Int), t0(Int), t1(Int)
+		SW GP[0], t2(Int)
+		LW t0(Int), GP[0]
+		LI t1(Int), 15
+		SEQ t2(Int), t0(Int), t1(Int)
 		IF t2 > 0 GOTO L_TRUE_0
 		GOTO L_FALSE_0
 L_TRUE_0:
-		LI t0(Int), 100
-		PARAM t0(Int)
-		CALL IO.out_int, 0
+		LW t0(String), "stop"
+		CALL t0(String).abort, 0
 		GOTO L_IF_END_0
 L_FALSE_0:
 		LI t0(Int), 0
-		PARAM t0(Int)
-		CALL IO.out_int, 0
 		GOTO L_IF_END_0
 L_IF_END_0:
+		GOTO L_LOOP_0
+L_LOOP_END_0:
 		RETURN
 	END FUNC main
 EOC
