@@ -14,8 +14,10 @@ import os
 from tkinter import scrolledtext, filedialog
 from PIL import Image, ImageTk
 from antlr4 import *
+
 from BuildTable import YAPLVisitorImpl
 from CI import *
+from MIPS import *
 
 from utils.utils import CustomErrorListener, beautify_lisp_string
 
@@ -91,10 +93,9 @@ def create_g4():
         if not error_listener.has_error():
             Terminal.delete(1.0, tk.END)
             Terminal.insert(tk.END, "\n\nNo se encontraron errores, árbol disponible en consola y GUI desplegada")
-            # print('Tree:\n')
-            # lisp_tree_str = tree.toStringTree(recog=parser)
-            # print(beautify_lisp_string(lisp_tree_str))
+
             show_tree()
+
             try:
                 YV = YAPLVisitorImpl()
                 res = YV.visit(tree)
@@ -104,13 +105,19 @@ def create_g4():
                     for err in YV.customErrors:
                         Terminal.insert(tk.END, f"-> {err}\n")
                     print()
+
                 else:
                     Terminal.insert(tk.END, "\nResultado Lectura: Todo está semánticamente correcto\n")
                     CI = CodigoIntermedio("CI.txt", YV.symbolTable)
                     resCI = CI.visit(tree)
-                treeF = YV.symbolTable.build_Table()
-                with open("SymbolTable.txt", 'w', encoding="utf-8") as f:
-                    f.write(treeF.get_string())
+
+                    MIPS_ = MIPS("CI.txt")
+                    MIPS_.get_MIPS_Code()
+
+                    treeF = YV.symbolTable.build_Table()
+                    with open("SymbolTable.txt", 'w', encoding="utf-8") as f:
+                        f.write(treeF.get_string())
+
             except TypeError as e:
                 print(e);
 
@@ -275,7 +282,28 @@ def on_change_to_CI():
     
 
 def on_change_to_MIPS():
-    0
+    global current
+    global code
+    if (current == "code"):
+        # save code
+        code = T.get("1.0", tk.END)
+
+    # change current
+    current = "MIPS"
+
+    # Clear
+    T.delete(1.0, tk.END)
+
+    # get text from file
+    try:
+        with open("MIPS.asm", 'r') as file:
+            text_ = str(file.read())
+
+            # change text to the one on 
+            T.insert(tk.END, text_)
+
+    except:
+        print("Error leyendo MIPS") 
 
 # UID ==========================================================
 

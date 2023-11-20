@@ -1,63 +1,8 @@
-CLASS Main, 72
-		LI t0(Int), 10
-		SW GP[0], t0(Int)
-		LI t0(Int), 2
-		SW GP[4], t0(Int)
-		LI t0(Int), 5
-		SW GP[8], t0(Int)
-	Main.retA, 8
-		LW t0(Int), GP[0]
-		RETURN t0
-	END FUNC retA
-	Main.retB, 8
-		LW t1(Int), GP[4]
-		RETURN t1
-	END FUNC retB
-	Main.main, 32
-		LW t2(Int), GP[0]
-		PARAM t2(Int)
-		CALL IO.out_int, 0
-		LW t2(Int), GP[4]
-		PARAM t2(Int)
-		CALL IO.out_int, 0
-		LW t2(Int), GP[8]
-		PARAM t2(Int)
-		CALL IO.out_int, 0
-		LW t2(Int), GP[0]
-		LW t3(Int), GP[4]
-		LW t4(Int), GP[8]
-		SUB t5(Int), t3(Int), t4(Int)
-		ADD t3(Int), t2(Int), t5(Int)
-		SW GP[12], t3(Int)
-		LW t2(Int), GP[12]
-		PARAM t2(Int)
-		CALL IO.out_int, 0
-		LW t2(Int), GP[0]
-		LW t3(Int), GP[4]
-		MULT t4(Int), t2(Int), t3(Int)
-		LW t2(Int), GP[8]
-		DIV t3(Int), t4(Int), t2(Int)
-		SW GP[12], t3(Int)
-		LW t2(Int), GP[12]
-		PARAM t2(Int)
-		CALL IO.out_int, 0
-		LW t2(Int), GP[0]
-		LI t3(Int), 8
-		SUB t4(Int), t2(Int), t3(Int)
-		PARAM t4(Int)
-		CALL IO.out_int, 0
-		LI t2(Int), 100
-		LI t3(Int), 5
-		DIV t4(Int), t2(Int), t3(Int)
-		PARAM t4(Int)
-		CALL IO.out_int, 0
-		LW t2(Int), retA
-		LW t3(Int), retB
-		MULT t4(Int), t2(Int), t3(Int)
-		SW GP[12], t4(Int)
-		LW t2(Int), GP[12]
-		PARAM t2(Int)
-		CALL IO.out_int, 0
+CLASS Main, 180
+	Main.main, 60
+		LW t0(String), "Hello, World.\n"
+		PARAM t0(String)
+		CALL IO.out_string, 0
 		RETURN
 	END FUNC main
 EOC
