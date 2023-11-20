@@ -18,6 +18,9 @@ class MIPS():
         if(mips_code != None):
             output_file = "MIPS.asm"
             # Abre el archivo de salida en modo escritura
+            mips_code = mips_code.replace("(Int)", "")
+            mips_code = mips_code.replace("(Bool)", "")
+            mips_code = mips_code.replace("(String)", "")
             with open(output_file, 'w') as file:
                 # Escribe el código MIPS traducido en el archivo de salida
                 file.write(mips_code)
@@ -231,6 +234,29 @@ class MIPS():
                             if temp:
                                 mips_code += f"    move $a{self.param}, {temp}\n"
                                 self.param += 1
+                                
+                            
+                        # elif(type(words[1]) == str and "$" not in words[1]):
+                            
+                        #     #TODO revisar creación de strings repetidos
+                        #     eti = f"str_{self.etis}"
+                        #     mips_code += f"    la $t0, {eti}\n    move $a0, $t0\n"
+                            
+                        #     if(words[1] not in self.strings_creados):
+                        #         self.etis += 1
+                        #         eti = f"str_{self.etis}"
+                        #         self.dataBlock += f"\n    {eti}: .asciiz {words[1]}"
+                        #         self.strings_creados.append(words[1])
+                            
+                            else:
+                                get_temp = re.search(r'\$t\d+', words[1])
+                                temp = get_temp.group()
+                                get_type = re.search(r'\((.*?)\)', words[1])
+                                type_T = get_type.group(1)
+                                
+                                if temp:
+                                    mips_code += f"    move $a{self.param}, {temp}\n"
+                                    self.param += 1
                                 
                             
                     elif words[0] == "CALL":
@@ -728,6 +754,22 @@ class MIPS():
                         mips_code += f"\n{words[0]}\n"
                         
                     elif words[0] == "RETURN":
+                        if(self.end_B != ""):
+                            mips_code += self.end_B
+                            self.end_B = ""
+                            
+                        if(len(words) == 1):
+                            continue
+                            
+                        match = re.match(r'(\w+)\[(\d+)\]', words[1])
+                        
+                        if match:
+                            env = match.group(1)
+                            disp = match.group(2)
+
+                            if Act_class != "Main" and Act_func != "main":
+                                mips_code += f"    lw $v0, {disp}(${env.lower()})\n    jr $ra\n"
+
                         if(self.end_B != ""):
                             mips_code += self.end_B
                             self.end_B = ""

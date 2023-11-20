@@ -17,7 +17,7 @@ class A {
    method2(num1 : Int, num2 : Int) : A {  -- plus
       (let x : Int in
 	 {
-            x <- (num1 + num2);
+            x <- num1 + num2;
 	    (new A).set_var(x);
 	 }
       )
@@ -36,7 +36,7 @@ class A {
       if num2 < num1 then
          (let x : Int in
 		   {
-            x <- (num1 - num2);
+            x <- num1 - num2;
 	         (new A).set_var(x);
 	      })
          
@@ -55,8 +55,8 @@ class A {
 	    (let y : Int <- 1 in
 	       while y <= num loop
 	          {
-                x <- (x * y);
-	             y <- (y + 1);
+                x <- x * y;
+	             y <- y + 1;
 	          }
 	       pool
 	    );
@@ -72,7 +72,7 @@ class B inherits A {  -- B is a number squared
    method5(num : Int) : A { -- square
       (let x : Int in
 	 {
-            x <- (num * num);
+            x <- num * num;
 	    (new A).set_var(x);
 	 }
       )
@@ -85,7 +85,7 @@ class C inherits B {
    method6(num : Int) : A { -- negate
       (let x : Int in
          {
-            x <- (~num);
+            x <- ~num;
 	    (new A).set_var(x);
          }
       )
@@ -94,7 +94,7 @@ class C inherits B {
    method5(num : Int) : A {  -- cube
       (let x : Int in
 	 {
-            x <- (num * num * num);
+            x <- num * num * num;
 	    (new A).set_var(x);
 	 }
       )
@@ -122,7 +122,7 @@ class E inherits D {
    method6(num : Int) : A {  -- division
       (let x : Int in
          {
-            x <- (num / 8);
+            x <- num / 8;
 	    (new A).set_var(x);
          }
       )

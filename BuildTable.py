@@ -39,7 +39,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         self.symbolTable.add_column([False, "Bool", "Declaration", None, "Bool", None, None, None, "Global", 1, 0])
         self.symbolTable.add_column([True, "Bool", "Declaration", None, "Bool", None, None, None, "Global", 1, 1])
         self.symbolTable.add_column(["Void", "Void", "Class", None, "Void", None, None, None, "Global", 1, None])
-        self.symbolTable.add_column(["SELF_TYPE", "SELF_TYPE", "Type", None, "SELF_TYPE", None, None, None, "Global", 6, None])
+        self.symbolTable.add_column(["SELF_TYPE", "SELF_TYPE", "Type", None, "SELF_TYPE", None, None, None, "Global", 0, None])
         self.symbolTable.add_column(["Object", "Object", "Class", None, "Object", None, ["abort", "type_name", "copy"], None, "Global", None, None])
         self.symbolTable.add_column(["String", "String", "Class", None, "String", None, ["lenght", "concat", "substr"], None, "Global", 2, "''"])
         self.symbolTable.add_column(["Int", "Int", "Class", None, "Int", None, None, None, "Global", 4, 0])
@@ -874,18 +874,30 @@ class YAPLVisitorImpl(YAPLVisitor):
     def visitIf(self, ctx: YAPLParser.IfContext):
         print("visitIf")
         condition_expr = self.visit(ctx.expr(0))
-        if condition_expr[0] != 'Bool':
+
+        val = ""
+
+        if type(condition_expr) == tuple:
+            condition_expr, val = condition_expr
+
+        print("if cond val", val)
+
+        if condition_expr.lower() != 'bool':
             # Handle the type mismatch error here
             self.customErrors.append("La condición dentro del if debe de retornar bool")
             return "Error"
         
         then_expr_type = self.visit(ctx.expr(1))
+        print("then_expr", then_expr_type)
         else_expr_type = self.visit(ctx.expr(2))
+        print("else_expr", else_expr_type)
         
         if then_expr_type == 'Error' or else_expr_type == 'Error':
-            return 'Error: Error en el cuerpo del if o del else'
+            self.customErrors.append("Error en el cuerpo del if o del else")
+            return 'Error'
+        
         else:
-            return "Bool"
+            return ("Bool", then_expr_type[1] if val else else_expr_type[1])
     
     def visitWhile(self, ctx: YAPLParser.WhileContext):
         print("visitWhile")
@@ -893,10 +905,12 @@ class YAPLVisitorImpl(YAPLVisitor):
         val = None
         condition_expr = self.visit(ctx.expr(0))
 
+        print("cond while", condition_expr)
+
         if type(condition_expr) == tuple:
             condition_expr, val = condition_expr
             
-        if condition_expr[0] != 'Bool':
+        if condition_expr.lower() != 'bool':
         # Handle the type mismatch error here
             self.customErrors.append(f"La condición dentro del while debe de retornar bool pero se encontró {condition_expr}")
             return "Error"
@@ -1044,9 +1058,14 @@ class YAPLVisitorImpl(YAPLVisitor):
         if(left_type == "Error" or right_type == "Error"):
             return "Error"
         
+        print("lv times", left_val)
+        print("rv times", right_val)
+        
+        val = left_val * right_val
+        
         if left_type is not None and right_type is not None:
             if left_type.lower() == "int" and right_type.lower() == "int":
-                return "Int"
+                return ("Int", val)
             elif left_type.lower() == "bool" and right_type.lower() == "int":
                 return "Bool"
             elif left_type.lower() == "int" and right_type.lower() == "bool":
@@ -1076,9 +1095,11 @@ class YAPLVisitorImpl(YAPLVisitor):
         if(left_type == "Error" or right_type == "Error"):
             return "Error"
         
+        val = int(left_val/right_val)
+        
         if left_type is not None and right_type is not None:
             if left_type.lower() == "int" and right_type.lower() == "int":
-                return "Int"
+                return ("Int", val)
             elif left_type.lower() == "bool" and right_type.lower() == "int":
                 return "Bool"
             elif left_type.lower() == "int" and right_type.lower() == "bool":
@@ -1202,9 +1223,13 @@ class YAPLVisitorImpl(YAPLVisitor):
         
         if(left_type == "Error" or right_type == "Error"):
             return "Error"
+        
+        print("lv <", left_val)
+        print("rv <", right_val)
+        val = left_val < right_val
 
         if (left_type.lower() == "int" and right_type.lower() == "int"):
-            return "Bool"
+            return ("Bool", val)
         elif (left_type.lower() == "bool" and right_type.lower() == "bool"):
             return "Bool"
         elif (left_type.lower() == "int" and right_type.lower() == "bool"):
@@ -1385,7 +1410,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         id = ctx.ID().getText()
         row = self.symbolTable.get_cell(id)
         
-        print("IIIIDDDDDDDDDDDDD", id, row[-4], self.current_class, self.current_function)
+        # print("IIIIDDDDDDDDDDDDD", id, row[-4], self.current_class, self.current_function)
 
         if row is None:
             self.customErrors.append(f"{id} no existe")
@@ -1409,13 +1434,15 @@ class YAPLVisitorImpl(YAPLVisitor):
                     # self.customErrors.append(f"El atributo '{id}' no ha sido declarado en la clase '{clase}'")
                     # return "Error"
         if row:
+            print("id ret", row[1], row[-1])
             return row[1], row[-1]
         return "Error"
     
     def visitInt(self, ctx: YAPLParser.IntContext):
         #print("visitInt")
         # res = int(ctx.INT().getText())
-        return "Int"
+        print("visit int!! ", ctx.getText())
+        return ("Int", int(ctx.getText()))
     
     def visitString(self, ctx: YAPLParser.StringContext):
         full_string = ctx.STRING().getText()
@@ -1432,7 +1459,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         #     res = False
         # elif(ctx.getText().capitalize() == "True"):
         #     res = True
-        return "Bool"
+        return ("Bool", ctx.getText().capitalize())
     
     def visitSelf(self, ctx: YAPLParser.SelfContext):
         

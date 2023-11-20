@@ -473,7 +473,6 @@ class CodigoIntermedio(YAPLVisitor):
         temp_ = ""
         if len(self.temp_stack) > 0:
             temp_, type_ = self.temp_stack.pop()
-            usedTemps.append(temp_)
         else:
             # ha ocurrido un error
             temp_ = "tt"
@@ -483,25 +482,40 @@ class CodigoIntermedio(YAPLVisitor):
         if_ = self.goto_if
         self.goto_if += 1
 
+        self.temp_stack.append([temp_, type_])
+
         retText += f"\t\tIF {temp_} > 0 GOTO L_TRUE_{if_}\n"
         retText += f"\t\tGOTO L_FALSE_{if_}\n"
 
         # regresar temporal
+        usedTemps.append(temp_)
         self.returnTemps(usedTemps)
+        
+        # temp_ = ""
+        # if len(self.temp_stack) > 0:
+        #     temp_, type_ = self.temp_stack.pop()
+        # else:
+        #     # ha ocurrido un error
+        #     temp_ = "tt"
+        #     type_ = "tt"
 
         # caso real
         retText += f"L_TRUE_{if_}:\n"
         retText += self.visit(ctx.expr(1))
+        # retText += f"\t\tSW {temp_},\n"
         retText += f"\t\tGOTO L_IF_END_{if_}\n"
 
         # caso falso 
         retText += f"L_FALSE_{if_}:\n"   
         retText += self.visit(ctx.expr(2))
+        # retText += f"\t\tSW {temp_},\n"
         retText += f"\t\tGOTO L_IF_END_{if_}\n"
 
         # continuar con el resto del codigo
         retText += f"L_IF_END_{if_}:\n"
 
+        self.temp_stack.append([temp_, "Bool"])
+        
 
         return retText
     
@@ -555,6 +569,7 @@ class CodigoIntermedio(YAPLVisitor):
 
         for expr in ctx.expr():
             retText += self.visit(expr)
+            # print("lastStatment", self.lastStatement)
 
         return retText
     
