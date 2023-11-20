@@ -11,7 +11,7 @@ class Main inherits IO {
     out_int(b);
     out_int(c);
 
-    res <- a + (b - c)
+    res <- a + (b - c);
     out_int(res);
 
     res <- (a * b) / c;
@@ -19,8 +19,9 @@ class Main inherits IO {
 
     out_int(a - 8);
 
-    out_int(100/5)
+    out_int(100/5);
 
   }};
 
 };
+

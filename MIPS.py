@@ -139,7 +139,7 @@ class MIPS():
                             
                             elif('$' in words[1]):
 
-                                print("$ ", words)
+                                # print("$ ", words)
                             
                                 get_temp = re.search(r'\$t\d+', words[1])
                                 temp = get_temp.group()
@@ -301,7 +301,7 @@ class MIPS():
                                 mips_code += "    jal String_substr\n    move $t0, $v0\n"
 
                             elif (temp_exist[1] == 'abort'):
-                                print("abort temp ", temp)
+                                # print("abort temp ", temp)
                                 mips_code += f"\n    la $a0, ({temp})\n"
                                 mips_code += f"    jal abort\n\n"
                                 self.tempBlock += "abort:\n    li $v0, 4\n    syscall\n    li $v0, 10\n    syscall\n"

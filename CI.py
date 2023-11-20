@@ -42,16 +42,16 @@ class CodigoIntermedio(YAPLVisitor):
 
         self.genDictionary(self.symbolTable)
         
-        print("==================================")
-        print(self.registers)
-        print("==================================")
+        # print("==================================")
+        # print(self.registers)
+        # print("==================================")
 
     # ================================================================================
     # visitor
     # ================================================================================
 
     def visitStart(self, ctx:YAPLParser.StartContext):
-        # print("#start")
+        print("#start")
         self.finalText = ""
         stages = ctx.class_def()
         for stage in stages:
