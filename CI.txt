@@ -1,101 +1,37 @@
-CLASS Main, 184
-		LW t0(String), "11 is trivially prime.\n"
-		PARAM t0(String)
-		CALL IO.out_string, 0
-		LI t0(Int), 11
-		SW GP[96], t0(Int)
-		LW t0(Int), GP[96]
-		SW GP[100], t0(Int)
-		LI t0(Int), 500
-		SW GP[108], t0(Int)
-	Main.main, 64
+CLASS Main, 32
+		LI t0(Int), 0
+		SW GP[0], t0(Int)
+	Main.main, 20
 		GOTO L_LOOP_0
 L_LOOP_0:
-		LI t0(Bool), 1
-		IF t0(Bool) = 0 GOTO L_LOOP_END_0
-		LW t0(Int), GP[100]
+		LW t0(Int), GP[0]
+		LI t1(Int), 10
+		SLT t2(Int), t0(Int), t1(Int)
+		IF t2(Int) = 0 GOTO L_LOOP_END_0
+		LW t0(Int), GP[0]
+		PARAM t0(Int)
+		CALL IO.out_int, 0
+		LW t0(Int), GP[0]
 		LI t1(Int), 1
 		ADD t2(Int), t0(Int), t1(Int)
-		SW GP[100], t2(Int)
-		LI t0(Int), 2
-		SW GP[104], t0(Int)
-		GOTO L_LOOP_1
-L_LOOP_1:
-		LW t0(Int), GP[100]
-		LW t1(Int), GP[104]
-		LW t2(Int), GP[104]
-		MULT t3(Int), t1(Int), t2(Int)
-		SLT t1(Int), t0(Int), t3(Int)
-		IF t1 > 0 GOTO L_TRUE_0
-		GOTO L_FALSE_0
-L_TRUE_0:
-		LI t0(Bool), 0
-		GOTO L_IF_END_0
-L_FALSE_0:
-		LW t1(Int), GP[100]
-		LW t2(Int), GP[104]
-		LW t3(Int), GP[100]
-		LW t4(Int), GP[104]
-		DIV t5(Int), t3(Int), t4(Int)
-		MULT t3(Int), t2(Int), t5(Int)
-		SUB t2(Int), t1(Int), t3(Int)
-		LI t1(Int), 0
-		SEQ t3(Int), t2(Int), t1(Int)
-		IF t3 > 0 GOTO L_TRUE_1
-		GOTO L_FALSE_1
-L_TRUE_1:
-		LI t1(Bool), 0
-		GOTO L_IF_END_1
-L_FALSE_1:
-		LI t2(Bool), 1
-		GOTO L_IF_END_1
-L_IF_END_1:
-		GOTO L_IF_END_0
-L_IF_END_0:
-		IF t2(Bool) = 0 GOTO L_LOOP_END_1
-		LW t2(Int), GP[104]
-		LI t3(Int), 1
-		ADD t4(Int), t2(Int), t3(Int)
-		SW GP[104], t4(Int)
-		GOTO L_LOOP_1
-L_LOOP_END_1:
-		LW t2(Int), GP[100]
-		LW t3(Int), GP[104]
-		LW t4(Int), GP[104]
-		MULT t5(Int), t3(Int), t4(Int)
-		SLT t3(Int), t2(Int), t5(Int)
-		IF t3 > 0 GOTO L_TRUE_2
-		GOTO L_FALSE_2
-L_TRUE_2:
-		LW t2(Int), GP[100]
-		SW GP[96], t2(Int)
-		LW t2(Int), GP[96]
-		PARAM t2(Int)
-		CALL IO.out_int, 0
-		LW t2(String), " is prime.\n"
-		PARAM t2(String)
-		CALL IO.out_string, 0
-		GOTO L_IF_END_2
-L_FALSE_2:
-		LI t2(Int), 0
-		GOTO L_IF_END_2
-L_IF_END_2:
-		LW t3(Int), GP[108]
-		LW t4(Int), GP[100]
-		SLE t5(Int), t3(Int), t4(Int)
-		IF t5 > 0 GOTO L_TRUE_3
-		GOTO L_FALSE_3
-L_TRUE_3:
-		LW t3(String), "halt"
-		CALL t3(String).abort, 0
-		GOTO L_IF_END_3
-L_FALSE_3:
-		LW t3(String), "continue"
-		GOTO L_IF_END_3
-L_IF_END_3:
+		SW GP[0], t2(Int)
 		GOTO L_LOOP_0
 L_LOOP_END_0:
-		RETURN t3
+		LI t0(Bool), 0
+		IF t0 > 0 GOTO L_TRUE_0
+		GOTO L_FALSE_0
+L_TRUE_0:
+		LI t0(Int), 100
+		PARAM t0(Int)
+		CALL IO.out_int, 0
+		GOTO L_IF_END_0
+L_FALSE_0:
+		LI t0(Int), 0
+		PARAM t0(Int)
+		CALL IO.out_int, 0
+		GOTO L_IF_END_0
+L_IF_END_0:
+		RETURN
 	END FUNC main
 EOC
 EOF

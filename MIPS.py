@@ -135,7 +135,11 @@ class MIPS():
                                 eti = f"str_{self.etis}"
                                 mips_code += f"    la $t0, {eti}\n"
                                 
-                                n_type_T = ' '.join(words[2:])
+                                if(not ' '.join(words[2:]).startswith('"') and not ' '.join(words[2:]).endswith('"')):
+                                    n_type_T = '"'+' '.join(words[2:])+'"'
+                                else:
+                                    n_type_T = ' '.join(words[2:])
+                                
                                 if(n_type_T not in self.strings_creados):
                                     eti = f"str_{self.etis}"
                                     self.dataBlock += f"\n    {eti}: .asciiz {n_type_T}"
@@ -444,7 +448,10 @@ class MIPS():
 
                     elif words[0] == "IF":
                         # print("if")
-                        mips_code += f"    bnez {words[1]}, {words[5]}\n"
+                        if "LOOP" in words[len(words) - 1]:
+                            mips_code += f"    beqz {words[1]}, {words[5]}\n"
+                        else:
+                            mips_code += f"    bnez {words[1]}, {words[5]}\n"
 
                     elif words[0][:6] == "L_TRUE" or words[0][:7] == "L_FALSE":
                         mips_code += f"\n{words[0]}\n"
