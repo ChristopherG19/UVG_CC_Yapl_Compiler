@@ -138,6 +138,8 @@ class MIPS():
                                 self.objects.append((words[1].replace('$', ''), words[2]))
                             
                             elif('$' in words[1]):
+
+                                print("$ ", words)
                             
                                 get_temp = re.search(r'\$t\d+', words[1])
                                 temp = get_temp.group()
@@ -151,7 +153,7 @@ class MIPS():
                                     n_type_T = ' '.join(words[2:])
                                 if(n_type_T not in self.strings_creados):
                                     eti = f"str_{self.etis}"
-                                    mips_code += f"    la $t0, {eti}\n"
+                                    mips_code += f"    la {temp}, {eti}\n"
                                     self.dataBlock += f"\n    {eti}: .asciiz {n_type_T}"
                                     self.strings_creados.append(n_type_T)
                                     self.etis += 1  
@@ -298,6 +300,14 @@ class MIPS():
                                 self.last_Result = ("", "")
                                 mips_code += "    jal String_substr\n    move $t0, $v0\n"
 
+                            elif (temp_exist[1] == 'abort'):
+                                print("abort temp ", temp)
+                                mips_code += f"\n    la $a0, ({temp})\n"
+                                mips_code += f"    jal abort\n\n"
+                                self.tempBlock += "abort:\n    li $v0, 4\n    syscall\n    li $v0, 10\n    syscall\n"
+                                
+                                self.etiquetas.append("abort")
+
                         elif('"' in temp_exist[0]):
                             get_f = [x.strip() for x in temp_exist[1].split(',')]
                             if(get_f[0] == 'abort'):
@@ -318,8 +328,10 @@ class MIPS():
                                     self.tempBlock += f"{func}:\n    li $v0, 1\n    syscall\n    la $a0, newline\n    li $v0, 4\n    syscall\n    jr $ra\n\n"
                                 elif("out_string" in func):
                                     self.tempBlock += f"{func}:\n    li $v0, 4\n    syscall\n    la $a0, newline\n    li $v0, 4\n    syscall\n    jr $ra\n\n"
-                                elif("abort" in func):
-                                    self.tempBlock += f"{func}:\n    li $v0, 10\n    syscall"
+                                elif("Object_abort"):
+                                    func = "abort"
+                                    self.tempBlock += "abort:\n    li $v0, 4\n    syscall\n    li $v0, 10\n    syscall\n"
+                                mips_code += f"    jal {func}\n\n"
                                 self.etiquetas.append(func)
                                     
                             else:    
@@ -599,29 +611,30 @@ class MIPS():
                                     
                         mips_code += f"    sub {w_1}, {w_2}, {w_3}\n\n"
                         
-                    elif words[0] == "AND":
+                    elif words[0] == "AND" or words[0] == "OR":
 
                         matchA = re.match(r'(\w+)\[(\d+)\]', words[2])
 
                         if matchA:
                             envA = matchA.group(1)
                             dispA = matchA.group(2)
-                            if("(" in words[2]):
-                                get_temp = re.search(r'\$t\d+', words[2])
-                                temp = get_temp.group()
-                                get_type = re.search(r'\((.*?)\)', words[2])
-                                type_T = get_type.group(1)
-                                if envA == "GP":
-                                    mips_code += f"    lw {temp}, {dispA}($s0)\n"
-                                elif envA == "SP":
-                                    mips_code += f"    lw {temp}, {dispA}($s1)\n"
-                            else:
-                                if envA == "GP":
-                                    mips_code += f"    lw {words[2]}, {dispA}($s0)\n"
-                                elif envA == "SP":
-                                    mips_code += f"    lw {words[2]}, {dispA}($s1)\n"
+                            if envA == "GP":
+                                mips_code += f"    lw {words[2]}, {dispA}($s0)\n"
+                            elif envA == "SP":
+                                mips_code += f"    lw {words[2]}, {dispA}($s1)\n"
                             
                         matchB = re.match(r'(\w+)\[(\d+)\]', words[3])
+
+                        if matchB:
+                            envB = matchB.group(1)
+                            dispB = matchB.group(2)
+                            if envB == "GP":
+                                mips_code += f"    lw {words[3]}, {dispB}($s0)\n"
+                            elif envB == "SP":
+                                mips_code += f"    lw {words[3]}, {dispB}($s1)\n"
+                                
+                        
+                        mips_code += f"    {words[0].lower()} {words[1]}, {words[2]}, {words[3]}\n\n"
 
                         if matchB:
                             envB = matchB.group(1)

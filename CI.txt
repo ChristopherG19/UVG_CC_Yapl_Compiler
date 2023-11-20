@@ -1,30 +1,13 @@
-CLASS Main, 28
-	Main.main, 20
-		LW t0(Object), Object
-		CALL t0(Object).type_name, 0
-		LW t0, RET
-		LI t0(Int), 3
-		LI t1(Int), 2
-		PARAM t0(Int)
-		PARAM t1(Int)
-		CALL t0(Object).substr, 0
-		LW t0, RET
-		PARAM t0(Object)
-		CALL IO.out_string, 0
-		LW t0(Int), Int
-		CALL t0(Int).type_name, 0
-		LW t0, RET
-		LI t0(Int), 0
-		LI t1(Int), 3
-		PARAM t0(Int)
-		PARAM t1(Int)
-		CALL t0(Int).substr, 0
-		LW t0, RET
-		PARAM t0(Int)
-		CALL IO.out_string, 0
-		LW t0(String), "5"
-		PARAM t0(String)
-		CALL IO.out_string, 0
+CLASS Main, 0
+	Main.main, 0
+		GOTO L_LOOP_0
+L_LOOP_0:
+		LI t0(Bool), 1
+		IF t0(Bool) = 0 GOTO L_LOOP_END_0
+		LW t0(String), "Stop"
+		CALL t0(String).abort, 0
+		GOTO L_LOOP_0
+L_LOOP_END_0:
 		RETURN
 	END FUNC main
 EOC

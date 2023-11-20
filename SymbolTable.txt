@@ -8,7 +8,7 @@
 |   False    |    Bool    | Declaration |   None   |    Bool   |    None    |     None     | Global |   1   |   0   |
 |    True    |    Bool    | Declaration |   None   |    Bool   |    None    |     None     | Global |   1   |   1   |
 |    Void    |    Void    |    Class    |   None   |    Void   |    None    |     None     | Global |   1   |  None |
-| SELF_TYPE  | SELF_TYPE  |     Type    |   None   | SELF_TYPE |    None    |     None     | Global |   6   |  None |
+| SELF_TYPE  | SELF_TYPE  |     Type    |   None   | SELF_TYPE |    None    |     None     | Global |   0   |  None |
 |   Object   |   Object   |    Class    |   None   |   Object  |    None    |     None     | Global |  None |  None |
 |   String   |   String   |    Class    |   None   |   String  |    None    |     None     | Global |   2   |   ''  |
 |   abort    |   Object   | Declaration |   None   |   Object  |    None    |     None     | Global |  None | Error |
@@ -26,12 +26,12 @@
 |   substr   |   String   |    Method   |   None   |   String  |    None    |     None     | Global |   0   |  None |
 |    iPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     | Local  |   0   |  None |
 |    lPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     | Local  |   0   |  None |
-|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     | Global |   18  |  None |
-| out_string | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   4   |  None |
-|   xParS    |   String   |    Param    |   None   |    Main   | out_string |      0       | Local  |   4   |   5   |
+|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     | Global |   0   |  None |
+| out_string | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
+|   xParS    |   String   |    Param    |   None   |    Main   | out_string |     None     | Local  |   0   |  None |
 |  out_int   | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
 |   xParI    |    Int     |    Param    |   None   |    Main   |  out_int   |     None     | Local  |   0   |  None |
 | in_string  |   String   |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
 |  int_int   |    Int     |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
-|    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   18  |  None |
+|    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
 +------------+------------+-------------+----------+-----------+------------+--------------+--------+-------+-------+
