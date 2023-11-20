@@ -313,6 +313,9 @@ class YAPLVisitorImpl(YAPLVisitor):
             elif type_id == "Object":
                 pass
             
+            elif type_id == "Void":
+                pass
+            
             else:
                 if not ((type_id == "Int" and type_id_b == "Bool") or (type_id == "Bool" and type_id_b == "Int")):
                     # print("Fun Type_id_B", type_id_b)
@@ -1489,7 +1492,7 @@ class YAPLVisitorImpl(YAPLVisitor):
         #     return "Self"
 
 def main():
-    file_name = "./tests/exampleUser.cl"
+    file_name = "./tests/cool.cl"
     input_stream = FileStream(file_name)
     lexer = YAPLLexer(input_stream)
     token_stream = CommonTokenStream(lexer)

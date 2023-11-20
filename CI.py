@@ -686,6 +686,17 @@ class CodigoIntermedio(YAPLVisitor):
     def visitIsvoid(self, ctx:YAPLParser.IsvoidContext):
         # print("#isvoid")
         retText = ""
+        type_c = self.symbolTable.get_cell(id=self.position[1])[1]
+        if(type_c == "Void"): 
+            value = "True"
+        else:
+            value = "False"
+
+        temp_ = self.available_temps_stack.pop()
+        self.temp_stack.append([temp_, "Bool"])
+
+        retText += f"\t\tLW {temp_}(Bool), {value}\n"
+        self.temp_stack.append([temp_, "Bool"])
 
         return retText
     
