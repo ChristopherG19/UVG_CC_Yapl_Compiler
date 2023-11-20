@@ -257,8 +257,9 @@ class MIPS():
 
                             elif (temp_exist[1] == 'abort'):
                                 
+                                mips_code += f"\n    la $a0, ({temp})\n"
                                 mips_code += f"    jal abort\n\n"
-                                self.tempBlock += "abort:\n    li $v0, 10\n    syscall\n"
+                                self.tempBlock += "abort:\n    li $v0, 4\n    syscall\n    li $v0, 10\n    syscall\n"
                                 
                                 self.etiquetas.append("abort")
 
@@ -280,12 +281,14 @@ class MIPS():
 
                             if(func not in self.etiquetas):
                                 print("in func", func)
-                                mips_code += f"    jal {func}\n\n"
                                 if("out_int" in func):
                                     self.tempBlock += f"{func}:\n    li $v0, 1\n    syscall\n    la $a0, newline\n    li $v0, 4\n    syscall\n    jr $ra\n\n"
                                 elif("out_string" in func):
                                     self.tempBlock += f"{func}:\n    li $v0, 4\n    syscall\n    la $a0, newline\n    li $v0, 4\n    syscall\n    jr $ra\n\n"
-
+                                elif("Object_abort"):
+                                    func = "abort"
+                                    self.tempBlock += "abort:\n    li $v0, 4\n    syscall\n    li $v0, 10\n    syscall\n"
+                                mips_code += f"    jal {func}\n\n"
                                 self.etiquetas.append(func)
                                     
                             else:    
