@@ -33,6 +33,7 @@ class MIPS():
         self.dataBlock = ".data\n"
         self.etis = 0
         self.end_B = ""
+        self.end_B_Main = ""
         self.current_eti = ""
         self.objects = []
         self.recursive = False
@@ -89,8 +90,14 @@ class MIPS():
                             mips_code += f"    li $v0, 9\n"
                             mips_code += f"    syscall\n"
                             mips_code += f"    move $s0, $v0\n"
+                            
+                        if Act_class == "Main":
+                            self.end_B_Main = "    jal Main_main\n"
                         
                     elif (Act_class+".") in words[0]:    
+                        if(self.end_B_Main != ""):
+                            mips_code += self.end_B_Main
+                            self.end_B_Main = ""
                         self.param = 0                
                         if(self.end_B != ""):
                             mips_code += self.end_B
@@ -104,7 +111,7 @@ class MIPS():
                         mips_code += f"    sub $sp, $sp, {int(words[1])*2}\n"
                         mips_code += f"    sw $ra, 0($sp)\n\n"
 
-                        self.end_B = f"    lw $ra, 0($sp)\n    add $sp, $sp, {int(words[1])*2}\n"
+                        self.end_B = f"    lw $ra, 0($sp)\n    add $sp, $sp, {int(words[1])*2}\n    jr $ra"
                     
                     elif words[0] == "LW":
                         match = re.match(r'(\w+)\[(\d+)\]', words[2])
@@ -133,6 +140,8 @@ class MIPS():
                                     if(self.last_Result[0] == "Str"):
                                         mips_code += f"    move $a2, {words[1]}\n"
                                         self.last_obj = (words[1], self.last_Result[1])
+                                    elif(self.last_Result[0] == "Temp"):
+                                        mips_code += f"    move {words[1]}, $v0\n"
                                     
                             elif words[2] in self.etiquetas:
                                 self.objects.append((words[1].replace('$', ''), words[2]))
@@ -294,8 +303,8 @@ class MIPS():
                                 if("String_substr" not in self.etiquetas):
                                     self.tempBlock += f"String_substr:\n    move $t2, $a2\n    move $t0, $a0\n    move $t1, $a1\n    add $t2, $t2, $t0\n    add $t4, $sp, $zero\n    add $t5, $t2, $t1"
                                     self.tempBlock += "\nloop:\n    bge $t2, $t5, end\n    lb $t3, ($t2)\n    sb $t3, ($t4)\n    addi $t2, $t2, 1\n    addi $t4, $t4, 1\n    j loop\n"
-                                    self.tempBlock += "\nend:\n    move $v0, $sp\n    jr $ra\n\n"
 
+                                    self.tempBlock += "\nend:\n    sb $zero, ($t4)\n     move $v0, $sp\n    jr $ra\n\n"
                                 self.etiquetas.append("String_substr")
                                 self.last_Result = ("", "")
                                 mips_code += "    jal String_substr\n    move $t0, $v0\n"
@@ -770,12 +779,12 @@ class MIPS():
                         mips_code += f"\n{words[0]}\n"
                         
                     elif words[0] == "RETURN":
-                        if(self.end_B != ""):
-                            mips_code += self.end_B
-                            self.end_B = ""
-                            
+                        
                         if(len(words) == 1):
                             continue
+                        else:
+                            mips_code += f"    move $v0, {words[1]}\n"
+                            self.last_Result = ("Temp", words[1])
                             
                         match = re.match(r'(\w+)\[(\d+)\]', words[1])
                         
@@ -790,18 +799,6 @@ class MIPS():
                             mips_code += self.end_B
                             self.end_B = ""
                             
-                        if(len(words) == 1):
-                            continue
-                            
-                        match = re.match(r'(\w+)\[(\d+)\]', words[1])
-                        
-                        if match:
-                            env = match.group(1)
-                            disp = match.group(2)
-
-                            if Act_class != "Main" and Act_func != "main":
-                                mips_code += f"    lw $v0, {disp}(${env.lower()})\n    jr $ra\n"
-
                     elif words[0] == "EOC":
                         mips_code += ""
                         

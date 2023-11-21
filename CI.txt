@@ -1,30 +1,24 @@
-CLASS Main, 20
-	Main.main, 12
-		LW t0(Object), Object
-		CALL t0(Object).type_name, 0
-		LW t0, RET
-		LI t0(Int), 3
-		LI t1(Int), 2
-		PARAM t0(Int)
-		PARAM t1(Int)
-		CALL t0(Object).substr, 0
-		LW t0, RET
-		PARAM t0(Object)
-		CALL IO.out_string, 0
-		LW t0(Bool), True
-		CALL t0(Bool).type_name, 0
-		LW t0, RET
-		LI t0(Int), 0
-		LI t1(Int), 3
-		PARAM t0(Int)
-		PARAM t1(Int)
-		CALL t0(Bool).substr, 0
-		LW t0, RET
-		PARAM t0(Bool)
-		CALL IO.out_string, 0
-		LW t0(String), "5"
-		PARAM t0(String)
-		CALL IO.out_string, 0
+CLASS Main, 36
+		LI t0(Int), 10
+		SW GP[0], t0(Int)
+		LI t0(Int), 2
+		SW GP[4], t0(Int)
+	Main.retA, 8
+		LW t0(Int), GP[0]
+		RETURN t0
+	END FUNC retA
+	Main.retB, 8
+		LW t1(Int), GP[4]
+		RETURN t1
+	END FUNC retB
+	Main.main, 4
+		CALL Main.retA, 0
+		LW t2, RET
+		CALL Main.retB, 0
+		LW t3, RET
+		ADD t4(Int), t2(Int), t3(Int)
+		PARAM t4(Int)
+		CALL IO.out_int, 0
 		RETURN
 	END FUNC main
 EOC
