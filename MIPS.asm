@@ -1,59 +1,35 @@
 .data
-    newline: .asciiz "\n"    
+    newline: .asciiz "\n"
+    str_0: .asciiz "Stop"    
 .text
 
 Main:
-    li $a0, 72
-    li $v0, 9
-    syscall
-    move $s0, $v0
-    li $t0, 10
-    sw $t0, 0($s0)
-    li $t0, 2
-    sw $t0, 4($s0)
     jal Main_main
 
-Main_retA:
-    sub $sp, $sp, 16
-    sw $ra, 0($sp)
-
-    lw $t0, 0($s0)
-    move $v0, $t0
-    lw $ra, 0($sp)
-    add $sp, $sp, 16
-    jr $ra
-Main_retB:
-    sub $sp, $sp, 16
-    sw $ra, 0($sp)
-
-    lw $t1, 4($s0)
-    move $v0, $t1
-    lw $ra, 0($sp)
-    add $sp, $sp, 16
-    jr $ra
 Main_main:
-    sub $sp, $sp, 8
+    sub $sp, $sp, 0
     sw $ra, 0($sp)
 
-    jal Main_retA
-    move $t2, $v0
-    jal Main_retB
-    move $t3, $v0
-    add $t4, $t2, $t3
+    j L_LOOP_0
 
-    move $a0, $t4
-    jal IO_out_int
+L_LOOP_0:
+    li $t0, 1
+    beqz $t0, L_LOOP_END_0
+    la $t0, str_0
 
+    la $a0, ($t0)
+    jal abort
+
+    j L_LOOP_0
+
+L_LOOP_END_0:
     j exit
 
-IO_out_int:
-    li $v0, 1
-    syscall
-    la $a0, newline
+abort:
     li $v0, 4
     syscall
-    jr $ra
-
+    li $v0, 10
+    syscall
 exit:
     li $v0, 10
     syscall

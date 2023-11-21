@@ -111,7 +111,7 @@ class MIPS():
                         mips_code += f"    sub $sp, $sp, {int(words[1])*2}\n"
                         mips_code += f"    sw $ra, 0($sp)\n\n"
 
-                        self.end_B = f"    lw $ra, 0($sp)\n    add $sp, $sp, {int(words[1])*2}\n    jr $ra"
+                        self.end_B = f"    lw $ra, 0($sp)\n    add $sp, $sp, {int(words[1])*2}\n    jr $ra\n"
                     
                     elif words[0] == "LW":
                         match = re.match(r'(\w+)\[(\d+)\]', words[2])

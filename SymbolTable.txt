@@ -26,16 +26,12 @@
 |   substr   |   String   |    Method   |   None   |   String  |    None    |     None     | Global |   0   |  None |
 |    iPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     | Local  |   0   |  None |
 |    lPar    |    Int     |    Param    |   None   |   String  |   substr   |     None     | Local  |   0   |  None |
-|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     | Global |   28  |  None |
+|    Main    |   Object   |    Class    |    IO    |    Main   |    None    |     None     | Global |   0   |  None |
 | out_string | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
 |   xParS    |   String   |    Param    |   None   |    Main   | out_string |     None     | Local  |   0   |  None |
-|  out_int   | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   4   |  None |
-|   xParI    |    Int     |    Param    |   None   |    Main   |  out_int   |      0       | Local  |   4   |  None |
+|  out_int   | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
+|   xParI    |    Int     |    Param    |   None   |    Main   |  out_int   |     None     | Local  |   0   |  None |
 | in_string  |   String   |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
 |  int_int   |    Int     |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
-|     a      |    Int     |   Instance  |   None   |    Main   |    None    |      0       | Main.a |   4   |   10  |
-|     b      |    Int     |   Instance  |   None   |    Main   |    None    |      4       | Main.b |   4   |   2   |
-|    retA    |    Int     |    Method   |   None   |    Main   |    None    |     None     | Global |   8   |  None |
-|    retB    |    Int     |    Method   |   None   |    Main   |    None    |     None     | Global |   8   |  None |
-|    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   4   |  None |
+|    main    | SELF_TYPE  |    Method   |   None   |    Main   |    None    |     None     | Global |   0   |  None |
 +------------+------------+-------------+----------+-----------+------------+--------------+--------+-------+-------+
