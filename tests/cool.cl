@@ -1,17 +1,9 @@
 class Main inherits IO {
-  a : Int <- 10;
-  b : Int <- 2;
-  
-  retA() : Int {
-    a
-  };
-
-  retB() : Int {
-    b
-  };
-
-
-  main() : SELF_TYPE {
-    out_int(retA()  + retB());
-  };
+    main() : SELF_TYPE {
+    {
+        out_string((new Object).type_name().substr(4,3));
+        out_string((isvoid self).type_name().substr(0,3));
+        out_string("5");
+    }
+    };
 };
