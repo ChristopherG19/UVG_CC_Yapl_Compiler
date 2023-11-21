@@ -336,7 +336,8 @@ class MIPS():
                                     
                             else:    
                                 mips_code += f"    jal {func}\n"
-                                mips_code += f"    li $t4, 0\n\n"
+                                if("out_int" in func or "out_string" in func):
+                                    mips_code += f"    li $t4, 0\n\n"
                         
 
                     elif words[0] == "DIV":
